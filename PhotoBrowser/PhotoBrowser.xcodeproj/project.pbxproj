@@ -127,7 +127,6 @@
 				4A52D1DC1C72CB2E001C257B /* Frameworks */,
 				4A52D1DD1C72CB2E001C257B /* Headers */,
 				4A52D1DE1C72CB2E001C257B /* Resources */,
-				4A52D1FC1C72CDC8001C257B /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -209,23 +208,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		4A52D1FC1C72CDC8001C257B /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Carthage/Build/iOS/Kingfisher.framework",
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		4A52D1DB1C72CB2E001C257B /* Sources */ = {
