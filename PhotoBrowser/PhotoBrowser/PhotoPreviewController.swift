@@ -26,16 +26,22 @@ class PhotoPreviewController: UIViewController {
     var waitingView: WaitingView?
     weak var delegate:PhotoPreviewControllerDelegate?
     
+    var imageViewLeadingConstraint: NSLayoutConstraint?
+    var imageViewTrailingConstraint: NSLayoutConstraint?
+    var imageViewTopConstraint: NSLayoutConstraint?
+    var imageViewBottomConstraint: NSLayoutConstraint?
+    var imageViewAspectRatioConstraint: NSLayoutConstraint?
+    
     init(photo: Photo, index: NSInteger) {
         super.init(nibName: nil, bundle: nil)
         self.index = index
         self.photo = photo
         scrollView = UIScrollView()
         imageView = UIImageView()
+        print(imageView.intrinsicContentSize())
         extendedLayoutIncludesOpaqueBars = true
         automaticallyAdjustsScrollViewInsets = false
         edgesForExtendedLayout = UIRectEdge.Top
-        view.backgroundColor = UIColor.clearColor()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -46,18 +52,42 @@ class PhotoPreviewController: UIViewController {
         commonInit()
     }
     
+    override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransitionToSize(size, withTransitionCoordinator: coordinator)
+        if scrollView.zoomScale != scrollView.minimumZoomScale {
+            scrollView.zoomScale = scrollView.minimumZoomScale
+        }
+        coordinator.animateAlongsideTransition({ (_) -> Void in
+            self.updateConstraint()
+            if let waitingView = self.waitingView {
+                waitingView.center = CGPointMake(size.width / 2, size.height / 2)
+            }
+            }, completion: nil)
+    }
+    
     func commonInit() {
         
         guard let photo = photo else {
             return
         }
+        view.backgroundColor = UIColor.clearColor()
         
         scrollView.delegate = self
         scrollView.maximumZoomScale = 1.0
         scrollView.minimumZoomScale = 1.0
-        scrollView.frame = view.bounds
+        scrollView.scrollEnabled = false
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(scrollView)
+        
+        view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|-0-[scrollView]-0-|", options: [], metrics: nil, views: ["scrollView":scrollView]))
+        view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|-0-[scrollView]-0-|", options: [], metrics: nil, views: ["scrollView":scrollView]))
         
         scrollView.addSubview(imageView)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        scrollView.addConstraint(NSLayoutConstraint(item: imageView, attribute: .Width, relatedBy: .LessThanOrEqual, toItem: scrollView, attribute: .Width, multiplier: 1.0, constant: 0))
+        scrollView.addConstraint(NSLayoutConstraint(item: imageView, attribute: .Height, relatedBy: .LessThanOrEqual, toItem: scrollView, attribute: .Height, multiplier: 1.0, constant: 0))
+        
         imageView.userInteractionEnabled = true
         
         let doubleTap = UITapGestureRecognizer.init(target: self, action: "handleDoubleTap:")
@@ -75,12 +105,11 @@ class PhotoPreviewController: UIViewController {
         
         if let image = photo.localOriginalPhoto() {
             imageView.image = image
-            displayImage()
+            updateZoom()
         } else {
             if let thumbnail = photo.localThumbnailPhoto() {
                 imageView.image = thumbnail
-                imageView.bounds = CGRectMake(0, 0, thumbnail.size.width, thumbnail.size.height)
-                imageView.center = scrollView.center
+                updateZoom()
             }
             if let waitingView = waitingView {
                 waitingView.removeFromSuperview()
@@ -90,8 +119,8 @@ class PhotoPreviewController: UIViewController {
                 waitingView = WaitingView.init(frame: CGRectMake(0, 0, 70, 70))
                 
                 if let newWaitingView = waitingView {
-                    newWaitingView.center = scrollView.center
-                    scrollView.addSubview(newWaitingView)
+                    newWaitingView.center = view.center
+                    view.addSubview(newWaitingView)
                 }
                 imageView.kf_setImageWithURL(photoUrl, placeholderImage: photo.localThumbnailPhoto(), optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
                     let progress = CGFloat(receivedSize) / CGFloat(totalSize)
@@ -103,12 +132,11 @@ class PhotoPreviewController: UIViewController {
                             waitingView.removeFromSuperview()
                         }
                         if let _ = image {
-                            self.displayImage()
+                            self.updateZoom()
                         }
                 })
             }
         }
-        view.addSubview(scrollView)
     }
     
     func handleDoubleTap(sender: UITapGestureRecognizer) {
@@ -141,46 +169,67 @@ class PhotoPreviewController: UIViewController {
         }
     }
     
-    func displayImage() {
+    func updateZoom() {
         guard let image = imageView.image else {
             return
         }
-        let scrollViewSize = scrollView.bounds.size
-        let widthScale = image.size.width / scrollViewSize.width
-        let heightScale = image.size.height / scrollViewSize.height
-        let finalScale = max(widthScale, heightScale)
-        var width = image.size.width
-        var height = image.size.height
-        if finalScale > 1 {
-            width = width / finalScale
-            height = height / finalScale
+        
+        scrollView.scrollEnabled = true
+        scrollView.maximumZoomScale = maximumZoomScaleForImage(image)
+        scrollView.zoomScale = scrollView.minimumZoomScale
+        
+        let imageWidth = image.size.width
+        let imageHeight = image.size.height
+        
+        let viewWidth = view.bounds.size.width
+        let viewHeight = view.bounds.size.height
+        
+        var minScale = min(viewWidth/imageWidth, viewHeight/imageHeight)
+        minScale = min(minScale, 1)
+        
+        let vPadding = max((viewHeight - minScale * imageHeight)/2, 0)
+        let hPadding = max((viewWidth - minScale * imageWidth)/2, 0)
+        
+        if let lead = imageViewLeadingConstraint, let trail = imageViewTrailingConstraint, let top = imageViewTopConstraint, let bottom = imageViewBottomConstraint, let ratio = imageViewAspectRatioConstraint {
+            scrollView.removeConstraints([lead, trail, top, bottom, ratio])
         }
-        imageView.bounds = CGRectMake(0, 0, width, height)
-        imageView.center = self.scrollView.center
-        scrollView.maximumZoomScale = self.maximumZoomScaleForImage(image)
+        
+        imageViewAspectRatioConstraint = NSLayoutConstraint(item: imageView, attribute: .Width, relatedBy: .Equal, toItem: imageView, attribute: .Height, multiplier: imageWidth/imageHeight, constant: 0)
+        imageViewLeadingConstraint = NSLayoutConstraint(item: imageView, attribute: .Leading, relatedBy: .Equal, toItem: scrollView, attribute: .Leading, multiplier: 1.0, constant: hPadding)
+        imageViewTopConstraint = NSLayoutConstraint(item: imageView, attribute: .Top, relatedBy: .Equal, toItem: scrollView, attribute: .Top, multiplier: 1.0, constant: vPadding)
+        imageViewTrailingConstraint = NSLayoutConstraint(item: scrollView, attribute: .Trailing, relatedBy: .Equal, toItem: imageView, attribute: .Trailing, multiplier: 1.0, constant: hPadding)
+        imageViewBottomConstraint = NSLayoutConstraint(item: scrollView, attribute: .Bottom, relatedBy: .Equal, toItem: imageView, attribute: .Bottom, multiplier: 1.0, constant: vPadding)
+        
+        if let lead = imageViewLeadingConstraint, let trail = imageViewTrailingConstraint, let top = imageViewTopConstraint, let bottom = imageViewBottomConstraint, let ratio = imageViewAspectRatioConstraint {
+            scrollView.addConstraints([lead, trail, top, bottom, ratio])
+        }
+        
+        
     }
     
-    func centreImageView() {
+    func updateConstraint() {
         
-        var newFrame = imageView.frame
-        
-        if newFrame.size.width < view.bounds.size.width {
-            newFrame.origin.x = floor((view.bounds.size.width - newFrame.size.width)/2.0)
-        } else {
-            newFrame.origin.x = 0
+        guard let lead = imageViewLeadingConstraint, let trail = imageViewTrailingConstraint, let top = imageViewTopConstraint, let bottom = imageViewBottomConstraint else {
+            return
         }
         
-        if newFrame.size.height < view.bounds.size.height {
-            newFrame.origin.y = floor((view.bounds.size.height - newFrame.size.height)/2.0)
-        } else {
-            newFrame.origin.y = 0
-        }
+        let imageWidth = imageView.frame.size.width
+        let imageHeight = imageView.frame.size.height
         
-        if !CGRectEqualToRect(imageView.frame, newFrame) {
-            imageView.frame = newFrame
-        }
+        var vPadding = (view.bounds.size.height - imageHeight) / 2.0
+        vPadding = max(vPadding, 0)
+        var hPadding = (view.bounds.size.width - imageWidth) / 2.0
+        hPadding = max(hPadding, 0)
         
+        lead.constant = hPadding
+        trail.constant = hPadding
+        
+        top.constant = vPadding
+        bottom.constant = vPadding
+        
+        view.layoutIfNeeded()
     }
+    
     
     func maximumZoomScaleForImage(image: UIImage) -> CGFloat {
         var maxZoomScale:CGFloat = 2.5
@@ -211,8 +260,7 @@ extension PhotoPreviewController:UIScrollViewDelegate  {
     }
     
     func scrollViewDidZoom(scrollView: UIScrollView) {
-        centreImageView()
+        updateConstraint()
     }
-    
 }
 

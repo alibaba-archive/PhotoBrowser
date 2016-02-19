@@ -10,6 +10,8 @@ import Foundation
 import UIKit
 import Kingfisher
 
+let ToolbarHeight: CGFloat = 44
+
 public protocol PhotoBrowserDelegate: class {
     func longPressOn(photo: Photo, gesture: UILongPressGestureRecognizer)
 }
@@ -22,6 +24,8 @@ public class PhotoBrowser: UIPageViewController {
     public var photos: [Photo]?
     public var toolbar: UIToolbar?
     public weak var photoBrowserDelegate: PhotoBrowserDelegate?
+    public var toolbarHeightConstraint: NSLayoutConstraint?
+    public var toolbarBottomConstraint: NSLayoutConstraint?
     
     public var currentPhoto: Photo? {
         return photos?[currentIndex]
@@ -41,6 +45,7 @@ public class PhotoBrowser: UIPageViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+        KingfisherManager.sharedManager.cache.clearDiskCache()
         view.backgroundColor = UIColor.whiteColor()
         extendedLayoutIncludesOpaqueBars = true
         automaticallyAdjustsScrollViewInsets = false
@@ -54,7 +59,12 @@ public class PhotoBrowser: UIPageViewController {
             setViewControllers([initPage], direction: UIPageViewControllerNavigationDirection.Forward, animated: false, completion: nil)
         }
         updateNavigationBarTitle()
-        updateToolbar()
+        updateToolbar(view.bounds.size)
+    }
+    
+    public override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransitionToSize(size, withTransitionCoordinator: coordinator)
+        updateToolbar(size)
     }
 }
 
@@ -71,17 +81,29 @@ extension PhotoBrowser {
         title = "\(currentIndex + 1) / \(photos.count)"
     }
     
-    func updateToolbar() {
-        if toolbar == nil {
-            toolbar = UIToolbar.init(frame: CGRectMake(0, view.bounds.size.height - 44, view.bounds.size.width, 44))
-        }
-        guard let toolbar = toolbar, let items = toolbarItems where items.count > 0 else {
+    func updateToolbar(size: CGSize) {
+        guard let items = toolbarItems where items.count > 0 else {
             return
         }
-        let itemsArray = layoutToolbar(items)
-        toolbar.setItems(itemsArray, animated: false)
-        toolbar.tintColor = UIColor.whiteColor()
-        view.addSubview(toolbar)
+        if toolbar == nil {
+            toolbar = UIToolbar()
+            if let toolbar = toolbar {
+                view.addSubview(toolbar)
+                toolbar.translatesAutoresizingMaskIntoConstraints = false
+                view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|-0-[toolbar]-0-|", options: [], metrics: nil , views: ["toolbar":toolbar]))
+                toolbarBottomConstraint = NSLayoutConstraint(item: bottomLayoutGuide, attribute: .Top, relatedBy: .Equal, toItem: toolbar, attribute: .Bottom, multiplier: 1.0, constant: 0)
+                toolbarHeightConstraint = NSLayoutConstraint(item: toolbar, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: ToolbarHeight)
+                if let heightConstraint = toolbarHeightConstraint, let bottomConstraint = toolbarBottomConstraint {
+                    view.addConstraint(bottomConstraint)
+                    toolbar.addConstraint(heightConstraint)
+                }
+            }
+        }
+        if let toolbar = toolbar {
+            let itemsArray = layoutToolbar(items)
+            toolbar.setItems(itemsArray, animated: false)
+            toolbar.tintColor = UIColor.whiteColor()
+        }
     }
     
     func layoutToolbar(items: [UIBarButtonItem]) -> [UIBarButtonItem]? {
@@ -165,14 +187,13 @@ extension PhotoBrowser: PhotoPreviewControllerDelegate {
         set(newValue) {
             isFullScreen = newValue
             self.navigationController?.setNavigationBarHidden(newValue, animated: true)
+            
+            if let bottomConstraint = toolbarBottomConstraint, let heightConstraint = toolbarHeightConstraint {
+                bottomConstraint.constant = newValue ? -heightConstraint.constant : 0
+            }
             UIView.animateWithDuration(0.25) { () -> Void in
                 self.view.backgroundColor = newValue ? UIColor.blackColor() : UIColor.whiteColor()
-                if let toolbar = self.toolbar {
-                    var frame = toolbar.frame
-                    let offset = newValue ? frame.size.height : -frame.size.height
-                    frame.origin.y = frame.origin.y + offset
-                    toolbar.frame = frame
-                }
+                self.view.layoutIfNeeded()
             }
         }
     }

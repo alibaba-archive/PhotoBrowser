@@ -10,12 +10,13 @@
 		4A52D1E41C72CB2E001C257B /* PhotoBrowser.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A52D1E31C72CB2E001C257B /* PhotoBrowser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4A52D1EB1C72CB2E001C257B /* PhotoBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A52D1E01C72CB2E001C257B /* PhotoBrowser.framework */; };
 		4A52D1F01C72CB2E001C257B /* PhotoBrowserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D1EF1C72CB2E001C257B /* PhotoBrowserTests.swift */; };
-		4A52D1FB1C72CDB1001C257B /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A52D1FA1C72CDB1001C257B /* Kingfisher.framework */; };
 		4A52D1FE1C72CE69001C257B /* PhotoBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D1FD1C72CE69001C257B /* PhotoBrowser.swift */; };
 		4A52D2301C72F47C001C257B /* Photo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D22F1C72F47C001C257B /* Photo.swift */; };
 		4A52D2361C72F524001C257B /* WaitingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D2351C72F524001C257B /* WaitingView.swift */; };
 		4A52D2381C72F568001C257B /* PhotoPreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D2371C72F568001C257B /* PhotoPreviewController.swift */; };
 		4A52D23A1C7310DD001C257B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4A52D2391C7310DD001C257B /* Images.xcassets */; };
+		4A52D2611C74727E001C257B /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A52D2601C74727E001C257B /* Kingfisher.framework */; };
+		4A52D2631C76B161001C257B /* UIImageView+IntrinsicSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D2621C76B161001C257B /* UIImageView+IntrinsicSize.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,12 +36,13 @@
 		4A52D1EA1C72CB2E001C257B /* PhotoBrowserTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PhotoBrowserTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A52D1EF1C72CB2E001C257B /* PhotoBrowserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoBrowserTests.swift; sourceTree = "<group>"; };
 		4A52D1F11C72CB2E001C257B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4A52D1FA1C72CDB1001C257B /* Kingfisher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kingfisher.framework; path = Carthage/Build/iOS/Kingfisher.framework; sourceTree = "<group>"; };
 		4A52D1FD1C72CE69001C257B /* PhotoBrowser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoBrowser.swift; sourceTree = "<group>"; };
 		4A52D22F1C72F47C001C257B /* Photo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Photo.swift; sourceTree = "<group>"; };
 		4A52D2351C72F524001C257B /* WaitingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaitingView.swift; sourceTree = "<group>"; };
 		4A52D2371C72F568001C257B /* PhotoPreviewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoPreviewController.swift; sourceTree = "<group>"; };
 		4A52D2391C7310DD001C257B /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = ../Images.xcassets; sourceTree = "<group>"; };
+		4A52D2601C74727E001C257B /* Kingfisher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kingfisher.framework; path = Carthage/Build/iOS/Kingfisher.framework; sourceTree = "<group>"; };
+		4A52D2621C76B161001C257B /* UIImageView+IntrinsicSize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImageView+IntrinsicSize.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,7 +50,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4A52D1FB1C72CDB1001C257B /* Kingfisher.framework in Frameworks */,
+				4A52D2611C74727E001C257B /* Kingfisher.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -66,7 +68,7 @@
 		4A52D1D61C72CB2E001C257B = {
 			isa = PBXGroup;
 			children = (
-				4A52D1FA1C72CDB1001C257B /* Kingfisher.framework */,
+				4A52D2601C74727E001C257B /* Kingfisher.framework */,
 				4A52D1E21C72CB2E001C257B /* PhotoBrowser */,
 				4A52D1EE1C72CB2E001C257B /* PhotoBrowserTests */,
 				4A52D1E11C72CB2E001C257B /* Products */,
@@ -92,6 +94,7 @@
 				4A52D1FD1C72CE69001C257B /* PhotoBrowser.swift */,
 				4A52D2371C72F568001C257B /* PhotoPreviewController.swift */,
 				4A52D2351C72F524001C257B /* WaitingView.swift */,
+				4A52D2621C76B161001C257B /* UIImageView+IntrinsicSize.swift */,
 			);
 			path = PhotoBrowser;
 			sourceTree = "<group>";
@@ -217,6 +220,7 @@
 				4A52D2301C72F47C001C257B /* Photo.swift in Sources */,
 				4A52D1FE1C72CE69001C257B /* PhotoBrowser.swift in Sources */,
 				4A52D2361C72F524001C257B /* WaitingView.swift in Sources */,
+				4A52D2631C76B161001C257B /* UIImageView+IntrinsicSize.swift in Sources */,
 				4A52D2381C72F568001C257B /* PhotoPreviewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
