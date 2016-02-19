@@ -7,24 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4A0B3FE31C76F0CC0049338C /* PhotoBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A0B3FE21C76F0CC0049338C /* PhotoBrowser.framework */; };
 		4A52D20C1C72D13B001C257B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D20B1C72D13B001C257B /* AppDelegate.swift */; };
 		4A52D20E1C72D13B001C257B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D20D1C72D13B001C257B /* ViewController.swift */; };
 		4A52D2111C72D13B001C257B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4A52D20F1C72D13B001C257B /* Main.storyboard */; };
 		4A52D2131C72D13B001C257B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4A52D2121C72D13B001C257B /* Assets.xcassets */; };
 		4A52D2161C72D13B001C257B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4A52D2141C72D13B001C257B /* LaunchScreen.storyboard */; };
-		4A52D2211C72D13B001C257B /* PhotoBrowserDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D2201C72D13B001C257B /* PhotoBrowserDemoTests.swift */; };
+		4A6BC7BC1C770DE100DACDA5 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A6BC7BB1C770DE100DACDA5 /* Kingfisher.framework */; };
+		4A6BC7BE1C770DE900DACDA5 /* PhotoBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A6BC7BD1C770DE900DACDA5 /* PhotoBrowser.framework */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		4A52D21D1C72D13B001C257B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4A52D2001C72D13B001C257B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4A52D2071C72D13B001C257B;
-			remoteInfo = PhotoBrowserDemo;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		4A52D22E1C72D3BA001C257B /* Embed Frameworks */ = {
@@ -40,7 +30,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		4A0B3FE21C76F0CC0049338C /* PhotoBrowser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PhotoBrowser.framework; path = ../Carthage/Build/iOS/PhotoBrowser.framework; sourceTree = "<group>"; };
 		4A52D2081C72D13B001C257B /* PhotoBrowserDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhotoBrowserDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A52D20B1C72D13B001C257B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4A52D20D1C72D13B001C257B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -48,9 +37,8 @@
 		4A52D2121C72D13B001C257B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4A52D2151C72D13B001C257B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4A52D2171C72D13B001C257B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4A52D21C1C72D13B001C257B /* PhotoBrowserDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PhotoBrowserDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		4A52D2201C72D13B001C257B /* PhotoBrowserDemoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoBrowserDemoTests.swift; sourceTree = "<group>"; };
-		4A52D2221C72D13B001C257B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4A6BC7BB1C770DE100DACDA5 /* Kingfisher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kingfisher.framework; path = Carthage/Build/iOS/Kingfisher.framework; sourceTree = "<group>"; };
+		4A6BC7BD1C770DE900DACDA5 /* PhotoBrowser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PhotoBrowser.framework; path = "../../Library/Developer/Xcode/DerivedData/PhotoBrowser-fvhcjeswrqujghbndnhfixwxfzii/Build/Products/Debug-iphoneos/PhotoBrowser.framework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,14 +46,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4A0B3FE31C76F0CC0049338C /* PhotoBrowser.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4A52D2191C72D13B001C257B /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
+				4A6BC7BE1C770DE900DACDA5 /* PhotoBrowser.framework in Frameworks */,
+				4A6BC7BC1C770DE100DACDA5 /* Kingfisher.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,9 +57,9 @@
 		4A52D1FF1C72D13B001C257B = {
 			isa = PBXGroup;
 			children = (
-				4A0B3FE21C76F0CC0049338C /* PhotoBrowser.framework */,
+				4A6BC7BD1C770DE900DACDA5 /* PhotoBrowser.framework */,
+				4A6BC7BB1C770DE100DACDA5 /* Kingfisher.framework */,
 				4A52D20A1C72D13B001C257B /* PhotoBrowserDemo */,
-				4A52D21F1C72D13B001C257B /* PhotoBrowserDemoTests */,
 				4A52D2091C72D13B001C257B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -86,7 +68,6 @@
 			isa = PBXGroup;
 			children = (
 				4A52D2081C72D13B001C257B /* PhotoBrowserDemo.app */,
-				4A52D21C1C72D13B001C257B /* PhotoBrowserDemoTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -104,15 +85,6 @@
 			path = PhotoBrowserDemo;
 			sourceTree = "<group>";
 		};
-		4A52D21F1C72D13B001C257B /* PhotoBrowserDemoTests */ = {
-			isa = PBXGroup;
-			children = (
-				4A52D2201C72D13B001C257B /* PhotoBrowserDemoTests.swift */,
-				4A52D2221C72D13B001C257B /* Info.plist */,
-			);
-			path = PhotoBrowserDemoTests;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -124,6 +96,7 @@
 				4A52D2051C72D13B001C257B /* Frameworks */,
 				4A52D2061C72D13B001C257B /* Resources */,
 				4A52D22E1C72D3BA001C257B /* Embed Frameworks */,
+				4A6BC7BF1C770E0B00DACDA5 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -133,24 +106,6 @@
 			productName = PhotoBrowserDemo;
 			productReference = 4A52D2081C72D13B001C257B /* PhotoBrowserDemo.app */;
 			productType = "com.apple.product-type.application";
-		};
-		4A52D21B1C72D13B001C257B /* PhotoBrowserDemoTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 4A52D2281C72D13B001C257B /* Build configuration list for PBXNativeTarget "PhotoBrowserDemoTests" */;
-			buildPhases = (
-				4A52D2181C72D13B001C257B /* Sources */,
-				4A52D2191C72D13B001C257B /* Frameworks */,
-				4A52D21A1C72D13B001C257B /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				4A52D21E1C72D13B001C257B /* PBXTargetDependency */,
-			);
-			name = PhotoBrowserDemoTests;
-			productName = PhotoBrowserDemoTests;
-			productReference = 4A52D21C1C72D13B001C257B /* PhotoBrowserDemoTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -164,10 +119,6 @@
 				TargetAttributes = {
 					4A52D2071C72D13B001C257B = {
 						CreatedOnToolsVersion = 7.2.1;
-					};
-					4A52D21B1C72D13B001C257B = {
-						CreatedOnToolsVersion = 7.2.1;
-						TestTargetID = 4A52D2071C72D13B001C257B;
 					};
 				};
 			};
@@ -185,7 +136,6 @@
 			projectRoot = "";
 			targets = (
 				4A52D2071C72D13B001C257B /* PhotoBrowserDemo */,
-				4A52D21B1C72D13B001C257B /* PhotoBrowserDemoTests */,
 			);
 		};
 /* End PBXProject section */
@@ -201,14 +151,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4A52D21A1C72D13B001C257B /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		4A6BC7BF1C770E0B00DACDA5 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/Kingfisher.framework",
+			);
+			outputPaths = (
+			);
 			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = "/usr/local/bin/carthage copy-frameworks";
+			shellScript = "";
 		};
-/* End PBXResourcesBuildPhase section */
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		4A52D2041C72D13B001C257B /* Sources */ = {
@@ -220,23 +180,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4A52D2181C72D13B001C257B /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4A52D2211C72D13B001C257B /* PhotoBrowserDemoTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		4A52D21E1C72D13B001C257B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4A52D2071C72D13B001C257B /* PhotoBrowserDemo */;
-			targetProxy = 4A52D21D1C72D13B001C257B /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		4A52D20F1C72D13B001C257B /* Main.storyboard */ = {
@@ -345,6 +289,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/Carthage/Build/iOS";
 				INFOPLIST_FILE = PhotoBrowserDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.Teambition.PhotoBrowserDemo;
@@ -356,34 +301,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/Carthage/Build/iOS";
 				INFOPLIST_FILE = PhotoBrowserDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.Teambition.PhotoBrowserDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
-		4A52D2291C72D13B001C257B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				INFOPLIST_FILE = PhotoBrowserDemoTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.Teambition.PhotoBrowserDemoTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PhotoBrowserDemo.app/PhotoBrowserDemo";
-			};
-			name = Debug;
-		};
-		4A52D22A1C72D13B001C257B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				INFOPLIST_FILE = PhotoBrowserDemoTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.Teambition.PhotoBrowserDemoTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PhotoBrowserDemo.app/PhotoBrowserDemo";
 			};
 			name = Release;
 		};
@@ -404,15 +326,6 @@
 			buildConfigurations = (
 				4A52D2261C72D13B001C257B /* Debug */,
 				4A52D2271C72D13B001C257B /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		4A52D2281C72D13B001C257B /* Build configuration list for PBXNativeTarget "PhotoBrowserDemoTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				4A52D2291C72D13B001C257B /* Debug */,
-				4A52D22A1C72D13B001C257B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -9,38 +9,23 @@
 /* Begin PBXBuildFile section */
 		4A0B3FDF1C76DB300049338C /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A0B3FDE1C76DB300049338C /* Kingfisher.framework */; };
 		4A52D1E41C72CB2E001C257B /* PhotoBrowser.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A52D1E31C72CB2E001C257B /* PhotoBrowser.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4A52D1EB1C72CB2E001C257B /* PhotoBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A52D1E01C72CB2E001C257B /* PhotoBrowser.framework */; };
-		4A52D1F01C72CB2E001C257B /* PhotoBrowserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D1EF1C72CB2E001C257B /* PhotoBrowserTests.swift */; };
 		4A52D1FE1C72CE69001C257B /* PhotoBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D1FD1C72CE69001C257B /* PhotoBrowser.swift */; };
 		4A52D2301C72F47C001C257B /* Photo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D22F1C72F47C001C257B /* Photo.swift */; };
 		4A52D2361C72F524001C257B /* WaitingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D2351C72F524001C257B /* WaitingView.swift */; };
 		4A52D2381C72F568001C257B /* PhotoPreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D2371C72F568001C257B /* PhotoPreviewController.swift */; };
-		4A52D23A1C7310DD001C257B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4A52D2391C7310DD001C257B /* Images.xcassets */; };
+		4A6BC7C11C770F6400DACDA5 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4A6BC7C01C770F6400DACDA5 /* Images.xcassets */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		4A52D1EC1C72CB2E001C257B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4A52D1D71C72CB2E001C257B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4A52D1DF1C72CB2E001C257B;
-			remoteInfo = PhotoBrowser;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		4A0B3FDE1C76DB300049338C /* Kingfisher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kingfisher.framework; path = Carthage/Build/iOS/Kingfisher.framework; sourceTree = "<group>"; };
 		4A52D1E01C72CB2E001C257B /* PhotoBrowser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PhotoBrowser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A52D1E31C72CB2E001C257B /* PhotoBrowser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PhotoBrowser.h; sourceTree = "<group>"; };
 		4A52D1E51C72CB2E001C257B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4A52D1EA1C72CB2E001C257B /* PhotoBrowserTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PhotoBrowserTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		4A52D1EF1C72CB2E001C257B /* PhotoBrowserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoBrowserTests.swift; sourceTree = "<group>"; };
-		4A52D1F11C72CB2E001C257B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4A52D1FD1C72CE69001C257B /* PhotoBrowser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoBrowser.swift; sourceTree = "<group>"; };
 		4A52D22F1C72F47C001C257B /* Photo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Photo.swift; sourceTree = "<group>"; };
 		4A52D2351C72F524001C257B /* WaitingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaitingView.swift; sourceTree = "<group>"; };
 		4A52D2371C72F568001C257B /* PhotoPreviewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoPreviewController.swift; sourceTree = "<group>"; };
-		4A52D2391C7310DD001C257B /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = ../Images.xcassets; sourceTree = "<group>"; };
+		4A6BC7C01C770F6400DACDA5 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,14 +37,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4A52D1E71C72CB2E001C257B /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4A52D1EB1C72CB2E001C257B /* PhotoBrowser.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -68,7 +45,6 @@
 			children = (
 				4A0B3FDE1C76DB300049338C /* Kingfisher.framework */,
 				4A52D1E21C72CB2E001C257B /* PhotoBrowser */,
-				4A52D1EE1C72CB2E001C257B /* PhotoBrowserTests */,
 				4A52D1E11C72CB2E001C257B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -77,7 +53,6 @@
 			isa = PBXGroup;
 			children = (
 				4A52D1E01C72CB2E001C257B /* PhotoBrowser.framework */,
-				4A52D1EA1C72CB2E001C257B /* PhotoBrowserTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -85,7 +60,7 @@
 		4A52D1E21C72CB2E001C257B /* PhotoBrowser */ = {
 			isa = PBXGroup;
 			children = (
-				4A52D2391C7310DD001C257B /* Images.xcassets */,
+				4A6BC7C01C770F6400DACDA5 /* Images.xcassets */,
 				4A52D1E31C72CB2E001C257B /* PhotoBrowser.h */,
 				4A52D1E51C72CB2E001C257B /* Info.plist */,
 				4A52D22F1C72F47C001C257B /* Photo.swift */,
@@ -94,15 +69,6 @@
 				4A52D2351C72F524001C257B /* WaitingView.swift */,
 			);
 			path = PhotoBrowser;
-			sourceTree = "<group>";
-		};
-		4A52D1EE1C72CB2E001C257B /* PhotoBrowserTests */ = {
-			isa = PBXGroup;
-			children = (
-				4A52D1EF1C72CB2E001C257B /* PhotoBrowserTests.swift */,
-				4A52D1F11C72CB2E001C257B /* Info.plist */,
-			);
-			path = PhotoBrowserTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -137,24 +103,6 @@
 			productReference = 4A52D1E01C72CB2E001C257B /* PhotoBrowser.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		4A52D1E91C72CB2E001C257B /* PhotoBrowserTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 4A52D1F71C72CB2E001C257B /* Build configuration list for PBXNativeTarget "PhotoBrowserTests" */;
-			buildPhases = (
-				4A52D1E61C72CB2E001C257B /* Sources */,
-				4A52D1E71C72CB2E001C257B /* Frameworks */,
-				4A52D1E81C72CB2E001C257B /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				4A52D1ED1C72CB2E001C257B /* PBXTargetDependency */,
-			);
-			name = PhotoBrowserTests;
-			productName = PhotoBrowserTests;
-			productReference = 4A52D1EA1C72CB2E001C257B /* PhotoBrowserTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -166,9 +114,6 @@
 				ORGANIZATIONNAME = Teambition;
 				TargetAttributes = {
 					4A52D1DF1C72CB2E001C257B = {
-						CreatedOnToolsVersion = 7.2.1;
-					};
-					4A52D1E91C72CB2E001C257B = {
 						CreatedOnToolsVersion = 7.2.1;
 					};
 				};
@@ -186,7 +131,6 @@
 			projectRoot = "";
 			targets = (
 				4A52D1DF1C72CB2E001C257B /* PhotoBrowser */,
-				4A52D1E91C72CB2E001C257B /* PhotoBrowserTests */,
 			);
 		};
 /* End PBXProject section */
@@ -196,14 +140,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4A52D23A1C7310DD001C257B /* Images.xcassets in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4A52D1E81C72CB2E001C257B /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
+				4A6BC7C11C770F6400DACDA5 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -221,23 +158,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4A52D1E61C72CB2E001C257B /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4A52D1F01C72CB2E001C257B /* PhotoBrowserTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		4A52D1ED1C72CB2E001C257B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4A52D1DF1C72CB2E001C257B /* PhotoBrowser */;
-			targetProxy = 4A52D1EC1C72CB2E001C257B /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		4A52D1F21C72CB2E001C257B /* Debug */ = {
@@ -372,26 +293,6 @@
 			};
 			name = Release;
 		};
-		4A52D1F81C72CB2E001C257B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				INFOPLIST_FILE = PhotoBrowserTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.Teambition.PhotoBrowserTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		4A52D1F91C72CB2E001C257B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				INFOPLIST_FILE = PhotoBrowserTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.Teambition.PhotoBrowserTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -409,15 +310,6 @@
 			buildConfigurations = (
 				4A52D1F51C72CB2E001C257B /* Debug */,
 				4A52D1F61C72CB2E001C257B /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		4A52D1F71C72CB2E001C257B /* Build configuration list for PBXNativeTarget "PhotoBrowserTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				4A52D1F81C72CB2E001C257B /* Debug */,
-				4A52D1F91C72CB2E001C257B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
