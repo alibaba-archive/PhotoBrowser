@@ -97,6 +97,7 @@ class PhotoPreviewController: UIViewController {
         
         singleTap.requireGestureRecognizerToFail(doubleTap)
         
+        
         if let image = photo.localOriginalPhoto() {
             imageView.image = image
             updateZoom()
@@ -133,6 +134,103 @@ class PhotoPreviewController: UIViewController {
         }
     }
     
+    func initializeConstraint() {
+        //layout scrollView in view
+        view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|-0-[scrollView]-0-|", options: [], metrics: nil, views: ["scrollView":scrollView]))
+        view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|-0-[scrollView]-0-|", options: [], metrics: nil, views: ["scrollView":scrollView]))
+        
+        //layout imageView in scrollView
+        imageViewLeadingConstraint = NSLayoutConstraint(item: imageView, attribute: .Leading, relatedBy: .Equal, toItem: scrollView, attribute: .Leading, multiplier: 1.0, constant: 0)
+        imageViewTopConstraint = NSLayoutConstraint(item: imageView, attribute: .Top, relatedBy: .Equal, toItem: scrollView, attribute: .Top, multiplier: 1.0, constant: 0)
+        imageViewTrailingConstraint = NSLayoutConstraint(item: scrollView, attribute: .Trailing, relatedBy: .Equal, toItem: imageView, attribute: .Trailing, multiplier: 1.0, constant: 0)
+        imageViewBottomConstraint = NSLayoutConstraint(item: scrollView, attribute: .Bottom, relatedBy: .Equal, toItem: imageView, attribute: .Bottom, multiplier: 1.0, constant: 0)
+        if let lead = imageViewLeadingConstraint, let trail = imageViewTrailingConstraint, let top = imageViewTopConstraint, let bottom = imageViewBottomConstraint {
+            scrollView.addConstraints([lead, trail, top, bottom])
+        }
+    }
+    
+    
+    func updateZoom() {
+        guard let image = imageView.image else {
+            return
+        }
+        //Zoom to show as much image as possible unless image is smaller than screen
+        var minZoom = min(view.bounds.size.width / image.size.width, view.bounds.size.height / image.size.height)
+        minZoom = min(minZoom, 1)
+        
+        scrollView.minimumZoomScale = minZoom
+        
+        //Force scrollViewDidZoom fire if zoom did not change
+        if scrollView.zoomScale == minZoom {
+            minZoom += 0.000001
+        }
+        scrollView.zoomScale = minZoom
+    }
+    
+    
+    func updateConstraint() {
+        
+        guard let image = imageView.image else {
+            return
+        }
+        
+        guard let lead = imageViewLeadingConstraint, let trail = imageViewTrailingConstraint, let top = imageViewTopConstraint, let bottom = imageViewBottomConstraint else {
+            return
+        }
+        
+        let imageWidth = image.size.width
+        let imageHeight = image.size.height
+        
+        let viewWidth = view.bounds.size.width
+        let viewHeight = view.bounds.size.height
+        
+        //center image if it is smaller than screen
+        var hPadding = (viewWidth - scrollView.zoomScale * imageWidth) / 2
+        hPadding = max(hPadding, 0)
+        
+        var vPadding = (viewHeight - scrollView.zoomScale * imageHeight) / 2
+        vPadding = max(vPadding, 0)
+        
+        lead.constant = hPadding
+        trail.constant = hPadding
+        top.constant = vPadding
+        bottom.constant = vPadding
+        
+        view.layoutIfNeeded()
+    }
+    
+    
+    func zoomScaleForDoubleTap() -> CGFloat {
+        guard let image = imageView.image else {
+            return scrollView.minimumZoomScale
+        }
+        
+        //Zoom to fit the smaller edge to screen if possible
+        //but at least double the minimumZoomScale
+        
+        var maxZoomScale: CGFloat = 2
+        
+        let imageSize = image.size
+        let boundSize = view.bounds.size
+        
+        let xScale = boundSize.width / imageSize.width
+        let yScale = boundSize.height / imageSize.height
+        
+        let minScale = min(xScale, yScale)
+        let maxScale = max(xScale, yScale)
+        
+        if minScale > 1 {
+            maxZoomScale = max(maxZoomScale, maxScale)
+        } else {
+            maxZoomScale = max(maxZoomScale, maxScale / minScale)
+        }
+        return maxZoomScale * scrollView.minimumZoomScale
+    }
+
+}
+
+extension PhotoPreviewController {
+    
     func handleDoubleTap(sender: UITapGestureRecognizer) {
         if scrollView.zoomScale != scrollView.minimumZoomScale {
             scrollView.setZoomScale(scrollView.minimumZoomScale, animated: true)
@@ -160,92 +258,6 @@ class PhotoPreviewController: UIViewController {
             delegate.longPressOn(photo, gesture: sender)
         }
     }
-    
-    func initializeConstraint() {
-        //layout scrollView in view
-        view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|-0-[scrollView]-0-|", options: [], metrics: nil, views: ["scrollView":scrollView]))
-        view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|-0-[scrollView]-0-|", options: [], metrics: nil, views: ["scrollView":scrollView]))
-        
-        //layout imageView in scrollView
-        imageViewLeadingConstraint = NSLayoutConstraint(item: imageView, attribute: .Leading, relatedBy: .Equal, toItem: scrollView, attribute: .Leading, multiplier: 1.0, constant: 0)
-        imageViewTopConstraint = NSLayoutConstraint(item: imageView, attribute: .Top, relatedBy: .Equal, toItem: scrollView, attribute: .Top, multiplier: 1.0, constant: 0)
-        imageViewTrailingConstraint = NSLayoutConstraint(item: scrollView, attribute: .Trailing, relatedBy: .Equal, toItem: imageView, attribute: .Trailing, multiplier: 1.0, constant: 0)
-        imageViewBottomConstraint = NSLayoutConstraint(item: scrollView, attribute: .Bottom, relatedBy: .Equal, toItem: imageView, attribute: .Bottom, multiplier: 1.0, constant: 0)
-        if let lead = imageViewLeadingConstraint, let trail = imageViewTrailingConstraint, let top = imageViewTopConstraint, let bottom = imageViewBottomConstraint {
-            scrollView.addConstraints([lead, trail, top, bottom])
-        }
-    }
-    
-    func updateZoom() {
-        guard let image = imageView.image else {
-            return
-        }
-        var minZoom = min(view.bounds.size.width / image.size.width, view.bounds.size.height / image.size.height)
-        minZoom = min(minZoom, 1)
-        
-        scrollView.minimumZoomScale = minZoom
-        
-        if scrollView.zoomScale == minZoom {
-            minZoom += 0.000001
-        }
-        scrollView.zoomScale = minZoom
-    }
-    
-    
-    func updateConstraint() {
-        guard let image = imageView.image else {
-            return
-        }
-        
-        guard let lead = imageViewLeadingConstraint, let trail = imageViewTrailingConstraint, let top = imageViewTopConstraint, let bottom = imageViewBottomConstraint else {
-            return
-        }
-        
-        let imageWidth = image.size.width
-        let imageHeight = image.size.height
-        
-        let viewWidth = view.bounds.size.width
-        let viewHeight = view.bounds.size.height
-        
-        var hPadding = (viewWidth - scrollView.zoomScale * imageWidth) / 2
-        hPadding = max(hPadding, 0)
-        
-        var vPadding = (viewHeight - scrollView.zoomScale * imageHeight) / 2
-        vPadding = max(vPadding, 0)
-        
-        lead.constant = hPadding
-        trail.constant = hPadding
-        top.constant = vPadding
-        bottom.constant = vPadding
-        
-        view.layoutIfNeeded()
-    }
-    
-    
-    func zoomScaleForDoubleTap() -> CGFloat {
-        guard let image = imageView.image else {
-            return scrollView.minimumZoomScale
-        }
-        
-        var maxZoomScale: CGFloat = 2.5
-        
-        let imageSize = image.size
-        let boundSize = view.bounds.size
-        
-        let xScale = boundSize.width / imageSize.width
-        let yScale = boundSize.height / imageSize.height
-        
-        let minScale = min(xScale, yScale)
-        let maxScale = max(xScale, yScale)
-        
-        if minScale > 1 {
-            maxZoomScale = max(maxZoomScale, maxScale)
-        } else {
-            maxZoomScale = max(maxZoomScale, maxScale / minScale)
-        }
-        return maxZoomScale * scrollView.minimumZoomScale
-    }
-
 }
 
 extension PhotoPreviewController:UIScrollViewDelegate  {
