@@ -45,7 +45,7 @@ public class PhotoBrowser: UIPageViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        KingfisherManager.sharedManager.cache.clearDiskCache()
+//        KingfisherManager.sharedManager.cache.clearDiskCache()
         view.backgroundColor = UIColor.whiteColor()
         extendedLayoutIncludesOpaqueBars = true
         automaticallyAdjustsScrollViewInsets = false

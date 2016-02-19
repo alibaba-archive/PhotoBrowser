@@ -16,7 +16,6 @@
 		4A52D2381C72F568001C257B /* PhotoPreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D2371C72F568001C257B /* PhotoPreviewController.swift */; };
 		4A52D23A1C7310DD001C257B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4A52D2391C7310DD001C257B /* Images.xcassets */; };
 		4A52D2611C74727E001C257B /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A52D2601C74727E001C257B /* Kingfisher.framework */; };
-		4A52D2631C76B161001C257B /* UIImageView+IntrinsicSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D2621C76B161001C257B /* UIImageView+IntrinsicSize.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,7 +41,6 @@
 		4A52D2371C72F568001C257B /* PhotoPreviewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoPreviewController.swift; sourceTree = "<group>"; };
 		4A52D2391C7310DD001C257B /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = ../Images.xcassets; sourceTree = "<group>"; };
 		4A52D2601C74727E001C257B /* Kingfisher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kingfisher.framework; path = Carthage/Build/iOS/Kingfisher.framework; sourceTree = "<group>"; };
-		4A52D2621C76B161001C257B /* UIImageView+IntrinsicSize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImageView+IntrinsicSize.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,7 +92,6 @@
 				4A52D1FD1C72CE69001C257B /* PhotoBrowser.swift */,
 				4A52D2371C72F568001C257B /* PhotoPreviewController.swift */,
 				4A52D2351C72F524001C257B /* WaitingView.swift */,
-				4A52D2621C76B161001C257B /* UIImageView+IntrinsicSize.swift */,
 			);
 			path = PhotoBrowser;
 			sourceTree = "<group>";
@@ -220,7 +217,6 @@
 				4A52D2301C72F47C001C257B /* Photo.swift in Sources */,
 				4A52D1FE1C72CE69001C257B /* PhotoBrowser.swift in Sources */,
 				4A52D2361C72F524001C257B /* WaitingView.swift in Sources */,
-				4A52D2631C76B161001C257B /* UIImageView+IntrinsicSize.swift in Sources */,
 				4A52D2381C72F568001C257B /* PhotoPreviewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
