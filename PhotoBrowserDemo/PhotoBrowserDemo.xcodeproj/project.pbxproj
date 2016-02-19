@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4A0B3FE31C76F0CC0049338C /* PhotoBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A0B3FE21C76F0CC0049338C /* PhotoBrowser.framework */; };
 		4A52D20C1C72D13B001C257B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D20B1C72D13B001C257B /* AppDelegate.swift */; };
 		4A52D20E1C72D13B001C257B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D20D1C72D13B001C257B /* ViewController.swift */; };
 		4A52D2111C72D13B001C257B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4A52D20F1C72D13B001C257B /* Main.storyboard */; };
@@ -39,6 +40,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4A0B3FE21C76F0CC0049338C /* PhotoBrowser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PhotoBrowser.framework; path = ../Carthage/Build/iOS/PhotoBrowser.framework; sourceTree = "<group>"; };
 		4A52D2081C72D13B001C257B /* PhotoBrowserDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhotoBrowserDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A52D20B1C72D13B001C257B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4A52D20D1C72D13B001C257B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -56,6 +58,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4A0B3FE31C76F0CC0049338C /* PhotoBrowser.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,6 +75,7 @@
 		4A52D1FF1C72D13B001C257B = {
 			isa = PBXGroup;
 			children = (
+				4A0B3FE21C76F0CC0049338C /* PhotoBrowser.framework */,
 				4A52D20A1C72D13B001C257B /* PhotoBrowserDemo */,
 				4A52D21F1C72D13B001C257B /* PhotoBrowserDemoTests */,
 				4A52D2091C72D13B001C257B /* Products */,

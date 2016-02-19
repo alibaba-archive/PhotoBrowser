@@ -37,7 +37,6 @@ class PhotoPreviewController: UIViewController {
         self.photo = photo
         scrollView = UIScrollView()
         imageView = UIImageView()
-        print(imageView.intrinsicContentSize())
         extendedLayoutIncludesOpaqueBars = true
         automaticallyAdjustsScrollViewInsets = false
         edgesForExtendedLayout = UIRectEdge.Top
@@ -74,7 +73,7 @@ class PhotoPreviewController: UIViewController {
         scrollView.delegate = self
         scrollView.maximumZoomScale = 3.0
         scrollView.minimumZoomScale = 1.0
-        scrollView.scrollEnabled = true
+        scrollView.scrollEnabled = false
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(scrollView)
         
@@ -267,6 +266,11 @@ extension PhotoPreviewController:UIScrollViewDelegate  {
     }
     
     func scrollViewDidZoom(scrollView: UIScrollView) {
+        if scrollView.zoomScale - scrollView.minimumZoomScale < 0.01 {
+            scrollView.scrollEnabled = false
+        } else {
+            scrollView.scrollEnabled = true
+        }
         updateConstraint()
     }
 }
