@@ -2,9 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:PhotoBrowserDemo/PhotoBrowserDemo.xcodeproj">
+      location = "group:PhotoBrowser.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:PhotoBrowser/PhotoBrowser.xcodeproj">
+      location = "group:PhotoBrowserDemo/PhotoBrowserDemo.xcodeproj">
    </FileRef>
 </Workspace>
