@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4A0944681C803AB1002EA9E6 /* PhotoBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A6BC7BD1C770DE900DACDA5 /* PhotoBrowser.framework */; };
 		4A52D20C1C72D13B001C257B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D20B1C72D13B001C257B /* AppDelegate.swift */; };
 		4A52D20E1C72D13B001C257B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D20D1C72D13B001C257B /* ViewController.swift */; };
 		4A52D2111C72D13B001C257B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4A52D20F1C72D13B001C257B /* Main.storyboard */; };
 		4A52D2131C72D13B001C257B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4A52D2121C72D13B001C257B /* Assets.xcassets */; };
 		4A52D2161C72D13B001C257B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4A52D2141C72D13B001C257B /* LaunchScreen.storyboard */; };
 		4A6BC7BC1C770DE100DACDA5 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A6BC7BB1C770DE100DACDA5 /* Kingfisher.framework */; };
-		4A6BC7BE1C770DE900DACDA5 /* PhotoBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A6BC7BD1C770DE900DACDA5 /* PhotoBrowser.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -46,8 +46,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4A6BC7BE1C770DE900DACDA5 /* PhotoBrowser.framework in Frameworks */,
 				4A6BC7BC1C770DE100DACDA5 /* Kingfisher.framework in Frameworks */,
+				4A0944681C803AB1002EA9E6 /* PhotoBrowser.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
