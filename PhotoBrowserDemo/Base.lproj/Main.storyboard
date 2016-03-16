@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--PhotoBrowser-->
@@ -17,41 +18,31 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="dOk-KC-cpX">
-                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="reuseIdentifier" textLabel="57y-GH-tvP" style="IBUITableViewCellStyleDefault" id="Fuv-1R-6hs">
-                                        <rect key="frame" x="0.0" y="92" width="600" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Fuv-1R-6hs" id="IwV-cc-f9m">
-                                            <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="57y-GH-tvP">
-                                                    <rect key="frame" x="15" y="0.0" width="570" height="43.5"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                </prototypes>
-                            </tableView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="thumbnail3" translatesAutoresizingMaskIntoConstraints="NO" id="s3W-RR-y1R">
+                                <rect key="frame" x="20" y="72" width="120" height="120"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="120" id="NBh-nb-3qB"/>
+                                    <constraint firstAttribute="height" constant="120" id="v5L-C6-bEt"/>
+                                </constraints>
+                            </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="dOk-KC-cpX" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="8hJ-E5-0bt"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="dOk-KC-cpX" secondAttribute="bottom" id="CpF-Lq-2xD"/>
-                            <constraint firstItem="dOk-KC-cpX" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="JWe-73-ldk"/>
-                            <constraint firstAttribute="trailing" secondItem="dOk-KC-cpX" secondAttribute="trailing" id="QU9-pm-ZHP"/>
+                            <constraint firstItem="s3W-RR-y1R" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="8f9-cY-d3t"/>
+                            <constraint firstItem="s3W-RR-y1R" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" id="ZEV-LN-crt"/>
+                            <constraint firstItem="s3W-RR-y1R" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="dJi-M5-yLj"/>
+                            <constraint firstItem="s3W-RR-y1R" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="xy9-Ds-ahF"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="dJi-M5-yLj"/>
+                                <exclude reference="xy9-Ds-ahF"/>
+                            </mask>
+                        </variation>
                     </view>
                     <navigationItem key="navigationItem" title="PhotoBrowser" id="lbC-Qz-mLi"/>
                     <connections>
-                        <outlet property="tableView" destination="dOk-KC-cpX" id="Jjl-iT-Uru"/>
+                        <outlet property="imageView" destination="s3W-RR-y1R" id="YwW-Vv-2AE"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -77,4 +68,7 @@
             <point key="canvasLocation" x="510" y="313"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="thumbnail3" width="200" height="112"/>
+    </resources>
 </document>

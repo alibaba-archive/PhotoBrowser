@@ -10,20 +10,19 @@ import UIKit
 import PhotoBrowser
 
 class ViewController: UIViewController {
-
-    @IBOutlet weak var tableView: UITableView!
-    
     var photoBrowser: PhotoBrowser?
+    
+    @IBOutlet weak var imageView: UIImageView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.dataSource = self
-        tableView.delegate = self
+        let gesture = UITapGestureRecognizer(target: self, action: "showPhotoBrowser")
+        imageView.userInteractionEnabled = true
+        imageView.addGestureRecognizer(gesture)
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     func saveToAlbum(image: UIImage) {
@@ -39,33 +38,6 @@ class ViewController: UIViewController {
     }
 }
 
-extension ViewController: UITableViewDataSource, UITableViewDelegate {
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return 1
-    }
-    
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
-    }
-    
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("reuseIdentifier", forIndexPath: indexPath)
-        cell.textLabel?.text = "\(indexPath.row)"
-        return cell
-    }
-    
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        tableView.deselectRowAtIndexPath(indexPath, animated: true)
-        switch indexPath.row {
-        case 0:
-            showPhotoBrowser()
-        default:
-            print("default")
-        }
-    }
-    
-}
-
 extension ViewController {
     func showPhotoBrowser() {
         let thumbnail1 = UIImage.init(named: "thumbnail1")
@@ -78,26 +50,34 @@ extension ViewController {
         let photoUrl3 = NSURL.init(string: "https://pic2.zhimg.com/a5455838750e168d97480d9247537d31_r.jpeg")
         
         let item1 = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.Bookmarks, target: self, action: nil)
-        item1.tintColor = UIColor.blackColor()
+        item1.tintColor = UIColor.whiteColor()
+        let item2 = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.Bookmarks, target: self, action: nil)
+        item2.tintColor = UIColor.whiteColor()
+        let item3 = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.Bookmarks, target: self, action: nil)
+        item3.tintColor = UIColor.whiteColor()
         
-        let photo = Photo.init(image: nil, thumbnailImage: thumbnail1, photoUrl: photoUrl1)
-        let photo2 = Photo.init(image: nil, thumbnailImage: thumbnail2, photoUrl: photoUrl2)
-        let photo3 = Photo.init(image: nil, thumbnailImage: thumbnail3, photoUrl: photoUrl3)
+        let photo = Photo.init(image: nil, title:"Image1", thumbnailImage: thumbnail1, photoUrl: photoUrl1)
+        let photo2 = Photo.init(image: nil, title:"Image2", thumbnailImage: thumbnail2, photoUrl: photoUrl2)
+        let photo3 = Photo.init(image: nil, title:"Image3", thumbnailImage: thumbnail3, photoUrl: photoUrl3)
         photoBrowser = PhotoBrowser()
         guard let browser = photoBrowser else {
             return
         }
-        browser.toolbarItems = [item1]
+        browser.toolbarItems = [item1, item2, item3]
         browser.photoBrowserDelegate = self
-        browser.currentIndex = 0
+        browser.currentIndex = 2
         browser.photos = [photo, photo2, photo3]
-        self.navigationController?.pushViewController(browser, animated: true)
+        navigationController!.showPhotoBrowser(browser, fromView: imageView)
     }
 }
 
 extension ViewController: PhotoBrowserDelegate {
     
-    func longPressOn(photo: Photo, gesture: UILongPressGestureRecognizer) {
+    func dismissPhotoBrowser(photoBrowser: PhotoBrowser) {
+        navigationController!.dismissPhotoBrowser(photoBrowser, toView: imageView)
+    }
+    
+    func longPressOnImage(gesture: UILongPressGestureRecognizer) {
         guard let imageView = gesture.view as? UIImageView else {
             return
         }
@@ -110,24 +90,15 @@ extension ViewController: PhotoBrowserDelegate {
         }
         alertController.addAction(saveAction)
         alertController.addAction(cancelAction)
-        self.photoBrowser?.presentViewController(alertController, animated: true, completion: nil)
+        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
+            self.photoBrowser?.presentViewController(alertController, animated: true, completion: nil)
+        } else {
+            let location = gesture.locationInView(gesture.view)
+            let rect = CGRectMake(location.x - 5, location.y - 5, 10, 10)
+            alertController.modalPresentationStyle = .Popover
+            alertController.popoverPresentationController?.sourceRect = rect
+            alertController.popoverPresentationController?.sourceView = gesture.view
+            self.photoBrowser?.presentViewController(alertController, animated: true, completion: nil)
+        }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -11,22 +11,35 @@ import UIKit
 import Kingfisher
 
 let ToolbarHeight: CGFloat = 44
+let PadToolbarItemSpace: CGFloat = 72
 
-public protocol PhotoBrowserDelegate: class {
-    func longPressOn(photo: Photo, gesture: UILongPressGestureRecognizer)
+@objc public protocol PhotoBrowserDelegate: NSObjectProtocol {
+    optional func dismissPhotoBrowser(photoBrowser: PhotoBrowser)
+    optional func longPressOnImage(gesture: UILongPressGestureRecognizer)
 }
 
 public class PhotoBrowser: UIPageViewController {
     
     var isFullScreen = false
-    public var currentIndex: Int = 0
+    var toolbarHeightConstraint: NSLayoutConstraint?
+    var toolbarBottomConstraint: NSLayoutConstraint?
+    var navigationTopConstraint: NSLayoutConstraint?
+    var navigationHeightConstraint: NSLayoutConstraint?
+    
+    var headerView: PBNavigationBar?
+    
+    var transitionDelegate: TransitionDelegate? {
+        didSet {
+            transitioningDelegate = transitionDelegate
+        }
+    }
     
     public var photos: [Photo]?
-    public var toolbar: UIToolbar?
+    public var toolbar: PBToolbar?
+    public var backgroundColor = UIColor.blackColor()
     public weak var photoBrowserDelegate: PhotoBrowserDelegate?
-    public var toolbarHeightConstraint: NSLayoutConstraint?
-    public var toolbarBottomConstraint: NSLayoutConstraint?
     
+    public var currentIndex: Int = 0
     public var currentPhoto: Photo? {
         return photos?[currentIndex]
     }
@@ -45,7 +58,7 @@ public class PhotoBrowser: UIPageViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.whiteColor()
+        view.backgroundColor = backgroundColor
         extendedLayoutIncludesOpaqueBars = true
         automaticallyAdjustsScrollViewInsets = false
         edgesForExtendedLayout = UIRectEdge.Top
@@ -57,6 +70,11 @@ public class PhotoBrowser: UIPageViewController {
             initPage.delegate = self
             setViewControllers([initPage], direction: UIPageViewControllerNavigationDirection.Forward, animated: false, completion: nil)
         }
+        
+    }
+    
+    public override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
         updateNavigationBarTitle()
         updateToolbar(view.bounds.size)
     }
@@ -64,6 +82,10 @@ public class PhotoBrowser: UIPageViewController {
     public override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransitionToSize(size, withTransitionCoordinator: coordinator)
         updateToolbar(size)
+    }
+    
+    public override func preferredStatusBarStyle() -> UIStatusBarStyle {
+        return .LightContent
     }
 }
 
@@ -73,11 +95,35 @@ extension PhotoBrowser {
         return isFullScreen
     }
     
+    public override func preferredStatusBarUpdateAnimation() -> UIStatusBarAnimation {
+        return .Fade
+    }
+    
     func updateNavigationBarTitle() {
         guard let photos = photos else {
             return
         }
-        title = "\(currentIndex + 1) / \(photos.count)"
+        
+        if headerView == nil {
+            headerView = PBNavigationBar()
+            if let headerView = headerView {
+                view.addSubview(headerView)
+                headerView.translatesAutoresizingMaskIntoConstraints = false
+                view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|-0-[headerView]-0-|", options: [], metrics: nil, views: ["headerView":headerView]))
+                navigationHeightConstraint = NSLayoutConstraint(item: headerView, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 64)
+                navigationTopConstraint = NSLayoutConstraint(item: view, attribute: .Top, relatedBy: .Equal, toItem: headerView, attribute: .Top, multiplier: 1.0, constant: 0)
+                if let topConstraint = navigationTopConstraint, let heightConstraint = navigationHeightConstraint {
+                    view.addConstraints([topConstraint, heightConstraint])
+                }
+                
+                headerView.leftButton.addTarget(self, action: "leftButtonTap:", forControlEvents: .TouchUpInside)
+                headerView.rightButton.addTarget(self, action: "rightButtonTap:", forControlEvents: .TouchUpInside)
+            }
+        }
+        if let headerView = headerView {
+            headerView.titleLabel.text = photos[currentIndex].title
+            headerView.indexLabel.text = "\(currentIndex + 1)/\(photos.count)"
+        }
     }
     
     func updateToolbar(size: CGSize) {
@@ -85,7 +131,7 @@ extension PhotoBrowser {
             return
         }
         if toolbar == nil {
-            toolbar = UIToolbar()
+            toolbar = PBToolbar()
             if let toolbar = toolbar {
                 view.addSubview(toolbar)
                 toolbar.translatesAutoresizingMaskIntoConstraints = false
@@ -101,27 +147,65 @@ extension PhotoBrowser {
         if let toolbar = toolbar {
             let itemsArray = layoutToolbar(items)
             toolbar.setItems(itemsArray, animated: false)
-            toolbar.tintColor = UIColor.whiteColor()
         }
     }
     
     func layoutToolbar(items: [UIBarButtonItem]) -> [UIBarButtonItem]? {
         let flexSpace = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.FlexibleSpace, target: self, action: nil)
+        let fixedSpace = UIBarButtonItem(barButtonSystemItem: .FixedSpace, target: self, action: nil)
+        fixedSpace.width = PadToolbarItemSpace
         var itemsArray = [UIBarButtonItem]()
-        if items.count == 1, let first = items.first {
-            itemsArray = [flexSpace, first, flexSpace]
-        } else if items.count == 2, let first = items.first, let last = items.last {
-            itemsArray = [flexSpace, first, flexSpace, flexSpace, last, flexSpace]
-        } else {
+        
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            itemsArray.append(flexSpace)
             for item in items {
                 itemsArray.append(item)
-                itemsArray.append(flexSpace)
+                itemsArray.append(fixedSpace)
             }
-            if itemsArray.count > 0 {
-                itemsArray.removeLast()
+            itemsArray.removeLast()
+            itemsArray.append(flexSpace)
+        } else {
+            if items.count == 1, let first = items.first {
+                itemsArray = [flexSpace, first, flexSpace]
+            } else if items.count == 2, let first = items.first, let last = items.last {
+                itemsArray = [flexSpace, first, flexSpace, flexSpace, last, flexSpace]
+            } else {
+                for item in items {
+                    itemsArray.append(item)
+                    itemsArray.append(flexSpace)
+                }
+                if itemsArray.count > 0 {
+                    itemsArray.removeLast()
+                }
             }
         }
+        
         return itemsArray
+    }
+    
+    func leftButtonTap(sender: AnyObject) {
+        if let delegate = photoBrowserDelegate where delegate.respondsToSelector("dismissPhotoBrowser:") {
+            delegate.dismissPhotoBrowser!(self)
+        } else {
+            dismissViewControllerAnimated(true, completion: nil)
+        }
+    }
+    
+    func rightButtonTap(sender: AnyObject) {
+        
+        if let image = currentImageView()?.image, let button = sender as? UIButton {
+            let activityController = UIActivityViewController(activityItems: [image], applicationActivities: nil)
+            
+            switch UIDevice.currentDevice().userInterfaceIdiom {
+            case .Phone:
+                presentViewController(activityController, animated: true, completion: nil)
+            case .Pad:
+                let popover = UIPopoverController(contentViewController: activityController)
+                popover.presentPopoverFromRect(button.frame, inView: view, permittedArrowDirections: .Any, animated: true)
+            default:
+                presentViewController(activityController, animated: true, completion: nil)
+            }
+        }
     }
     
 }
@@ -185,14 +269,11 @@ extension PhotoBrowser: PhotoPreviewControllerDelegate {
         
         set(newValue) {
             isFullScreen = newValue
-            self.navigationController?.setNavigationBarHidden(newValue, animated: true)
-            
-            if let bottomConstraint = toolbarBottomConstraint, let heightConstraint = toolbarHeightConstraint {
-                bottomConstraint.constant = newValue ? -heightConstraint.constant : 0
-            }
-            UIView.animateWithDuration(0.25) { () -> Void in
-                self.view.backgroundColor = newValue ? UIColor.blackColor() : UIColor.whiteColor()
-                self.view.layoutIfNeeded()
+            UIView.animateWithDuration(0.3) { () -> Void in
+                self.setNeedsStatusBarAppearanceUpdate()
+                self.view.backgroundColor = newValue ? UIColor.blackColor() : self.backgroundColor
+                self.headerView?.alpha = newValue ? 0 : 1
+                self.toolbar?.alpha = newValue ? 0 : 1
             }
         }
     }
@@ -201,7 +282,17 @@ extension PhotoBrowser: PhotoPreviewControllerDelegate {
         guard let browserDelegate = photoBrowserDelegate else {
             return
         }
-        browserDelegate.longPressOn(photo, gesture: gesture)
+        if browserDelegate.respondsToSelector("longPressOnImage:") {
+            browserDelegate.longPressOnImage!(gesture)
+        }
     }
-    
+}
+
+extension PhotoBrowser {
+    func currentImageView() -> UIImageView? {
+        guard let page = viewControllers?.last as? PhotoPreviewController else {
+            return nil
+        }
+        return page.imageView
+    }
 }

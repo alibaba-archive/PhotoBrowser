@@ -16,10 +16,12 @@ public struct Photo {
     public var thumbnailImage: UIImage?
     public var photoUrl: NSURL?
     public var thumbnailUrl: NSURL?
+    public var title: String?
     public var object: AnyObject?
     
-    public init(image: UIImage?, thumbnailImage: UIImage?, photoUrl: NSURL? = nil, thumbnailUrl: NSURL? = nil, object: AnyObject? = nil) {
+    public init(image: UIImage?, title: String? = nil, thumbnailImage: UIImage? = nil, photoUrl: NSURL? = nil, thumbnailUrl: NSURL? = nil, object: AnyObject? = nil) {
         self.image = image
+        self.title = title
         self.thumbnailImage = thumbnailImage
         self.photoUrl = photoUrl
         self.thumbnailUrl = thumbnailUrl
