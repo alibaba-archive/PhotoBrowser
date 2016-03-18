@@ -37,6 +37,7 @@ class PhotoPreviewController: UIViewController {
         self.photo = photo
         scrollView = UIScrollView()
         imageView = UIImageView()
+        imageView.contentMode = .ScaleAspectFill
         extendedLayoutIncludesOpaqueBars = true
         automaticallyAdjustsScrollViewInsets = false
         edgesForExtendedLayout = UIRectEdge.Top
@@ -157,6 +158,10 @@ class PhotoPreviewController: UIViewController {
         var minZoom = min(view.bounds.size.width / image.size.width, view.bounds.size.height / image.size.height)
         minZoom = min(minZoom, 1)
         
+        //Scale thumbnail to display exactly as original image
+        if let originalImageSize = photo?.originalImageSize where originalImageSize.width > image.size.width {
+            minZoom = minZoom * (originalImageSize.width / image.size.width)
+        }
         scrollView.minimumZoomScale = minZoom
         
         //Force scrollViewDidZoom fire if zoom did not change

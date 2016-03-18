@@ -8,7 +8,7 @@
 
 import UIKit
 
-let statusBarHeight = UIApplication.sharedApplication().statusBarFrame.size.height
+let statusBarHeight = 20
 
 class PBNavigationBar: UIView {
     

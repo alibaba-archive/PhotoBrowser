@@ -11,9 +11,16 @@ import UIKit
 let TransitionDuration = 0.3
 
 extension UIViewController {
-    public func showPhotoBrowser(photoBrowser: PhotoBrowser, fromView: UIImageView) {
+    public func showPhotoBrowser(photoBrowser: PhotoBrowser, fromView: UIImageView, inNavigationController: Bool = false) {
         photoBrowser.transitionDelegate = TransitionDelegate(photoBrowser: photoBrowser, fromView: fromView)
-        presentViewController(photoBrowser, animated: true, completion: nil)
+        if inNavigationController {
+            let navigationController = UINavigationController(rootViewController: photoBrowser)
+            navigationController.transitioningDelegate = photoBrowser.transitionDelegate
+            navigationController.setNavigationBarHidden(true, animated: false)
+            presentViewController(navigationController, animated: true, completion: nil)
+        } else {
+            presentViewController(photoBrowser, animated: true, completion: nil)
+        }
     }
     
     public func dismissPhotoBrowser(photoBrowser: PhotoBrowser, toView: UIView? = nil) {
@@ -77,12 +84,13 @@ public class PresentAnimation: NSObject, UIViewControllerAnimatedTransitioning {
         photoBrowser.currentImageView()?.alpha = 0
         fromView.hidden = true
         
+        let imageSize = photoBrowser.currentPhoto?.originalImageSize ?? self.fromView.image?.size
         
         container.addSubview(toVC.view)
         container.addSubview(snapshotView)
         
         UIView.animateWithDuration(TransitionDuration, animations: { () -> Void in
-            let finalFrame = self.finalFrameForImage(self.fromView.image, inTransitionContext: transitionContext)
+            let finalFrame = self.finalFrameForImageWithSize(imageSize, inTransitionContext: transitionContext)
             snapshotView.frame = finalFrame
             toVC.view.alpha = 1
             }) { (finished) -> Void in
@@ -93,23 +101,21 @@ public class PresentAnimation: NSObject, UIViewControllerAnimatedTransitioning {
         }
     }
     
-    func finalFrameForImage(image: UIImage?, inTransitionContext transitionContext: UIViewControllerContextTransitioning) -> CGRect {
+    func finalFrameForImageWithSize(imageSize: CGSize?, inTransitionContext transitionContext: UIViewControllerContextTransitioning) -> CGRect {
         let toVC = transitionContext.viewControllerForKey(UITransitionContextToViewControllerKey)
-        guard let destVC = toVC, let image = image else {
+        guard let destVC = toVC, let imageSize = imageSize else {
             return CGRectZero
         }
         
         let viewSize = transitionContext.finalFrameForViewController(destVC).size
-        let imageSize = image.size
         
         let xScale = imageSize.width / viewSize.width
         let yScale = imageSize.height / viewSize.height
         
-        let finalScale = max(xScale, yScale)
+        let finalScale = max(max(xScale, yScale), 1.0)
         let finalSize = CGSizeMake(imageSize.width / finalScale, imageSize.height / finalScale)
         
         let center = destVC.view.center
-        
         return CGRectMake(center.x - finalSize.width/2, center.y-finalSize.height/2, finalSize.width, finalSize.height)
     }
 }
@@ -137,10 +143,11 @@ public class DismissAnimation: NSObject, UIViewControllerAnimatedTransitioning {
         let image = currentPhoto.localOriginalPhoto() ?? currentPhoto.localThumbnailPhoto()
         let snapshotView = UIImageView(image: image)
         snapshotView.frame = currentImageView.frame
-        snapshotView.clipsToBounds = currentImageView.clipsToBounds
-        snapshotView.contentMode = currentImageView.contentMode
+        snapshotView.clipsToBounds = toView.clipsToBounds
+        snapshotView.contentMode = toView.contentMode
         
         let toVC = transitionContext.viewControllerForKey(UITransitionContextToViewControllerKey)!
+        toVC.view.frame = transitionContext.finalFrameForViewController(toVC)
         let container = transitionContext.containerView()!
         container.addSubview(toVC.view)
         container.addSubview(snapshotView)
@@ -149,12 +156,12 @@ public class DismissAnimation: NSObject, UIViewControllerAnimatedTransitioning {
         
         let finalFrame = container.convertRect(toView.frame, fromView: toView.superview)
         
-        
         UIView.animateWithDuration(TransitionDuration, animations: { () -> Void in
             snapshotView.frame = finalFrame
             }) { (_) -> Void in
                 self.toView.alpha = 1
                 currentImageView.hidden = false
+                snapshotView.removeFromSuperview()
                 transitionContext.completeTransition(!transitionContext.transitionWasCancelled())
         }
     }

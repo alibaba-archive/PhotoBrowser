@@ -46,6 +46,8 @@ extension ViewController {
         let thumbnail2 = UIImage.init(named: "thumbnail2")
         let photoUrl2 = NSURL.init(string: "https://pic1.zhimg.com/0f70807392a9f62528b00ec434f5519c_b.png")
         
+        let original2 = UIImage(named: "original2")
+        
         let thumbnail3 = UIImage.init(named: "thumbnail3")
         let photoUrl3 = NSURL.init(string: "https://pic2.zhimg.com/a5455838750e168d97480d9247537d31_r.jpeg")
         
@@ -57,7 +59,7 @@ extension ViewController {
         item3.tintColor = UIColor.whiteColor()
         
         let photo = Photo.init(image: nil, title:"Image1", thumbnailImage: thumbnail1, photoUrl: photoUrl1)
-        let photo2 = Photo.init(image: nil, title:"Image2", thumbnailImage: thumbnail2, photoUrl: photoUrl2)
+        let photo2 = Photo.init(image: nil, title:"Image2", thumbnailImage: thumbnail2, photoUrl: photoUrl2, originalImageSize: original2?.size)
         let photo3 = Photo.init(image: nil, title:"Image3", thumbnailImage: thumbnail3, photoUrl: photoUrl3)
         photoBrowser = PhotoBrowser()
         guard let browser = photoBrowser else {
@@ -65,9 +67,9 @@ extension ViewController {
         }
         browser.toolbarItems = [item1, item2, item3]
         browser.photoBrowserDelegate = self
-        browser.currentIndex = 2
+        browser.currentIndex = 1
         browser.photos = [photo, photo2, photo3]
-        navigationController!.showPhotoBrowser(browser, fromView: imageView)
+        navigationController!.showPhotoBrowser(browser, fromView: imageView, inNavigationController: true)
     }
 }
 

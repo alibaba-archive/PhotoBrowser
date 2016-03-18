@@ -18,7 +18,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="thumbnail3" translatesAutoresizingMaskIntoConstraints="NO" id="s3W-RR-y1R">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="thumbnail2" translatesAutoresizingMaskIntoConstraints="NO" id="s3W-RR-y1R">
                                 <rect key="frame" x="20" y="72" width="120" height="120"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="120" id="NBh-nb-3qB"/>
@@ -69,6 +69,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="thumbnail3" width="200" height="112"/>
+        <image name="thumbnail2" width="200" height="112"/>
     </resources>
 </document>

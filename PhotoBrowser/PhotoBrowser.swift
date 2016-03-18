@@ -20,7 +20,7 @@ let PadToolbarItemSpace: CGFloat = 72
 
 public class PhotoBrowser: UIPageViewController {
     
-    var isFullScreen = false
+    var isFullScreen = true
     var toolbarHeightConstraint: NSLayoutConstraint?
     var toolbarBottomConstraint: NSLayoutConstraint?
     var navigationTopConstraint: NSLayoutConstraint?
@@ -71,17 +71,18 @@ public class PhotoBrowser: UIPageViewController {
             setViewControllers([initPage], direction: UIPageViewControllerNavigationDirection.Forward, animated: false, completion: nil)
         }
         
+        self.updateNavigationBarTitle()
+        self.updateToolbar()
     }
     
     public override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        updateNavigationBarTitle()
-        updateToolbar(view.bounds.size)
+        isFullScreenMode = false
     }
     
     public override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransitionToSize(size, withTransitionCoordinator: coordinator)
-        updateToolbar(size)
+        updateToolbar()
     }
     
     public override func preferredStatusBarStyle() -> UIStatusBarStyle {
@@ -107,14 +108,12 @@ extension PhotoBrowser {
         if headerView == nil {
             headerView = PBNavigationBar()
             if let headerView = headerView {
+                headerView.alpha = 0
                 view.addSubview(headerView)
                 headerView.translatesAutoresizingMaskIntoConstraints = false
                 view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|-0-[headerView]-0-|", options: [], metrics: nil, views: ["headerView":headerView]))
-                navigationHeightConstraint = NSLayoutConstraint(item: headerView, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 64)
-                navigationTopConstraint = NSLayoutConstraint(item: view, attribute: .Top, relatedBy: .Equal, toItem: headerView, attribute: .Top, multiplier: 1.0, constant: 0)
-                if let topConstraint = navigationTopConstraint, let heightConstraint = navigationHeightConstraint {
-                    view.addConstraints([topConstraint, heightConstraint])
-                }
+                headerView.addConstraint(NSLayoutConstraint(item: headerView, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 64))
+                view.addConstraint(NSLayoutConstraint(item: view, attribute: .Top, relatedBy: .Equal, toItem: headerView, attribute: .Top, multiplier: 1.0, constant: 0))
                 
                 headerView.leftButton.addTarget(self, action: "leftButtonTap:", forControlEvents: .TouchUpInside)
                 headerView.rightButton.addTarget(self, action: "rightButtonTap:", forControlEvents: .TouchUpInside)
@@ -126,22 +125,19 @@ extension PhotoBrowser {
         }
     }
     
-    func updateToolbar(size: CGSize) {
+    func updateToolbar() {
         guard let items = toolbarItems where items.count > 0 else {
             return
         }
         if toolbar == nil {
             toolbar = PBToolbar()
             if let toolbar = toolbar {
+                toolbar.alpha = 0
                 view.addSubview(toolbar)
                 toolbar.translatesAutoresizingMaskIntoConstraints = false
                 view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|-0-[toolbar]-0-|", options: [], metrics: nil , views: ["toolbar":toolbar]))
-                toolbarBottomConstraint = NSLayoutConstraint(item: bottomLayoutGuide, attribute: .Top, relatedBy: .Equal, toItem: toolbar, attribute: .Bottom, multiplier: 1.0, constant: 0)
-                toolbarHeightConstraint = NSLayoutConstraint(item: toolbar, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: ToolbarHeight)
-                if let heightConstraint = toolbarHeightConstraint, let bottomConstraint = toolbarBottomConstraint {
-                    view.addConstraint(bottomConstraint)
-                    toolbar.addConstraint(heightConstraint)
-                }
+                view.addConstraint(NSLayoutConstraint(item: bottomLayoutGuide, attribute: .Top, relatedBy: .Equal, toItem: toolbar, attribute: .Bottom, multiplier: 1.0, constant: 0))
+                toolbar.addConstraint(NSLayoutConstraint(item: toolbar, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: ToolbarHeight))
             }
         }
         if let toolbar = toolbar {
