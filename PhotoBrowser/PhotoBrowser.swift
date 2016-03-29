@@ -28,7 +28,16 @@ public class PhotoBrowser: UIPageViewController {
     
     var headerView: PBNavigationBar?
     
-    public var photos: [Photo]?
+    public var photos: [Photo]? {
+        didSet {
+            if let photos = photos {
+                let initPage = PhotoPreviewController(photo: photos[currentIndex], index: currentIndex)
+                initPage.delegate = self
+                setViewControllers([initPage], direction: UIPageViewControllerNavigationDirection.Forward, animated: false, completion: nil)
+                updateNavigationBarTitle()
+            }
+        }
+    }
     public var toolbar: PBToolbar?
     public var backgroundColor = UIColor.blackColor()
     public weak var photoBrowserDelegate: PhotoBrowserDelegate?
@@ -58,14 +67,6 @@ public class PhotoBrowser: UIPageViewController {
         edgesForExtendedLayout = UIRectEdge.Top
         dataSource = self
         delegate = self
-        
-        if let photos = photos {
-            let initPage = PhotoPreviewController(photo: photos[currentIndex], index: currentIndex)
-            initPage.delegate = self
-            setViewControllers([initPage], direction: UIPageViewControllerNavigationDirection.Forward, animated: false, completion: nil)
-        }
-        
-        self.updateNavigationBarTitle()
         self.updateToolbar()
     }
     
