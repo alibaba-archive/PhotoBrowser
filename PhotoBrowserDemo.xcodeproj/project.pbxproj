@@ -7,22 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4A0944681C803AB1002EA9E6 /* PhotoBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A6BC7BD1C770DE900DACDA5 /* PhotoBrowser.framework */; };
 		4A52D20C1C72D13B001C257B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D20B1C72D13B001C257B /* AppDelegate.swift */; };
 		4A52D20E1C72D13B001C257B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D20D1C72D13B001C257B /* ViewController.swift */; };
 		4A52D2111C72D13B001C257B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4A52D20F1C72D13B001C257B /* Main.storyboard */; };
 		4A52D2131C72D13B001C257B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4A52D2121C72D13B001C257B /* Assets.xcassets */; };
 		4A52D2161C72D13B001C257B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4A52D2141C72D13B001C257B /* LaunchScreen.storyboard */; };
 		4A6BC7BC1C770DE100DACDA5 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A6BC7BB1C770DE100DACDA5 /* Kingfisher.framework */; };
+		4A783B9F1CAA5C6E00B49092 /* PhotoBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A783B9E1CAA5C6E00B49092 /* PhotoBrowser.framework */; };
+		4A783BA01CAA5C6E00B49092 /* PhotoBrowser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4A783B9E1CAA5C6E00B49092 /* PhotoBrowser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		4A52D22E1C72D3BA001C257B /* Embed Frameworks */ = {
+		4A783BA11CAA5C6E00B49092 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				4A783BA01CAA5C6E00B49092 /* PhotoBrowser.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -38,7 +40,7 @@
 		4A52D2151C72D13B001C257B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4A52D2171C72D13B001C257B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4A6BC7BB1C770DE100DACDA5 /* Kingfisher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kingfisher.framework; path = Carthage/Build/iOS/Kingfisher.framework; sourceTree = "<group>"; };
-		4A6BC7BD1C770DE900DACDA5 /* PhotoBrowser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PhotoBrowser.framework; path = "../../Library/Developer/Xcode/DerivedData/PhotoBrowser-fvhcjeswrqujghbndnhfixwxfzii/Build/Products/Debug-iphoneos/PhotoBrowser.framework"; sourceTree = "<group>"; };
+		4A783B9E1CAA5C6E00B49092 /* PhotoBrowser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = PhotoBrowser.framework; path = "/Users/wangwei/Library/Developer/Xcode/DerivedData/PhotoBrowser-dipxyiugwgioqkardxkfssgenegl/Build/Products/Debug-iphoneos/PhotoBrowser.framework"; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,8 +48,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4A783B9F1CAA5C6E00B49092 /* PhotoBrowser.framework in Frameworks */,
 				4A6BC7BC1C770DE100DACDA5 /* Kingfisher.framework in Frameworks */,
-				4A0944681C803AB1002EA9E6 /* PhotoBrowser.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -57,7 +59,7 @@
 		4A52D1FF1C72D13B001C257B = {
 			isa = PBXGroup;
 			children = (
-				4A6BC7BD1C770DE900DACDA5 /* PhotoBrowser.framework */,
+				4A783B9E1CAA5C6E00B49092 /* PhotoBrowser.framework */,
 				4A6BC7BB1C770DE100DACDA5 /* Kingfisher.framework */,
 				4A52D20A1C72D13B001C257B /* PhotoBrowserDemo */,
 				4A52D2091C72D13B001C257B /* Products */,
@@ -95,8 +97,8 @@
 				4A52D2041C72D13B001C257B /* Sources */,
 				4A52D2051C72D13B001C257B /* Frameworks */,
 				4A52D2061C72D13B001C257B /* Resources */,
-				4A52D22E1C72D3BA001C257B /* Embed Frameworks */,
 				4A6BC7BF1C770E0B00DACDA5 /* ShellScript */,
+				4A783BA11CAA5C6E00B49092 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -165,8 +167,8 @@
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = "/usr/local/bin/carthage copy-frameworks";
-			shellScript = "";
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks";
 		};
 /* End PBXShellScriptBuildPhase section */
 

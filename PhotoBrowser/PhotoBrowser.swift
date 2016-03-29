@@ -20,19 +20,13 @@ let PadToolbarItemSpace: CGFloat = 72
 
 public class PhotoBrowser: UIPageViewController {
     
-    var isFullScreen = true
+    var isFullScreen = false
     var toolbarHeightConstraint: NSLayoutConstraint?
     var toolbarBottomConstraint: NSLayoutConstraint?
     var navigationTopConstraint: NSLayoutConstraint?
     var navigationHeightConstraint: NSLayoutConstraint?
     
     var headerView: PBNavigationBar?
-    
-    var transitionDelegate: TransitionDelegate? {
-        didSet {
-            transitioningDelegate = transitionDelegate
-        }
-    }
     
     public var photos: [Photo]?
     public var toolbar: PBToolbar?
@@ -75,6 +69,16 @@ public class PhotoBrowser: UIPageViewController {
         self.updateToolbar()
     }
     
+    public override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: true)
+    }
+    
+    public override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: true)
+    }
+    
     public override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         isFullScreenMode = false
@@ -115,8 +119,8 @@ extension PhotoBrowser {
                 headerView.addConstraint(NSLayoutConstraint(item: headerView, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 64))
                 view.addConstraint(NSLayoutConstraint(item: view, attribute: .Top, relatedBy: .Equal, toItem: headerView, attribute: .Top, multiplier: 1.0, constant: 0))
                 
-                headerView.leftButton.addTarget(self, action: "leftButtonTap:", forControlEvents: .TouchUpInside)
-                headerView.rightButton.addTarget(self, action: "rightButtonTap:", forControlEvents: .TouchUpInside)
+                headerView.leftButton.addTarget(self, action: #selector(leftButtonTap(_:)), forControlEvents: .TouchUpInside)
+                headerView.rightButton.addTarget(self, action: #selector(rightButtonTap(_:)), forControlEvents: .TouchUpInside)
             }
         }
         if let headerView = headerView {
@@ -180,10 +184,10 @@ extension PhotoBrowser {
     }
     
     func leftButtonTap(sender: AnyObject) {
-        if let delegate = photoBrowserDelegate where delegate.respondsToSelector("dismissPhotoBrowser:") {
+        if let delegate = photoBrowserDelegate where delegate.respondsToSelector(#selector(PhotoBrowserDelegate.dismissPhotoBrowser(_:))) {
             delegate.dismissPhotoBrowser!(self)
         } else {
-            dismissViewControllerAnimated(true, completion: nil)
+            dismissViewControllerAnimated(false, completion: nil)
         }
     }
     
@@ -192,15 +196,13 @@ extension PhotoBrowser {
         if let image = currentImageView()?.image, let button = sender as? UIButton {
             let activityController = UIActivityViewController(activityItems: [image], applicationActivities: nil)
             
-            switch UIDevice.currentDevice().userInterfaceIdiom {
-            case .Phone:
-                presentViewController(activityController, animated: true, completion: nil)
-            case .Pad:
-                let popover = UIPopoverController(contentViewController: activityController)
-                popover.presentPopoverFromRect(button.frame, inView: view, permittedArrowDirections: .Any, animated: true)
-            default:
-                presentViewController(activityController, animated: true, completion: nil)
+            if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+                activityController.modalPresentationStyle = .Popover
+                activityController.popoverPresentationController?.sourceView = view
+                let frame = view.convertRect(button.frame, fromView: button.superview)
+                activityController.popoverPresentationController?.sourceRect = frame
             }
+            presentViewController(activityController, animated: true, completion: nil)
         }
     }
     
@@ -278,7 +280,7 @@ extension PhotoBrowser: PhotoPreviewControllerDelegate {
         guard let browserDelegate = photoBrowserDelegate else {
             return
         }
-        if browserDelegate.respondsToSelector("longPressOnImage:") {
+        if browserDelegate.respondsToSelector(#selector(PhotoBrowserDelegate.longPressOnImage(_:))) {
             browserDelegate.longPressOnImage!(gesture)
         }
     }

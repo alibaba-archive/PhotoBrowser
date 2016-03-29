@@ -84,15 +84,15 @@ class PhotoPreviewController: UIViewController {
         initializeConstraint()
         imageView.userInteractionEnabled = true
         
-        let doubleTap = UITapGestureRecognizer.init(target: self, action: "handleDoubleTap:")
+        let doubleTap = UITapGestureRecognizer.init(target: self, action: #selector(handleDoubleTap(_:)))
         doubleTap.numberOfTapsRequired = 2
         imageView.addGestureRecognizer(doubleTap)
         
-        let singleTap = UITapGestureRecognizer.init(target: self, action: "handleSingleTap:")
+        let singleTap = UITapGestureRecognizer.init(target: self, action: #selector(handleSingleTap(_:)))
         singleTap.numberOfTapsRequired = 1
         view.addGestureRecognizer(singleTap)
         
-        let longPress = UILongPressGestureRecognizer.init(target: self, action: "handleLongPress:")
+        let longPress = UILongPressGestureRecognizer.init(target: self, action: #selector(handleLongPress(_:)))
         imageView.addGestureRecognizer(longPress)
         
         singleTap.requireGestureRecognizerToFail(doubleTap)

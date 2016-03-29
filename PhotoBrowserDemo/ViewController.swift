@@ -16,7 +16,7 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let gesture = UITapGestureRecognizer(target: self, action: "showPhotoBrowser")
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(displayPhotoBrowser))
         imageView.userInteractionEnabled = true
         imageView.addGestureRecognizer(gesture)
     }
@@ -26,7 +26,7 @@ class ViewController: UIViewController {
     }
     
     func saveToAlbum(image: UIImage) {
-        UIImageWriteToSavedPhotosAlbum(image, self, "image:didFinishSavingWithError:contextInfo:", nil)
+        UIImageWriteToSavedPhotosAlbum(image, self, #selector(self.image(_:didFinishSavingWithError:contextInfo:)), nil)
     }
     
     func image(image: UIImage, didFinishSavingWithError error:NSError?, contextInfo:UnsafePointer<Void>) {
@@ -39,19 +39,17 @@ class ViewController: UIViewController {
 }
 
 extension ViewController {
-    func showPhotoBrowser() {
+    func displayPhotoBrowser() {
         let thumbnail1 = UIImage.init(named: "thumbnail1")
         let photoUrl1 = NSURL.init(string: "https://pic4.zhimg.com/453d7ebcdb0c4494e60fa07d09a83a83_r.jpeg")
         
         let thumbnail2 = UIImage.init(named: "thumbnail2")
         let photoUrl2 = NSURL.init(string: "https://pic1.zhimg.com/0f70807392a9f62528b00ec434f5519c_b.png")
         
-        let original2 = UIImage(named: "original2")
-        
         let thumbnail3 = UIImage.init(named: "thumbnail3")
         let photoUrl3 = NSURL.init(string: "https://pic2.zhimg.com/a5455838750e168d97480d9247537d31_r.jpeg")
         
-        let item1 = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.Bookmarks, target: self, action: nil)
+        let item1 = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.Bookmarks, target: self, action: #selector(pushNextViewController))
         item1.tintColor = UIColor.whiteColor()
         let item2 = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.Bookmarks, target: self, action: nil)
         item2.tintColor = UIColor.whiteColor()
@@ -59,24 +57,30 @@ extension ViewController {
         item3.tintColor = UIColor.whiteColor()
         
         let photo = Photo.init(image: nil, title:"Image1", thumbnailImage: thumbnail1, photoUrl: photoUrl1)
-        let photo2 = Photo.init(image: nil, title:"Image2", thumbnailImage: thumbnail2, photoUrl: photoUrl2, originalImageSize: original2?.size)
+        let photo2 = Photo.init(image: nil, title:"Image2", thumbnailImage: thumbnail2, photoUrl: photoUrl2, originalImageSize: nil)
         let photo3 = Photo.init(image: nil, title:"Image3", thumbnailImage: thumbnail3, photoUrl: photoUrl3)
         photoBrowser = PhotoBrowser()
-        guard let browser = photoBrowser else {
-            return
+        if let browser = photoBrowser {
+            browser.toolbarItems = [item1, item2, item3]
+            browser.photoBrowserDelegate = self
+            browser.currentIndex = 1
+            browser.photos = [photo, photo2, photo3]
+            presentViewController(browser, fromView: imageView)
         }
-        browser.toolbarItems = [item1, item2, item3]
-        browser.photoBrowserDelegate = self
-        browser.currentIndex = 1
-        browser.photos = [photo, photo2, photo3]
-        navigationController!.showPhotoBrowser(browser, fromView: imageView, inNavigationController: true)
+    }
+    
+    func pushNextViewController() {
+        let viewController = UIViewController()
+        viewController.view.backgroundColor = UIColor.whiteColor()
+        viewController.title = "After Photo Browser"
+        photoBrowser?.navigationController?.pushViewController(viewController, animated: true)
     }
 }
 
 extension ViewController: PhotoBrowserDelegate {
     
     func dismissPhotoBrowser(photoBrowser: PhotoBrowser) {
-        navigationController!.dismissPhotoBrowser(photoBrowser, toView: imageView)
+        dismissViewController(toView: imageView)
     }
     
     func longPressOnImage(gesture: UILongPressGestureRecognizer) {

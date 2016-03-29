@@ -8,47 +8,53 @@
 
 import UIKit
 
-let TransitionDuration = 0.3
+let PresentDuration = 0.3
+let DismissDuration = 0.35
+var AssociatedObjectHandle: UInt8 = 0
 
 extension UIViewController {
-    public func showPhotoBrowser(photoBrowser: PhotoBrowser, fromView: UIImageView, inNavigationController: Bool = false) {
-        photoBrowser.transitionDelegate = TransitionDelegate(photoBrowser: photoBrowser, fromView: fromView)
-        if inNavigationController {
-            let navigationController = UINavigationController(rootViewController: photoBrowser)
-            navigationController.transitioningDelegate = photoBrowser.transitionDelegate
-            navigationController.setNavigationBarHidden(true, animated: false)
-            presentViewController(navigationController, animated: true, completion: nil)
-        } else {
-            presentViewController(photoBrowser, animated: true, completion: nil)
-        }
+
+    public func presentViewController(viewControllerToPresent: UIViewController, fromView: UIView) {
+        let transitionDelegate = TransitionDelegate(fromView: fromView)
+        let navigationController = UINavigationController(rootViewController: viewControllerToPresent)
+        navigationController.transitionDelegate = transitionDelegate
+        navigationController.transitioningDelegate = transitionDelegate
+        presentViewController(navigationController, animated: true, completion: nil)
     }
     
-    public func dismissPhotoBrowser(photoBrowser: PhotoBrowser, toView: UIView? = nil) {
-        photoBrowser.transitionDelegate?.toView = toView
+    public func dismissViewController(toView toView: UIView? = nil) {
+        if let viewController = presentedViewController {
+            viewController.transitionDelegate.toView = toView
+        }
         dismissViewControllerAnimated(true, completion: nil)
+    }
+
+    internal var transitionDelegate: TransitionDelegate {
+        get {
+            return objc_getAssociatedObject(self, &AssociatedObjectHandle) as! TransitionDelegate
+        }
+        set {
+            objc_setAssociatedObject(self, &AssociatedObjectHandle, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
     }
 }
 
 public class TransitionDelegate: NSObject, UIViewControllerTransitioningDelegate {
-    var startIndex: Int!
-    public var fromView: UIImageView!
+    public var fromView: UIView!
     public var toView: UIView?
-    public weak var photoBrowser: PhotoBrowser!
     
-    init(photoBrowser: PhotoBrowser, fromView: UIImageView) {
+    init(fromView: UIView) {
         super.init()
         self.fromView = fromView
-        self.photoBrowser = photoBrowser
-        startIndex = photoBrowser.currentIndex
     }
     
     public func animationControllerForPresentedController(presented: UIViewController, presentingController presenting: UIViewController, sourceController source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return PresentAnimation(photoBrowser: photoBrowser, fromView: fromView)
+        return PresentAnimation(fromView: fromView)
     }
     
     public func animationControllerForDismissedController(dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         if let destView = toView {
-            return DismissAnimation(photoBrowser: photoBrowser, toView: destView)
+            return DismissAnimation(toView: destView)
         } else {
             return DismissImmediatelyAnimation()
         }
@@ -56,122 +62,78 @@ public class TransitionDelegate: NSObject, UIViewControllerTransitioningDelegate
 }
 
 public class PresentAnimation: NSObject, UIViewControllerAnimatedTransitioning {
+    public var fromView: UIView!
     
-    public var fromView: UIImageView!
-    public weak var photoBrowser: PhotoBrowser!
-    
-    public init(photoBrowser: PhotoBrowser, fromView: UIImageView) {
+    public init(fromView: UIView) {
         super.init()
         self.fromView = fromView
-        self.photoBrowser = photoBrowser
-        
     }
-    
+
     public func transitionDuration(transitionContext: UIViewControllerContextTransitioning?) -> NSTimeInterval {
-        return TransitionDuration
+        return PresentDuration
     }
-    
+ 
     public func animateTransition(transitionContext: UIViewControllerContextTransitioning) {
         let toVC = transitionContext.viewControllerForKey(UITransitionContextToViewControllerKey)!
         let container = transitionContext.containerView()!
-        
-        let snapshotView = UIImageView(image: fromView.image)
-        snapshotView.contentMode = fromView.contentMode
-        snapshotView.clipsToBounds = fromView.clipsToBounds
-        snapshotView.frame = container.convertRect(fromView.frame, fromView: fromView.superview)
-        
-        toVC.view.alpha = 0
-        photoBrowser.currentImageView()?.alpha = 0
-        fromView.hidden = true
-        
-        let imageSize = photoBrowser.currentPhoto?.originalImageSize ?? self.fromView.image?.size
-        
+ 
         container.addSubview(toVC.view)
-        container.addSubview(snapshotView)
+        let fromFrame = fromView.frame
+        let toFrame = transitionContext.finalFrameForViewController(toVC)
         
-        UIView.animateWithDuration(TransitionDuration, animations: { () -> Void in
-            let finalFrame = self.finalFrameForImageWithSize(imageSize, inTransitionContext: transitionContext)
-            snapshotView.frame = finalFrame
+        let scale = CGAffineTransformMakeScale(fromFrame.width/toFrame.width, fromFrame.height/toFrame.height)
+        let translate = CGAffineTransformMakeTranslation(-(toVC.view.center.x - fromView.center.x), -(toVC.view.center.y - fromView.center.y))
+        toVC.view.transform = CGAffineTransformConcat(scale, translate)
+        toVC.view.alpha = 0
+        
+        UIView.animateWithDuration(PresentDuration, delay: 0, options: .CurveEaseInOut, animations: {
+            toVC.view.transform = CGAffineTransformMakeScale(1, 1)
             toVC.view.alpha = 1
-            }) { (finished) -> Void in
-                self.fromView.hidden = false
-                self.photoBrowser.currentImageView()?.alpha = 1
-                snapshotView.removeFromSuperview()
+            self.fromView.alpha = 0
+            }) { (_) in
                 transitionContext.completeTransition(!transitionContext.transitionWasCancelled())
+                self.fromView.alpha = 1
         }
-    }
-    
-    func finalFrameForImageWithSize(imageSize: CGSize?, inTransitionContext transitionContext: UIViewControllerContextTransitioning) -> CGRect {
-        let toVC = transitionContext.viewControllerForKey(UITransitionContextToViewControllerKey)
-        guard let destVC = toVC, let imageSize = imageSize else {
-            return CGRectZero
-        }
-        
-        let viewSize = transitionContext.finalFrameForViewController(destVC).size
-        
-        let xScale = imageSize.width / viewSize.width
-        let yScale = imageSize.height / viewSize.height
-        
-        let finalScale = max(max(xScale, yScale), 1.0)
-        let finalSize = CGSizeMake(imageSize.width / finalScale, imageSize.height / finalScale)
-        
-        let center = destVC.view.center
-        return CGRectMake(center.x - finalSize.width/2, center.y-finalSize.height/2, finalSize.width, finalSize.height)
     }
 }
 
 public class DismissAnimation: NSObject, UIViewControllerAnimatedTransitioning {
-    
-    public weak var photoBrowser: PhotoBrowser!
     public var toView: UIView!
     
-    init(photoBrowser: PhotoBrowser, toView: UIView) {
+    init(toView: UIView) {
         super.init()
-        self.photoBrowser = photoBrowser
         self.toView = toView
     }
     
     public func transitionDuration(transitionContext: UIViewControllerContextTransitioning?) -> NSTimeInterval {
-        return TransitionDuration
+        return DismissDuration
     }
     
     public func animateTransition(transitionContext: UIViewControllerContextTransitioning) {
-        guard let currentPhoto = photoBrowser.currentPhoto, let currentImageView = photoBrowser.currentImageView() else {
-            transitionContext.completeTransition(!transitionContext.transitionWasCancelled())
-            return
-        }
-        let image = currentPhoto.localOriginalPhoto() ?? currentPhoto.localThumbnailPhoto()
-        let snapshotView = UIImageView(image: image)
-        snapshotView.frame = currentImageView.frame
-        snapshotView.clipsToBounds = toView.clipsToBounds
-        snapshotView.contentMode = toView.contentMode
-        
-        let toVC = transitionContext.viewControllerForKey(UITransitionContextToViewControllerKey)!
-        toVC.view.frame = transitionContext.finalFrameForViewController(toVC)
         let container = transitionContext.containerView()!
+        let fromVC = transitionContext.viewControllerForKey(UITransitionContextFromViewControllerKey)!
+        let toVC = transitionContext.viewControllerForKey(UITransitionContextToViewControllerKey)!
         container.addSubview(toVC.view)
-        container.addSubview(snapshotView)
+        container.addSubview(fromVC.view)
+        let toFrame = toView.frame
+        let scale = CGAffineTransformMakeScale(toFrame.width/fromVC.view.frame.width, toFrame.height/fromVC.view.frame.height)
+        let translate = CGAffineTransformMakeTranslation(-(fromVC.view.center.x - toView.center.x), -(fromVC.view.center.y - toView.center.y))
         toView.alpha = 0
-        currentImageView.hidden = true
         
-        let finalFrame = container.convertRect(toView.frame, fromView: toView.superview)
-        
-        UIView.animateWithDuration(TransitionDuration, animations: { () -> Void in
-            snapshotView.frame = finalFrame
-            }) { (_) -> Void in
-                self.toView.alpha = 1
-                currentImageView.hidden = false
-                snapshotView.removeFromSuperview()
+        UIView.animateWithDuration(DismissDuration, delay: 0, options: .CurveEaseOut, animations: {
+            fromVC.view.transform = CGAffineTransformConcat(scale, translate)
+            fromVC.view.alpha = 0
+            self.toView.alpha = 1
+            }) { (_) in
                 transitionContext.completeTransition(!transitionContext.transitionWasCancelled())
         }
     }
-    
 }
 
 public class DismissImmediatelyAnimation: NSObject, UIViewControllerAnimatedTransitioning {
     
     public func transitionDuration(transitionContext: UIViewControllerContextTransitioning?) -> NSTimeInterval {
-        return TransitionDuration/2
+        return DismissDuration/2
     }
     
     public func animateTransition(transitionContext: UIViewControllerContextTransitioning) {
@@ -181,34 +143,10 @@ public class DismissImmediatelyAnimation: NSObject, UIViewControllerAnimatedTran
         transitionContext.containerView()?.addSubview(toVC.view)
         transitionContext.containerView()?.addSubview(fromVC.view)
         
-        UIView.animateWithDuration(TransitionDuration/2, animations: { () -> Void in
+        UIView.animateWithDuration(DismissDuration/2, animations: { () -> Void in
             fromVC.view.alpha = 0
             }) { (_) -> Void in
                 transitionContext.completeTransition(!transitionContext.transitionWasCancelled())
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
