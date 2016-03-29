@@ -65,7 +65,7 @@ extension ViewController {
             browser.photoBrowserDelegate = self
             browser.currentIndex = 1
             browser.photos = [photo, photo2, photo3]
-            presentViewController(browser, fromView: imageView)
+            presentPhotoBrowser(browser, fromView: imageView)
         }
     }
     
@@ -80,7 +80,7 @@ extension ViewController {
 extension ViewController: PhotoBrowserDelegate {
     
     func dismissPhotoBrowser(photoBrowser: PhotoBrowser) {
-        dismissViewController(toView: imageView)
+        dismissPhotoBrowser(toView: imageView)
     }
     
     func longPressOnImage(gesture: UILongPressGestureRecognizer) {

@@ -14,22 +14,22 @@ var AssociatedObjectHandle: UInt8 = 0
 
 extension UIViewController {
 
-    public func presentViewController(viewControllerToPresent: UIViewController, fromView: UIView) {
+    public func presentPhotoBrowser(viewControllerToPresent: UIViewController, fromView: UIView) {
         let transitionDelegate = TransitionDelegate(fromView: fromView)
         let navigationController = UINavigationController(rootViewController: viewControllerToPresent)
-        navigationController.transitionDelegate = transitionDelegate
+        navigationController.pb_transitionDelegate = transitionDelegate
         navigationController.transitioningDelegate = transitionDelegate
         presentViewController(navigationController, animated: true, completion: nil)
     }
     
-    public func dismissViewController(toView toView: UIView? = nil) {
+    public func dismissPhotoBrowser(toView toView: UIView? = nil) {
         if let viewController = presentedViewController {
-            viewController.transitionDelegate.toView = toView
+            viewController.pb_transitionDelegate.toView = toView
         }
         dismissViewControllerAnimated(true, completion: nil)
     }
 
-    internal var transitionDelegate: TransitionDelegate {
+    internal var pb_transitionDelegate: TransitionDelegate {
         get {
             return objc_getAssociatedObject(self, &AssociatedObjectHandle) as! TransitionDelegate
         }
@@ -78,11 +78,11 @@ public class PresentAnimation: NSObject, UIViewControllerAnimatedTransitioning {
         let container = transitionContext.containerView()!
  
         container.addSubview(toVC.view)
-        let fromFrame = fromView.frame
+        let fromFrame = container.convertRect(fromView.frame, fromView: fromView.superview)
         let toFrame = transitionContext.finalFrameForViewController(toVC)
         
         let scale = CGAffineTransformMakeScale(fromFrame.width/toFrame.width, fromFrame.height/toFrame.height)
-        let translate = CGAffineTransformMakeTranslation(-(toVC.view.center.x - fromView.center.x), -(toVC.view.center.y - fromView.center.y))
+        let translate = CGAffineTransformMakeTranslation(-(toVC.view.center.x - fromFrame.midX), -(toVC.view.center.y - fromFrame.midY))
         toVC.view.transform = CGAffineTransformConcat(scale, translate)
         toVC.view.alpha = 0
         
@@ -115,9 +115,9 @@ public class DismissAnimation: NSObject, UIViewControllerAnimatedTransitioning {
         let toVC = transitionContext.viewControllerForKey(UITransitionContextToViewControllerKey)!
         container.addSubview(toVC.view)
         container.addSubview(fromVC.view)
-        let toFrame = toView.frame
+        let toFrame = container.convertRect(toView.frame, fromView: toView.superview)
         let scale = CGAffineTransformMakeScale(toFrame.width/fromVC.view.frame.width, toFrame.height/fromVC.view.frame.height)
-        let translate = CGAffineTransformMakeTranslation(-(fromVC.view.center.x - toView.center.x), -(fromVC.view.center.y - toView.center.y))
+        let translate = CGAffineTransformMakeTranslation(-(fromVC.view.center.x - toFrame.midX), -(fromVC.view.center.y - toFrame.midY))
         toView.alpha = 0
         
         UIView.animateWithDuration(DismissDuration, delay: 0, options: .CurveEaseOut, animations: {
