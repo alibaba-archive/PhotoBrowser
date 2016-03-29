@@ -157,13 +157,8 @@ class PhotoPreviewController: UIViewController {
         //Zoom to show as much image as possible unless image is smaller than screen
         var minZoom = min(view.bounds.size.width / image.size.width, view.bounds.size.height / image.size.height)
         minZoom = min(minZoom, 1)
-        
-        //Scale thumbnail to display exactly as original image
-        if let originalImageSize = photo?.originalImageSize where originalImageSize.width > image.size.width {
-            minZoom = minZoom * (originalImageSize.width / image.size.width)
-        }
         scrollView.minimumZoomScale = minZoom
-        
+
         //Force scrollViewDidZoom fire if zoom did not change
         if scrollView.zoomScale == minZoom {
             minZoom += 0.000001

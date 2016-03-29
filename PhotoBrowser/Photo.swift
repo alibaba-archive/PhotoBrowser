@@ -18,16 +18,14 @@ public struct Photo {
     public var thumbnailUrl: NSURL?
     public var title: String?
     public var object: AnyObject?
-    public var originalImageSize: CGSize?
     
-    public init(image: UIImage?, title: String? = nil, thumbnailImage: UIImage? = nil, photoUrl: NSURL? = nil, thumbnailUrl: NSURL? = nil, object: AnyObject? = nil, originalImageSize: CGSize? = nil) {
+    public init(image: UIImage?, title: String? = nil, thumbnailImage: UIImage? = nil, photoUrl: NSURL? = nil, thumbnailUrl: NSURL? = nil, object: AnyObject? = nil) {
         self.image = image
         self.title = title
         self.thumbnailImage = thumbnailImage
         self.photoUrl = photoUrl
         self.thumbnailUrl = thumbnailUrl
         self.object = object
-        self.originalImageSize = originalImageSize
     }
     
     public func localOriginalPhoto() -> UIImage? {
