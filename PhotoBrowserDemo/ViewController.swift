@@ -57,7 +57,7 @@ extension ViewController {
             print("item3")
         }
         
-        let photo = Photo.init(image: nil, title:"Image1", thumbnailImage: thumbnail1, photoUrl: photoUrl1)
+        let photo = Photo.init(image: nil, title:"Image1fjdkkfadjfkajdkfalkdsfjklasfklaskdfkadsjfklajklsdjfkajsdkfaksdjfkajsdkfjlaksdfjkakdfklak", thumbnailImage: thumbnail1, photoUrl: photoUrl1)
         let photo2 = Photo.init(image: nil, title:"Image2", thumbnailImage: thumbnail2, photoUrl: photoUrl2)
         let photo3 = Photo.init(image: nil, title:"Image3", thumbnailImage: thumbnail3, photoUrl: photoUrl3)
         photoBrowser = PhotoBrowser()

@@ -11,10 +11,9 @@ import UIKit
 import Kingfisher
 
 protocol PhotoPreviewControllerDelegate: class {
-    
     var isFullScreenMode: Bool {get set}
-    
     func longPressOn(photo: Photo, gesture: UILongPressGestureRecognizer)
+    func didTapOnBackground()
 }
 
 class PhotoPreviewController: UIViewController {
@@ -90,10 +89,14 @@ class PhotoPreviewController: UIViewController {
         
         let singleTap = UITapGestureRecognizer.init(target: self, action: #selector(handleSingleTap(_:)))
         singleTap.numberOfTapsRequired = 1
-        view.addGestureRecognizer(singleTap)
+        imageView.addGestureRecognizer(singleTap)
         
         let longPress = UILongPressGestureRecognizer.init(target: self, action: #selector(handleLongPress(_:)))
         imageView.addGestureRecognizer(longPress)
+
+        let backgroudSingleTap = UITapGestureRecognizer.init(target: self, action: #selector(handleBackgroundSingleTap(_:)))
+        backgroudSingleTap.numberOfTapsRequired = 1
+        view.addGestureRecognizer(backgroudSingleTap)
         
         singleTap.requireGestureRecognizerToFail(doubleTap)
         
@@ -256,6 +259,10 @@ extension PhotoPreviewController {
         if sender.state == UIGestureRecognizerState.Began {
             delegate.longPressOn(photo, gesture: sender)
         }
+    }
+
+    func handleBackgroundSingleTap(sender: UITapGestureRecognizer) {
+        delegate?.didTapOnBackground()
     }
 }
 

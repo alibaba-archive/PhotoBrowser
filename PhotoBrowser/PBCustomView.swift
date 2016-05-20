@@ -80,6 +80,7 @@ class PBNavigationBar: UIView {
         
         view.addConstraint(NSLayoutConstraint(item: view, attribute: .Top, relatedBy: .Equal, toItem: self.titleLabel, attribute: .Top, multiplier: 1.0, constant: 0))
         view.addConstraint(NSLayoutConstraint(item: view, attribute: .CenterX, relatedBy: .Equal, toItem: self.titleLabel, attribute: .CenterX, multiplier: 1.0, constant: 0))
+        view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|-60-[titleLabel]-60-|", options: [], metrics: nil, views: ["titleLabel": self.titleLabel]))
         
         view.addConstraint(NSLayoutConstraint(item: self.titleLabel, attribute: .Bottom, relatedBy: .Equal, toItem: self.indexLabel, attribute: .Top, multiplier: 1.0, constant: -3))
         view.addConstraint(NSLayoutConstraint(item: self.titleLabel, attribute: .CenterX, relatedBy: .Equal, toItem: self.indexLabel, attribute: .CenterX, multiplier: 1.0, constant: 0))
@@ -89,6 +90,7 @@ class PBNavigationBar: UIView {
     lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Title"
+        label.textAlignment = .Center
         label.textColor = UIColor.whiteColor()
         label.translatesAutoresizingMaskIntoConstraints = false
         return label

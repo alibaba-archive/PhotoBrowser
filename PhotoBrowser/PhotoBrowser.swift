@@ -13,9 +13,16 @@ import Kingfisher
 let ToolbarHeight: CGFloat = 44
 let PadToolbarItemSpace: CGFloat = 72
 
-@objc public protocol PhotoBrowserDelegate: NSObjectProtocol {
-    optional func dismissPhotoBrowser(photoBrowser: PhotoBrowser)
-    optional func longPressOnImage(gesture: UILongPressGestureRecognizer)
+public protocol PhotoBrowserDelegate: class {
+    func dismissPhotoBrowser(photoBrowser: PhotoBrowser)
+    func longPressOnImage(gesture: UILongPressGestureRecognizer)
+}
+
+extension PhotoBrowserDelegate {
+    func dismissPhotoBrowser(photoBrowser: PhotoBrowser) {
+        photoBrowser.dismissViewControllerAnimated(false, completion: nil)
+    }
+    func longPressOnImage(gesture: UILongPressGestureRecognizer) {}
 }
 
 public class PhotoBrowser: UIPageViewController {
@@ -228,11 +235,7 @@ extension PhotoBrowser {
     }
     
     func leftButtonTap(sender: AnyObject) {
-        if let delegate = photoBrowserDelegate where delegate.respondsToSelector(#selector(PhotoBrowserDelegate.dismissPhotoBrowser(_:))) {
-            delegate.dismissPhotoBrowser!(self)
-        } else {
-            dismissViewControllerAnimated(false, completion: nil)
-        }
+        photoBrowserDelegate?.dismissPhotoBrowser(self)
     }
     
     func rightButtonTap(sender: AnyObject) {
@@ -321,12 +324,11 @@ extension PhotoBrowser: PhotoPreviewControllerDelegate {
     }
     
     func longPressOn(photo: Photo, gesture: UILongPressGestureRecognizer) {
-        guard let browserDelegate = photoBrowserDelegate else {
-            return
-        }
-        if browserDelegate.respondsToSelector(#selector(PhotoBrowserDelegate.longPressOnImage(_:))) {
-            browserDelegate.longPressOnImage!(gesture)
-        }
+        photoBrowserDelegate?.longPressOnImage(gesture)
+    }
+
+    func didTapOnBackground() {
+        photoBrowserDelegate?.dismissPhotoBrowser(self)
     }
 }
 
