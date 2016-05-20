@@ -42,38 +42,32 @@ extension ViewController {
     func displayPhotoBrowser() {
         let thumbnail1 = UIImage.init(named: "thumbnail1")
         let photoUrl1 = NSURL.init(string: "https://pic4.zhimg.com/453d7ebcdb0c4494e60fa07d09a83a83_r.jpeg")
-        
         let thumbnail2 = UIImage.init(named: "thumbnail2")
         let photoUrl2 = NSURL.init(string: "https://pic1.zhimg.com/0f70807392a9f62528b00ec434f5519c_b.png")
-        
         let thumbnail3 = UIImage.init(named: "thumbnail3")
         let photoUrl3 = NSURL.init(string: "https://pic2.zhimg.com/a5455838750e168d97480d9247537d31_r.jpeg")
         
-        let item1 = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.Bookmarks, target: self, action: #selector(pushNextViewController))
-        item1.tintColor = UIColor.whiteColor()
-        let item2 = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.Bookmarks, target: self, action: nil)
-        item2.tintColor = UIColor.whiteColor()
-        let item3 = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.Bookmarks, target: self, action: nil)
-        item3.tintColor = UIColor.whiteColor()
+        let item1 = ActionBarItem(title: "item1", style: .Plain) { (photoBrowser, item) in
+            photoBrowser.setCurrentIndex(to: 2)
+        }
+        let item2 = ActionBarItem(title: "item1", style: .Plain) { (photoBrowser, item) in
+            print("item2")
+        }
+        let item3 = ActionBarItem(title: "item1", style: .Plain) { (photoBrowser, item) in
+            print("item3")
+        }
         
         let photo = Photo.init(image: nil, title:"Image1", thumbnailImage: thumbnail1, photoUrl: photoUrl1)
         let photo2 = Photo.init(image: nil, title:"Image2", thumbnailImage: thumbnail2, photoUrl: photoUrl2)
         let photo3 = Photo.init(image: nil, title:"Image3", thumbnailImage: thumbnail3, photoUrl: photoUrl3)
         photoBrowser = PhotoBrowser()
         if let browser = photoBrowser {
-            browser.toolbarItems = [item1, item2, item3]
+            browser.actionItems = [item1, item2, item3]
             browser.photoBrowserDelegate = self
             browser.currentIndex = 1
             browser.photos = [photo, photo2, photo3]
             presentPhotoBrowser(browser, fromView: imageView)
         }
-    }
-    
-    func pushNextViewController() {
-        let viewController = UIViewController()
-        viewController.view.backgroundColor = UIColor.whiteColor()
-        viewController.title = "After Photo Browser"
-        photoBrowser?.navigationController?.pushViewController(viewController, animated: true)
     }
 }
 

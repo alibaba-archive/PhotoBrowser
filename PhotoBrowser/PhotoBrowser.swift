@@ -46,6 +46,21 @@ public class PhotoBrowser: UIPageViewController {
     public var currentPhoto: Photo? {
         return photos?[currentIndex]
     }
+    public lazy var progressView: UIProgressView = {
+        let progressView = UIProgressView(progressViewStyle: .Default)
+        progressView.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: 2)
+        progressView.autoresizingMask = [.FlexibleWidth, .FlexibleBottomMargin]
+        return progressView
+    }()
+
+    public var actionItems = [ActionBarItem]() {
+        willSet {
+            newValue.map { $0.photoBrowser = self }
+        }
+        didSet {
+            toolbarItems = actionItems.map { $0.barButtonItem }
+        }
+    }
     
     public override init(transitionStyle style: UIPageViewControllerTransitionStyle, navigationOrientation: UIPageViewControllerNavigationOrientation, options: [String : AnyObject]?) {
         super.init(transitionStyle: style, navigationOrientation: navigationOrientation, options: options)
@@ -92,6 +107,34 @@ public class PhotoBrowser: UIPageViewController {
     
     public override func preferredStatusBarStyle() -> UIStatusBarStyle {
         return .LightContent
+    }
+}
+
+// Mark: -Progress bar update
+
+public extension PhotoBrowser {
+    func beginUpdate() {
+        dataSource = nil
+        toolbar?.addSubview(progressView)
+    }
+    func endUpdate() {
+        dataSource = self
+        progressView.removeFromSuperview()
+    }
+    func update(progress value: Float) {
+        progressView.progress = value
+    }
+}
+
+public extension PhotoBrowser {
+    func setCurrentIndex(to index: Int) {
+        if let photos = photos {
+            currentIndex = index
+            let initPage = PhotoPreviewController(photo: photos[index], index: index)
+            initPage.delegate = self
+            setViewControllers([initPage], direction: UIPageViewControllerNavigationDirection.Forward, animated: false, completion: nil)
+            updateNavigationBarTitle()
+        }
     }
 }
 

@@ -46,6 +46,7 @@ public class TransitionDelegate: NSObject, UIViewControllerTransitioningDelegate
     init(fromView: UIView) {
         super.init()
         self.fromView = fromView
+        self.toView = fromView
     }
     
     public func animationControllerForPresentedController(presented: UIViewController, presentingController presenting: UIViewController, sourceController source: UIViewController) -> UIViewControllerAnimatedTransitioning? {

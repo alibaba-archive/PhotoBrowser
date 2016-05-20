@@ -123,7 +123,7 @@ class PBNavigationBar: UIView {
         return button
     }()
     
-    var gradientView = GradientView()
+    var backgroundView = UIVisualEffectView(effect: UIBlurEffect(style: .Dark))
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -135,11 +135,9 @@ class PBNavigationBar: UIView {
     }
     
     func setup() {
-        addSubview(gradientView)
-        gradientView.autoresizingMask = [.FlexibleHeight, .FlexibleWidth]
-        gradientView.colors = [UIColor.blackColor().colorWithAlphaComponent(0.48).CGColor, UIColor.clearColor().CGColor]
-        gradientView.startPoint = CGPoint(x: 0, y: 0)
-        gradientView.endPoint = CGPoint(x: 0, y: 1)
+        addSubview(backgroundView)
+        backgroundView.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height)
+        backgroundView.autoresizingMask = [.FlexibleHeight, .FlexibleWidth]
         addSubview(contentView)
         addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|-0-[contentView]-0-|", options: [], metrics: nil, views: ["contentView": contentView]))
         addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|-statusBarHeight-[contentView]-0-|", options: [], metrics: ["statusBarHeight":statusBarHeight], views: ["contentView": contentView]))
@@ -148,17 +146,14 @@ class PBNavigationBar: UIView {
 
 public class PBToolbar: UIToolbar {
     
-    var gradientView = GradientView()
+    var backgroundView = UIVisualEffectView(effect: UIBlurEffect(style: .Dark))
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         setBackgroundImage(UIImage(), forToolbarPosition: .Any, barMetrics: .Default)
         clipsToBounds = true
-        addSubview(gradientView)
-        gradientView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
-        gradientView.colors = [UIColor.blackColor().colorWithAlphaComponent(0.48).CGColor, UIColor.clearColor().CGColor]
-        gradientView.startPoint = CGPoint(x: 0, y: 1)
-        gradientView.endPoint = CGPoint(x: 0, y: 0)
+        addSubview(backgroundView)
+        backgroundView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
     }
     
     required public init?(coder aDecoder: NSCoder) {
