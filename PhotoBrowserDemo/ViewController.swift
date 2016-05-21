@@ -47,13 +47,13 @@ extension ViewController {
         let thumbnail3 = UIImage.init(named: "thumbnail3")
         let photoUrl3 = NSURL.init(string: "https://pic2.zhimg.com/a5455838750e168d97480d9247537d31_r.jpeg")
         
-        let item1 = ActionBarItem(title: "item1", style: .Plain) { (photoBrowser, item) in
+        let item1 = PBActionBarItem(title: "ONE", style: .Plain) { (photoBrowser, item) in
             photoBrowser.setCurrentIndex(to: 2)
         }
-        let item2 = ActionBarItem(title: "item1", style: .Plain) { (photoBrowser, item) in
+        let item2 = PBActionBarItem(title: "TWO", style: .Plain) { (photoBrowser, item) in
             print("item2")
         }
-        let item3 = ActionBarItem(title: "item1", style: .Plain) { (photoBrowser, item) in
+        let item3 = PBActionBarItem(title: "THREE", style: .Plain) { (photoBrowser, item) in
             print("item3")
         }
         

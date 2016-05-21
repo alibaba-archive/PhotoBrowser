@@ -60,9 +60,11 @@ public class PhotoBrowser: UIPageViewController {
         return progressView
     }()
 
-    public var actionItems = [ActionBarItem]() {
+    public var actionItems = [PBActionBarItem]() {
         willSet {
-            newValue.map { $0.photoBrowser = self }
+            for item in newValue {
+                item.photoBrowser = self
+            }
         }
         didSet {
             toolbarItems = actionItems.map { $0.barButtonItem }
