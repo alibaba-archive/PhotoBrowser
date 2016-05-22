@@ -68,6 +68,7 @@ public class PhotoBrowser: UIPageViewController {
         }
         didSet {
             toolbarItems = actionItems.map { $0.barButtonItem }
+            updateToolbar()
         }
     }
     

@@ -62,10 +62,10 @@ extension ViewController {
         let photo3 = Photo.init(image: nil, title:"Image3", thumbnailImage: thumbnail3, photoUrl: photoUrl3)
         photoBrowser = PhotoBrowser()
         if let browser = photoBrowser {
+            browser.photos = [photo, photo2, photo3]
             browser.actionItems = [item1, item2, item3]
             browser.photoBrowserDelegate = self
             browser.currentIndex = 1
-            browser.photos = [photo, photo2, photo3]
             presentPhotoBrowser(browser, fromView: imageView)
         }
     }
