@@ -18,7 +18,7 @@ public protocol PhotoBrowserDelegate: class {
     func longPressOnImage(gesture: UILongPressGestureRecognizer)
 }
 
-extension PhotoBrowserDelegate {
+public extension PhotoBrowserDelegate {
     func dismissPhotoBrowser(photoBrowser: PhotoBrowser) {
         photoBrowser.dismissViewControllerAnimated(false, completion: nil)
     }
