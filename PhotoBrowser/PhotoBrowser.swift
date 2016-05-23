@@ -233,12 +233,15 @@ extension PhotoBrowser {
                 }
             }
         }
-        
         return itemsArray
     }
     
     func leftButtonTap(sender: AnyObject) {
-        photoBrowserDelegate?.dismissPhotoBrowser(self)
+        if let delegate = photoBrowserDelegate {
+            delegate.dismissPhotoBrowser(self)
+        } else {
+            dismissPhotoBrowser()
+        }
     }
     
     func rightButtonTap(sender: AnyObject) {
