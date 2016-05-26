@@ -17,6 +17,7 @@ extension UIViewController {
     public func presentPhotoBrowser(viewControllerToPresent: UIViewController, fromView: UIView) {
         let transitionDelegate = TransitionDelegate(fromView: fromView)
         let navigationController = UINavigationController(rootViewController: viewControllerToPresent)
+        navigationController.modalPresentationStyle = .FullScreen
         navigationController.pb_transitionDelegate = transitionDelegate
         navigationController.transitioningDelegate = transitionDelegate
         presentViewController(navigationController, animated: true, completion: nil)

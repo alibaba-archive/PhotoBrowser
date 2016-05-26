@@ -334,7 +334,11 @@ extension PhotoBrowser: PhotoPreviewControllerDelegate {
     }
 
     func didTapOnBackground() {
-        photoBrowserDelegate?.dismissPhotoBrowser(self)
+        if let delegate = photoBrowserDelegate {
+            delegate.dismissPhotoBrowser(self)
+        } else {
+            dismissPhotoBrowser()
+        }
     }
 }
 
