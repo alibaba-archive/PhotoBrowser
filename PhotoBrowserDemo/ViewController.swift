@@ -72,6 +72,10 @@ extension ViewController {
 }
 
 extension ViewController: PhotoBrowserDelegate {
+
+    func photoBrowser(browser: PhotoBrowser, didShowPhotoAtIndex index: Int) {
+        print("photo browser did show at index: \(index)")
+    }
     
     func dismissPhotoBrowser(photoBrowser: PhotoBrowser) {
         dismissPhotoBrowser(toView: imageView)

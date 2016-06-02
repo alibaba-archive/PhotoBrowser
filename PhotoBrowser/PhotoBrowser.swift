@@ -16,6 +16,7 @@ let PadToolbarItemSpace: CGFloat = 72
 public protocol PhotoBrowserDelegate: class {
     func dismissPhotoBrowser(photoBrowser: PhotoBrowser)
     func longPressOnImage(gesture: UILongPressGestureRecognizer)
+    func photoBrowser(browser: PhotoBrowser, didShowPhotoAtIndex index: Int)
 }
 
 public extension PhotoBrowserDelegate {
@@ -23,6 +24,8 @@ public extension PhotoBrowserDelegate {
         photoBrowser.dismissViewControllerAnimated(false, completion: nil)
     }
     func longPressOnImage(gesture: UILongPressGestureRecognizer) {}
+    func photoBrowser(browser: PhotoBrowser, willShowPhotoAtIndex: Int) {}
+    func photoBrowser(browser: PhotoBrowser, didShowPhotoAtIndex: Int) {}
 }
 
 public class PhotoBrowser: UIPageViewController {
@@ -297,7 +300,7 @@ extension PhotoBrowser: UIPageViewControllerDataSource, UIPageViewControllerDele
         
         return nextViewController
     }
-    
+
     public func pageViewController(pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
         if completed {
             guard let currentViewController = pageViewController.viewControllers?.last as? PhotoPreviewController else {
@@ -305,6 +308,7 @@ extension PhotoBrowser: UIPageViewControllerDataSource, UIPageViewControllerDele
             }
             if let index = currentViewController.index {
                 currentIndex = index
+                photoBrowserDelegate?.photoBrowser(self, didShowPhotoAtIndex: index)
                 updateNavigationBarTitle()
             }
         }
