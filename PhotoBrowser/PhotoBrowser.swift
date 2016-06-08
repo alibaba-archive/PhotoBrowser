@@ -41,10 +41,15 @@ public class PhotoBrowser: UIPageViewController {
     public var photos: [Photo]? {
         didSet {
             if let photos = photos {
-                let initPage = PhotoPreviewController(photo: photos[currentIndex], index: currentIndex)
-                initPage.delegate = self
-                setViewControllers([initPage], direction: UIPageViewControllerNavigationDirection.Forward, animated: false, completion: nil)
-                updateNavigationBarTitle()
+                if photos.count == 0 {
+                    leftButtonTap(nil)
+                } else {
+                    currentIndex = min(currentIndex, photos.count - 1)
+                    let initPage = PhotoPreviewController(photo: photos[currentIndex], index: currentIndex)
+                    initPage.delegate = self
+                    setViewControllers([initPage], direction: UIPageViewControllerNavigationDirection.Forward, animated: false, completion: nil)
+                    updateNavigationBarTitle()
+                }
             }
         }
     }
@@ -239,7 +244,7 @@ extension PhotoBrowser {
         return itemsArray
     }
     
-    func leftButtonTap(sender: AnyObject) {
+    func leftButtonTap(sender: AnyObject?) {
         if let delegate = photoBrowserDelegate {
             delegate.dismissPhotoBrowser(self)
         } else {

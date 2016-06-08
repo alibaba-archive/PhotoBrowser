@@ -47,8 +47,13 @@ extension ViewController {
         let thumbnail3 = UIImage.init(named: "thumbnail3")
         let photoUrl3 = NSURL.init(string: "https://pic2.zhimg.com/a5455838750e168d97480d9247537d31_r.jpeg")
         
+        let photo = Photo.init(image: nil, title:"Image1fjdkkfadjfkajdkfalkdsfjklasfklaskdfkadsjfklajklsdjfkajsdkfaksdjfkajsdkfjlaksdfjkakdfklak", thumbnailImage: thumbnail1, photoUrl: photoUrl1)
+        let photo2 = Photo.init(image: nil, title:"Image2", thumbnailImage: thumbnail2, photoUrl: photoUrl2)
+        let photo3 = Photo.init(image: nil, title:"Image3", thumbnailImage: thumbnail3, photoUrl: photoUrl3)
+
         let item1 = PBActionBarItem(title: "ONE", style: .Plain) { (photoBrowser, item) in
-            photoBrowser.setCurrentIndex(to: 2)
+            let photos = [photo, photo2]
+            photoBrowser.photos = photos
         }
         let item2 = PBActionBarItem(title: "TWO", style: .Plain) { (photoBrowser, item) in
             print("item2")
@@ -57,9 +62,6 @@ extension ViewController {
             print("item3")
         }
         
-        let photo = Photo.init(image: nil, title:"Image1fjdkkfadjfkajdkfalkdsfjklasfklaskdfkadsjfklajklsdjfkajsdkfaksdjfkajsdkfjlaksdfjkakdfklak", thumbnailImage: thumbnail1, photoUrl: photoUrl1)
-        let photo2 = Photo.init(image: nil, title:"Image2", thumbnailImage: thumbnail2, photoUrl: photoUrl2)
-        let photo3 = Photo.init(image: nil, title:"Image3", thumbnailImage: thumbnail3, photoUrl: photoUrl3)
         photoBrowser = PhotoBrowser()
         if let browser = photoBrowser {
             browser.photos = [photo, photo2, photo3]
