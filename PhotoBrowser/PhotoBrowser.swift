@@ -56,6 +56,11 @@ public class PhotoBrowser: UIPageViewController {
     public var toolbar: PBToolbar?
     public var backgroundColor = UIColor.blackColor()
     public weak var photoBrowserDelegate: PhotoBrowserDelegate?
+    public var enableShare = true {
+        didSet {
+            headerView?.rightButton.hidden = !enableShare
+        }
+    }
     
     public var currentIndex: Int = 0
     public var currentPhoto: Photo? {

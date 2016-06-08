@@ -56,6 +56,7 @@ extension ViewController {
             photoBrowser.photos = photos
         }
         let item2 = PBActionBarItem(title: "TWO", style: .Plain) { (photoBrowser, item) in
+            photoBrowser.enableShare = !photoBrowser.enableShare
             print("item2")
         }
         let item3 = PBActionBarItem(title: "THREE", style: .Plain) { (photoBrowser, item) in
