@@ -17,6 +17,7 @@ public protocol PhotoBrowserDelegate: class {
     func dismissPhotoBrowser(photoBrowser: PhotoBrowser)
     func longPressOnImage(gesture: UILongPressGestureRecognizer)
     func photoBrowser(browser: PhotoBrowser, didShowPhotoAtIndex index: Int)
+    func photoBrowser(browser: PhotoBrowser, willSharePhoto photo: Photo)
 }
 
 public extension PhotoBrowserDelegate {
@@ -26,6 +27,9 @@ public extension PhotoBrowserDelegate {
     func longPressOnImage(gesture: UILongPressGestureRecognizer) {}
     func photoBrowser(browser: PhotoBrowser, willShowPhotoAtIndex: Int) {}
     func photoBrowser(browser: PhotoBrowser, didShowPhotoAtIndex: Int) {}
+    func photoBrowser(browser: PhotoBrowser, willSharePhoto photo: Photo) {
+        browser.defaultShareAction()
+    }
 }
 
 public class PhotoBrowser: UIPageViewController {
@@ -256,12 +260,21 @@ extension PhotoBrowser {
             dismissPhotoBrowser()
         }
     }
-    
+
     func rightButtonTap(sender: AnyObject) {
-        
-        if let image = currentImageView()?.image, let button = sender as? UIButton {
+        guard let photo = currentPhoto else {
+            return
+        }
+        if let delegate = photoBrowserDelegate{
+            delegate.photoBrowser(self, willSharePhoto: photo)
+        } else {
+            defaultShareAction()
+        }
+    }
+
+    func defaultShareAction() {
+        if let image = currentImageView()?.image, let button = headerView?.rightButton {
             let activityController = UIActivityViewController(activityItems: [image], applicationActivities: nil)
-            
             if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
                 activityController.modalPresentationStyle = .Popover
                 activityController.popoverPresentationController?.sourceView = view
@@ -271,7 +284,6 @@ extension PhotoBrowser {
             presentViewController(activityController, animated: true, completion: nil)
         }
     }
-    
 }
 
 extension PhotoBrowser: UIPageViewControllerDataSource, UIPageViewControllerDelegate {

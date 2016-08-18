@@ -108,4 +108,8 @@ extension ViewController: PhotoBrowserDelegate {
             self.photoBrowser?.presentViewController(alertController, animated: true, completion: nil)
         }
     }
+
+    func photoBrowser(browser: PhotoBrowser, willSharePhoto photo: Photo) {
+        print("Custom share action here")
+    }
 }
