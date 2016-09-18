@@ -8,7 +8,6 @@
 
 import UIKit
 import PhotoBrowser
-import CoreData
 
 class ViewController: UIViewController {
     var photoBrowser: PhotoBrowser?
