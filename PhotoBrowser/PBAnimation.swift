@@ -14,20 +14,20 @@ var AssociatedObjectHandle: UInt8 = 0
 
 extension UIViewController {
 
-    public func presentPhotoBrowser(viewControllerToPresent: UIViewController, fromView: UIView) {
+    public func presentPhotoBrowser(_ viewControllerToPresent: UIViewController, fromView: UIView) {
         let transitionDelegate = TransitionDelegate(fromView: fromView)
         let navigationController = UINavigationController(rootViewController: viewControllerToPresent)
-        navigationController.modalPresentationStyle = .FullScreen
+        navigationController.modalPresentationStyle = .fullScreen
         navigationController.pb_transitionDelegate = transitionDelegate
         navigationController.transitioningDelegate = transitionDelegate
-        presentViewController(navigationController, animated: true, completion: nil)
+        present(navigationController, animated: true, completion: nil)
     }
     
-    public func dismissPhotoBrowser(toView toView: UIView? = nil) {
+    public func dismissPhotoBrowser(toView: UIView? = nil) {
         if let viewController = presentedViewController {
             viewController.pb_transitionDelegate.toView = toView
         }
-        dismissViewControllerAnimated(true, completion: nil)
+        dismiss(animated: true, completion: nil)
     }
 
     internal var pb_transitionDelegate: TransitionDelegate {
@@ -40,9 +40,9 @@ extension UIViewController {
     }
 }
 
-public class TransitionDelegate: NSObject, UIViewControllerTransitioningDelegate {
-    public var fromView: UIView!
-    public var toView: UIView?
+open class TransitionDelegate: NSObject, UIViewControllerTransitioningDelegate {
+    open var fromView: UIView!
+    open var toView: UIView?
     
     init(fromView: UIView) {
         super.init()
@@ -50,11 +50,11 @@ public class TransitionDelegate: NSObject, UIViewControllerTransitioningDelegate
         self.toView = fromView
     }
     
-    public func animationControllerForPresentedController(presented: UIViewController, presentingController presenting: UIViewController, sourceController source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+    open func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         return PresentAnimation(fromView: fromView)
     }
     
-    public func animationControllerForDismissedController(dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+    open func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         if let destView = toView {
             return DismissAnimation(toView: destView)
         } else {
@@ -63,94 +63,94 @@ public class TransitionDelegate: NSObject, UIViewControllerTransitioningDelegate
     }
 }
 
-public class PresentAnimation: NSObject, UIViewControllerAnimatedTransitioning {
-    public var fromView: UIView!
+open class PresentAnimation: NSObject, UIViewControllerAnimatedTransitioning {
+    open var fromView: UIView!
     
     public init(fromView: UIView) {
         super.init()
         self.fromView = fromView
     }
 
-    public func transitionDuration(transitionContext: UIViewControllerContextTransitioning?) -> NSTimeInterval {
+    open func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         return PresentDuration
     }
  
-    public func animateTransition(transitionContext: UIViewControllerContextTransitioning) {
-        let toVC = transitionContext.viewControllerForKey(UITransitionContextToViewControllerKey)!
-        let container = transitionContext.containerView()!
+    open func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
+        let toVC = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to)!
+        let container = transitionContext.containerView
  
         container.addSubview(toVC.view)
-        let fromFrame = container.convertRect(fromView.frame, fromView: fromView.superview)
-        let toFrame = transitionContext.finalFrameForViewController(toVC)
+        let fromFrame = container.convert(fromView.frame, from: fromView.superview)
+        let toFrame = transitionContext.finalFrame(for: toVC)
         
-        let scale = CGAffineTransformMakeScale(fromFrame.width/toFrame.width, fromFrame.height/toFrame.height)
-        let translate = CGAffineTransformMakeTranslation(-(toVC.view.center.x - fromFrame.midX), -(toVC.view.center.y - fromFrame.midY))
-        toVC.view.transform = CGAffineTransformConcat(scale, translate)
+        let scale = CGAffineTransform(scaleX: fromFrame.width/toFrame.width, y: fromFrame.height/toFrame.height)
+        let translate = CGAffineTransform(translationX: -(toVC.view.center.x - fromFrame.midX), y: -(toVC.view.center.y - fromFrame.midY))
+        toVC.view.transform = scale.concatenating(translate)
         toVC.view.alpha = 0
         
-        UIView.animateWithDuration(PresentDuration, delay: 0, options: .CurveEaseInOut, animations: {
-            toVC.view.transform = CGAffineTransformMakeScale(1, 1)
+        UIView.animate(withDuration: PresentDuration, delay: 0, options: UIViewAnimationOptions(), animations: {
+            toVC.view.transform = CGAffineTransform(scaleX: 1, y: 1)
             toVC.view.alpha = 1
             self.fromView.alpha = 0
             }) { (_) in
-                transitionContext.completeTransition(!transitionContext.transitionWasCancelled())
+                transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
                 self.fromView.alpha = 1
         }
     }
 }
 
-public class DismissAnimation: NSObject, UIViewControllerAnimatedTransitioning {
-    public var toView: UIView!
+open class DismissAnimation: NSObject, UIViewControllerAnimatedTransitioning {
+    open var toView: UIView!
     
     init(toView: UIView) {
         super.init()
         self.toView = toView
     }
     
-    public func transitionDuration(transitionContext: UIViewControllerContextTransitioning?) -> NSTimeInterval {
+    open func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         return DismissDuration
     }
     
-    public func animateTransition(transitionContext: UIViewControllerContextTransitioning) {
-        let container = transitionContext.containerView()!
-        let fromVC = transitionContext.viewControllerForKey(UITransitionContextFromViewControllerKey)!
-        let toVC = transitionContext.viewControllerForKey(UITransitionContextToViewControllerKey)!
+    open func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
+        let container = transitionContext.containerView
+        let fromVC = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.from)!
+        let toVC = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to)!
 
-        toVC.view.frame = transitionContext.finalFrameForViewController(toVC)
+        toVC.view.frame = transitionContext.finalFrame(for: toVC)
         container.addSubview(toVC.view)
         container.addSubview(fromVC.view)
-        let toFrame = container.convertRect(toView.frame, fromView: toView.superview)
-        let scale = CGAffineTransformMakeScale(toFrame.width/fromVC.view.frame.width, toFrame.height/fromVC.view.frame.height)
-        let translate = CGAffineTransformMakeTranslation(-(fromVC.view.center.x - toFrame.midX), -(fromVC.view.center.y - toFrame.midY))
+        let toFrame = container.convert(toView.frame, from: toView.superview)
+        let scale = CGAffineTransform(scaleX: toFrame.width/fromVC.view.frame.width, y: toFrame.height/fromVC.view.frame.height)
+        let translate = CGAffineTransform(translationX: -(fromVC.view.center.x - toFrame.midX), y: -(fromVC.view.center.y - toFrame.midY))
         toView.alpha = 0
         
-        UIView.animateWithDuration(DismissDuration, delay: 0, options: .CurveEaseOut, animations: {
-            fromVC.view.transform = CGAffineTransformConcat(scale, translate)
+        UIView.animate(withDuration: DismissDuration, delay: 0, options: .curveEaseOut, animations: {
+            fromVC.view.transform = scale.concatenating(translate)
             fromVC.view.alpha = 0
             self.toView.alpha = 1
             }) { (_) in
-                transitionContext.completeTransition(!transitionContext.transitionWasCancelled())
+                transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
         }
     }
 }
 
-public class DismissImmediatelyAnimation: NSObject, UIViewControllerAnimatedTransitioning {
+open class DismissImmediatelyAnimation: NSObject, UIViewControllerAnimatedTransitioning {
     
-    public func transitionDuration(transitionContext: UIViewControllerContextTransitioning?) -> NSTimeInterval {
+    open func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         return DismissDuration/2
     }
     
-    public func animateTransition(transitionContext: UIViewControllerContextTransitioning) {
-        let fromVC = transitionContext.viewControllerForKey(UITransitionContextFromViewControllerKey)!
-        let toVC = transitionContext.viewControllerForKey(UITransitionContextToViewControllerKey)!
+    open func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
+        let fromVC = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.from)!
+        let toVC = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to)!
         
-        transitionContext.containerView()?.addSubview(toVC.view)
-        transitionContext.containerView()?.addSubview(fromVC.view)
+        transitionContext.containerView.addSubview(toVC.view)
+        transitionContext.containerView.addSubview(fromVC.view)
         
-        UIView.animateWithDuration(DismissDuration/2, animations: { () -> Void in
+        UIView.animate(withDuration: DismissDuration/2, animations: { () -> Void in
             fromVC.view.alpha = 0
-            }) { (_) -> Void in
-                transitionContext.completeTransition(!transitionContext.transitionWasCancelled())
-        }
+            }, completion: { (_) -> Void in
+                transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+        }) 
     }
 }

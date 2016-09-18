@@ -31,10 +31,10 @@ class WaitingView: UIView {
         super.init(frame: frame)
         layer.cornerRadius = 5.0
         layer.masksToBounds = true
-        backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.6)
+        backgroundColor = UIColor.black.withAlphaComponent(0.6)
         clipsToBounds = true
         
-        let image = UIImage.init(named: "icon-logo-white", inBundle: NSBundle.init(forClass: classForCoder), compatibleWithTraitCollection: nil)
+        let image = UIImage.init(named: "icon-logo-white", in: Bundle.init(for: classForCoder), compatibleWith: nil)
         
         logoView = UIImageView.init(image: image)
         logoView.center = center
@@ -45,18 +45,19 @@ class WaitingView: UIView {
         super.init(coder: aDecoder)
     }
     
-    override func drawRect(rect: CGRect) {
+    override func draw(_ rect: CGRect) {
         let currentContext = UIGraphicsGetCurrentContext()
         let centerX = rect.size.width / 2
         let centerY = rect.size.height / 2
+        let center = CGPoint(x: centerX, y: centerY)
         
-        UIColor.whiteColor().set()
-        CGContextSetLineWidth(currentContext, 2)
-        CGContextSetLineCap(currentContext, CGLineCap.Round)
+        UIColor.white.set()
+        currentContext?.setLineWidth(2)
+        currentContext?.setLineCap(CGLineCap.round)
         let end = CGFloat( -M_PI_2 + Double(progress) * M_PI * 2 + 0.05)
         let radius = min(rect.size.width, rect.size.height) / 2 - waitingViewMargin
-        CGContextAddArc(currentContext, centerX, centerY, radius, CGFloat(-M_PI_2), end, 0)
-        CGContextStrokePath(currentContext)
+        currentContext?.addArc(center: center, radius: radius, startAngle: CGFloat(-M_PI_2), endAngle: end, clockwise: false)
+        currentContext?.strokePath()
     }
     
 }
@@ -72,26 +73,26 @@ class PBNavigationBar: UIView {
         view.addSubview(self.titleLabel)
         view.addSubview(self.indexLabel)
         
-        view.addConstraint(NSLayoutConstraint(item: view, attribute: .CenterY, relatedBy: .Equal, toItem: self.rightButton, attribute: .CenterY, multiplier: 1.0, constant: 0))
-        view.addConstraint(NSLayoutConstraint(item: view, attribute: .CenterY, relatedBy: .Equal, toItem: self.leftButton, attribute: .CenterY, multiplier: 1.0, constant: 0))
+        view.addConstraint(NSLayoutConstraint(item: view, attribute: .centerY, relatedBy: .equal, toItem: self.rightButton, attribute: .centerY, multiplier: 1.0, constant: 0))
+        view.addConstraint(NSLayoutConstraint(item: view, attribute: .centerY, relatedBy: .equal, toItem: self.leftButton, attribute: .centerY, multiplier: 1.0, constant: 0))
         
-        view.addConstraint(NSLayoutConstraint(item: view, attribute: .Leading, relatedBy: .Equal, toItem: self.leftButton, attribute: .Leading, multiplier: 1.0, constant: -8))
-        view.addConstraint(NSLayoutConstraint(item: view, attribute: .Trailing, relatedBy: .Equal, toItem: self.rightButton, attribute: .Trailing, multiplier: 1.0, constant: 8))
+        view.addConstraint(NSLayoutConstraint(item: view, attribute: .leading, relatedBy: .equal, toItem: self.leftButton, attribute: .leading, multiplier: 1.0, constant: -8))
+        view.addConstraint(NSLayoutConstraint(item: view, attribute: .trailing, relatedBy: .equal, toItem: self.rightButton, attribute: .trailing, multiplier: 1.0, constant: 8))
         
-        view.addConstraint(NSLayoutConstraint(item: view, attribute: .Top, relatedBy: .Equal, toItem: self.titleLabel, attribute: .Top, multiplier: 1.0, constant: 0))
-        view.addConstraint(NSLayoutConstraint(item: view, attribute: .CenterX, relatedBy: .Equal, toItem: self.titleLabel, attribute: .CenterX, multiplier: 1.0, constant: 0))
-        view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|-60-[titleLabel]-60-|", options: [], metrics: nil, views: ["titleLabel": self.titleLabel]))
+        view.addConstraint(NSLayoutConstraint(item: view, attribute: .top, relatedBy: .equal, toItem: self.titleLabel, attribute: .top, multiplier: 1.0, constant: 0))
+        view.addConstraint(NSLayoutConstraint(item: view, attribute: .centerX, relatedBy: .equal, toItem: self.titleLabel, attribute: .centerX, multiplier: 1.0, constant: 0))
+        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-60-[titleLabel]-60-|", options: [], metrics: nil, views: ["titleLabel": self.titleLabel]))
         
-        view.addConstraint(NSLayoutConstraint(item: self.titleLabel, attribute: .Bottom, relatedBy: .Equal, toItem: self.indexLabel, attribute: .Top, multiplier: 1.0, constant: -3))
-        view.addConstraint(NSLayoutConstraint(item: self.titleLabel, attribute: .CenterX, relatedBy: .Equal, toItem: self.indexLabel, attribute: .CenterX, multiplier: 1.0, constant: 0))
+        view.addConstraint(NSLayoutConstraint(item: self.titleLabel, attribute: .bottom, relatedBy: .equal, toItem: self.indexLabel, attribute: .top, multiplier: 1.0, constant: -3))
+        view.addConstraint(NSLayoutConstraint(item: self.titleLabel, attribute: .centerX, relatedBy: .equal, toItem: self.indexLabel, attribute: .centerX, multiplier: 1.0, constant: 0))
         return view
     }()
     
     lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Title"
-        label.textAlignment = .Center
-        label.textColor = UIColor.whiteColor()
+        label.textAlignment = .center
+        label.textColor = UIColor.white
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -99,33 +100,33 @@ class PBNavigationBar: UIView {
     var indexLabel: UILabel = {
         let label = UILabel()
         label.text = "Index"
-        label.textColor = UIColor.whiteColor()
-        label.font = UIFont.systemFontOfSize(14)
+        label.textColor = UIColor.white
+        label.font = UIFont.systemFont(ofSize: 14)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     var leftButton: UIButton = {
         let button = UIButton()
-        let image = UIImage(named: "icon-cross", inBundle: NSBundle(forClass: classForCoder()), compatibleWithTraitCollection: nil)
-        button.setImage(image, forState: .Normal)
+        let image = UIImage(named: "icon-cross", in: Bundle(for: classForCoder()), compatibleWith: nil)
+        button.setImage(image, for: UIControlState())
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addConstraint(NSLayoutConstraint(item: button, attribute: .Width, relatedBy: .GreaterThanOrEqual, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 40))
-        button.addConstraint(NSLayoutConstraint(item: button, attribute: .Height, relatedBy: .GreaterThanOrEqual, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 40))
+        button.addConstraint(NSLayoutConstraint(item: button, attribute: .width, relatedBy: .greaterThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 40))
+        button.addConstraint(NSLayoutConstraint(item: button, attribute: .height, relatedBy: .greaterThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 40))
         return button
     }()
     
     var rightButton: UIButton = {
         let button = UIButton()
-        let image = UIImage(named: "icon-share", inBundle: NSBundle(forClass: classForCoder()), compatibleWithTraitCollection: nil)
-        button.setImage(image, forState: .Normal)
+        let image = UIImage(named: "icon-share", in: Bundle(for: classForCoder()), compatibleWith: nil)
+        button.setImage(image, for: UIControlState())
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addConstraint(NSLayoutConstraint(item: button, attribute: .Width, relatedBy: .GreaterThanOrEqual, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 40))
-        button.addConstraint(NSLayoutConstraint(item: button, attribute: .Height, relatedBy: .GreaterThanOrEqual, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: 40))
+        button.addConstraint(NSLayoutConstraint(item: button, attribute: .width, relatedBy: .greaterThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 40))
+        button.addConstraint(NSLayoutConstraint(item: button, attribute: .height, relatedBy: .greaterThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 40))
         return button
     }()
     
-    var backgroundView = UIVisualEffectView(effect: UIBlurEffect(style: .Dark))
+    var backgroundView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -139,23 +140,23 @@ class PBNavigationBar: UIView {
     func setup() {
         addSubview(backgroundView)
         backgroundView.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height)
-        backgroundView.autoresizingMask = [.FlexibleHeight, .FlexibleWidth]
+        backgroundView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
         addSubview(contentView)
-        addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|-0-[contentView]-0-|", options: [], metrics: nil, views: ["contentView": contentView]))
-        addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|-statusBarHeight-[contentView]-0-|", options: [], metrics: ["statusBarHeight":statusBarHeight], views: ["contentView": contentView]))
+        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[contentView]-0-|", options: [], metrics: nil, views: ["contentView": contentView]))
+        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-statusBarHeight-[contentView]-0-|", options: [], metrics: ["statusBarHeight":statusBarHeight], views: ["contentView": contentView]))
     }
 }
 
-public class PBToolbar: UIToolbar {
+open class PBToolbar: UIToolbar {
     
-    var backgroundView = UIVisualEffectView(effect: UIBlurEffect(style: .Dark))
+    var backgroundView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setBackgroundImage(UIImage(), forToolbarPosition: .Any, barMetrics: .Default)
+        setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
         clipsToBounds = true
         addSubview(backgroundView)
-        backgroundView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
+        backgroundView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -167,7 +168,7 @@ class GradientView: UIView {
     
     var colors: [AnyObject]? {
         get {
-            return (layer as! CAGradientLayer).colors
+            return (layer as! CAGradientLayer).colors as [AnyObject]?
         }
         set {
             (layer as! CAGradientLayer).colors = newValue
@@ -192,7 +193,7 @@ class GradientView: UIView {
         }
     }
     
-    override class func layerClass() -> AnyClass {
+    override class var layerClass : AnyClass {
         return CAGradientLayer.self
     }
 }

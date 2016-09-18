@@ -12,7 +12,7 @@ import Kingfisher
 
 protocol PhotoPreviewControllerDelegate: class {
     var isFullScreenMode: Bool {get set}
-    func longPressOn(photo: Photo, gesture: UILongPressGestureRecognizer)
+    func longPressOn(_ photo: Photo, gesture: UILongPressGestureRecognizer)
     func didTapOnBackground()
 }
 
@@ -36,10 +36,10 @@ class PhotoPreviewController: UIViewController {
         self.photo = photo
         scrollView = UIScrollView()
         imageView = UIImageView()
-        imageView.contentMode = .ScaleAspectFill
+        imageView.contentMode = .scaleAspectFill
         extendedLayoutIncludesOpaqueBars = true
         automaticallyAdjustsScrollViewInsets = false
-        edgesForExtendedLayout = UIRectEdge.Top
+        edgesForExtendedLayout = UIRectEdge.top
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -50,15 +50,15 @@ class PhotoPreviewController: UIViewController {
         commonInit()
     }
     
-    override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransitionToSize(size, withTransitionCoordinator: coordinator)
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
         if scrollView.zoomScale != scrollView.minimumZoomScale {
             scrollView.zoomScale = scrollView.minimumZoomScale
         }
-        coordinator.animateAlongsideTransition({ (_) -> Void in
+        coordinator.animate(alongsideTransition: { (_) -> Void in
             self.updateZoom()
             if let waitingView = self.waitingView {
-                waitingView.center = CGPointMake(size.width / 2, size.height / 2)
+                waitingView.center = CGPoint(x: size.width / 2, y: size.height / 2)
             }
             }, completion: nil)
     }
@@ -68,12 +68,12 @@ class PhotoPreviewController: UIViewController {
         guard let photo = photo else {
             return
         }
-        view.backgroundColor = UIColor.clearColor()
+        view.backgroundColor = UIColor.clear
         
         scrollView.delegate = self
         scrollView.maximumZoomScale = 3.0
         scrollView.minimumZoomScale = 1.0
-        scrollView.scrollEnabled = false
+        scrollView.isScrollEnabled = false
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(scrollView)
         
@@ -81,7 +81,7 @@ class PhotoPreviewController: UIViewController {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         initializeConstraint()
-        imageView.userInteractionEnabled = true
+        imageView.isUserInteractionEnabled = true
         
         let doubleTap = UITapGestureRecognizer.init(target: self, action: #selector(handleDoubleTap(_:)))
         doubleTap.numberOfTapsRequired = 2
@@ -98,7 +98,7 @@ class PhotoPreviewController: UIViewController {
         backgroudSingleTap.numberOfTapsRequired = 1
         view.addGestureRecognizer(backgroudSingleTap)
         
-        singleTap.requireGestureRecognizerToFail(doubleTap)
+        singleTap.require(toFail: doubleTap)
         
         
         if let image = photo.localOriginalPhoto() {
@@ -114,13 +114,13 @@ class PhotoPreviewController: UIViewController {
             }
             
             if let photoUrl = photo.photoUrl {
-                waitingView = WaitingView.init(frame: CGRectMake(0, 0, 70, 70))
+                waitingView = WaitingView.init(frame: CGRect(x: 0, y: 0, width: 70, height: 70))
                 
                 if let newWaitingView = waitingView {
                     newWaitingView.center = view.center
                     view.addSubview(newWaitingView)
                 }
-                imageView.kf_setImageWithURL(photoUrl, placeholderImage: photo.localThumbnailPhoto(), optionsInfo: nil, progressBlock: { (receivedSize, totalSize) -> () in
+                imageView.kf_setImage(with: photoUrl, placeholder: photo.localThumbnailPhoto(), options: nil, progressBlock: { (receivedSize, totalSize) -> () in
                     let progress = CGFloat(receivedSize) / CGFloat(totalSize)
                     if let waitingView = self.waitingView {
                         waitingView.progress = progress
@@ -139,14 +139,14 @@ class PhotoPreviewController: UIViewController {
     
     func initializeConstraint() {
         //layout scrollView in view
-        view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|-0-[scrollView]-0-|", options: [], metrics: nil, views: ["scrollView":scrollView]))
-        view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|-0-[scrollView]-0-|", options: [], metrics: nil, views: ["scrollView":scrollView]))
+        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[scrollView]-0-|", options: [], metrics: nil, views: ["scrollView":scrollView]))
+        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[scrollView]-0-|", options: [], metrics: nil, views: ["scrollView":scrollView]))
         
         //layout imageView in scrollView
-        imageViewLeadingConstraint = NSLayoutConstraint(item: imageView, attribute: .Leading, relatedBy: .Equal, toItem: scrollView, attribute: .Leading, multiplier: 1.0, constant: 0)
-        imageViewTopConstraint = NSLayoutConstraint(item: imageView, attribute: .Top, relatedBy: .Equal, toItem: scrollView, attribute: .Top, multiplier: 1.0, constant: 0)
-        imageViewTrailingConstraint = NSLayoutConstraint(item: scrollView, attribute: .Trailing, relatedBy: .Equal, toItem: imageView, attribute: .Trailing, multiplier: 1.0, constant: 0)
-        imageViewBottomConstraint = NSLayoutConstraint(item: scrollView, attribute: .Bottom, relatedBy: .Equal, toItem: imageView, attribute: .Bottom, multiplier: 1.0, constant: 0)
+        imageViewLeadingConstraint = NSLayoutConstraint(item: imageView, attribute: .leading, relatedBy: .equal, toItem: scrollView, attribute: .leading, multiplier: 1.0, constant: 0)
+        imageViewTopConstraint = NSLayoutConstraint(item: imageView, attribute: .top, relatedBy: .equal, toItem: scrollView, attribute: .top, multiplier: 1.0, constant: 0)
+        imageViewTrailingConstraint = NSLayoutConstraint(item: scrollView, attribute: .trailing, relatedBy: .equal, toItem: imageView, attribute: .trailing, multiplier: 1.0, constant: 0)
+        imageViewBottomConstraint = NSLayoutConstraint(item: scrollView, attribute: .bottom, relatedBy: .equal, toItem: imageView, attribute: .bottom, multiplier: 1.0, constant: 0)
         if let lead = imageViewLeadingConstraint, let trail = imageViewTrailingConstraint, let top = imageViewTopConstraint, let bottom = imageViewBottomConstraint {
             scrollView.addConstraints([lead, trail, top, bottom])
         }
@@ -233,50 +233,50 @@ class PhotoPreviewController: UIViewController {
 
 extension PhotoPreviewController {
     
-    func handleDoubleTap(sender: UITapGestureRecognizer) {
+    func handleDoubleTap(_ sender: UITapGestureRecognizer) {
         if scrollView.zoomScale != scrollView.minimumZoomScale {
             scrollView.setZoomScale(scrollView.minimumZoomScale, animated: true)
         } else {
-            let touchPoint = sender.locationInView(imageView)
+            let touchPoint = sender.location(in: imageView)
             let newZoomScale = zoomScaleForDoubleTap()
             let xsize = scrollView.bounds.size.width / newZoomScale
             let ysize = scrollView.bounds.size.height / newZoomScale
-            scrollView.zoomToRect(CGRectMake(touchPoint.x - xsize/2, touchPoint.y - ysize/2, xsize, ysize), animated: true)
+            scrollView.zoom(to: CGRect(x: touchPoint.x - xsize/2, y: touchPoint.y - ysize/2, width: xsize, height: ysize), animated: true)
         }
     }
     
-    func handleSingleTap(sender: UITapGestureRecognizer) {
+    func handleSingleTap(_ sender: UITapGestureRecognizer) {
         guard let delegate = delegate else {
             return
         }
         delegate.isFullScreenMode = !delegate.isFullScreenMode
     }
     
-    func handleLongPress(sender: UILongPressGestureRecognizer) {
+    func handleLongPress(_ sender: UILongPressGestureRecognizer) {
         guard let delegate = delegate, let photo = photo else {
             return
         }
-        if sender.state == UIGestureRecognizerState.Began {
+        if sender.state == UIGestureRecognizerState.began {
             delegate.longPressOn(photo, gesture: sender)
         }
     }
 
-    func handleBackgroundSingleTap(sender: UITapGestureRecognizer) {
+    func handleBackgroundSingleTap(_ sender: UITapGestureRecognizer) {
         delegate?.didTapOnBackground()
     }
 }
 
 extension PhotoPreviewController:UIScrollViewDelegate  {
     
-    func viewForZoomingInScrollView(scrollView: UIScrollView) -> UIView? {
+    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return imageView
     }
     
-    func scrollViewDidZoom(scrollView: UIScrollView) {
+    func scrollViewDidZoom(_ scrollView: UIScrollView) {
         if scrollView.zoomScale - scrollView.minimumZoomScale < 0.01 {
-            scrollView.scrollEnabled = false
+            scrollView.isScrollEnabled = false
         } else {
-            scrollView.scrollEnabled = true
+            scrollView.isScrollEnabled = true
         }
         updateConstraint()
     }

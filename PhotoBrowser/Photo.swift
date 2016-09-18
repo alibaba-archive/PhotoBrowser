@@ -14,12 +14,12 @@ import Kingfisher
 public struct Photo {
     public var image: UIImage?
     public var thumbnailImage: UIImage?
-    public var photoUrl: NSURL?
-    public var thumbnailUrl: NSURL?
+    public var photoUrl: URL?
+    public var thumbnailUrl: URL?
     public var title: String?
     public var object: AnyObject?
     
-    public init(image: UIImage?, title: String? = nil, thumbnailImage: UIImage? = nil, photoUrl: NSURL? = nil, thumbnailUrl: NSURL? = nil, object: AnyObject? = nil) {
+    public init(image: UIImage?, title: String? = nil, thumbnailImage: UIImage? = nil, photoUrl: URL? = nil, thumbnailUrl: URL? = nil, object: AnyObject? = nil) {
         self.image = image
         self.title = title
         self.thumbnailImage = thumbnailImage
@@ -32,8 +32,8 @@ public struct Photo {
         if image != nil {
             return image
         } else if let photoUrl = photoUrl {
-            let image = KingfisherManager.sharedManager.cache.retrieveImageInMemoryCacheForKey(photoUrl.absoluteString)
-            return image ?? KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(photoUrl.absoluteString)
+            let image = KingfisherManager.shared.cache.retrieveImageInMemoryCache(forKey: photoUrl.absoluteString)
+            return image ?? KingfisherManager.shared.cache.retrieveImageInDiskCache(forKey: photoUrl.absoluteString)
         }
         return nil
     }
@@ -42,8 +42,8 @@ public struct Photo {
         if thumbnailImage != nil {
             return thumbnailImage
         } else if let thumbnailUrl = thumbnailUrl {
-            let image = KingfisherManager.sharedManager.cache.retrieveImageInMemoryCacheForKey(thumbnailUrl.absoluteString)
-            return image ?? KingfisherManager.sharedManager.cache.retrieveImageInDiskCacheForKey(thumbnailUrl.absoluteString)
+            let image = KingfisherManager.shared.cache.retrieveImageInMemoryCache(forKey: thumbnailUrl.absoluteString)
+            return image ?? KingfisherManager.shared.cache.retrieveImageInDiskCache(forKey: thumbnailUrl.absoluteString)
         }
         return nil
     }

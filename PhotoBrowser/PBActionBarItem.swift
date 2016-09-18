@@ -10,15 +10,15 @@ import Foundation
 
 public typealias BarActionClosure = (PhotoBrowser, PBActionBarItem) -> Void
 
-public class PBActionBarItem: NSObject {
-    public var barButtonItem: UIBarButtonItem!
-    public var action: BarActionClosure?
-    public weak var photoBrowser: PhotoBrowser?
+open class PBActionBarItem: NSObject {
+    open var barButtonItem: UIBarButtonItem!
+    open var action: BarActionClosure?
+    open weak var photoBrowser: PhotoBrowser?
 
     public init(title: String?, style: UIBarButtonItemStyle, action: BarActionClosure? = nil) {
         super.init()
         self.action = action
-        barButtonItem = UIBarButtonItem(title: title, style: .Plain, target: self, action: #selector(PBActionBarItem.triggerAction))
+        barButtonItem = UIBarButtonItem(title: title, style: .plain, target: self, action: #selector(PBActionBarItem.triggerAction))
     }
 
     public init(image: UIImage?, style: UIBarButtonItemStyle, action: BarActionClosure? = nil) {
@@ -34,7 +34,7 @@ public class PBActionBarItem: NSObject {
     }
 
     func triggerAction() {
-        guard let photoBrowser = photoBrowser, action = action else {
+        guard let photoBrowser = photoBrowser, let action = action else {
             return
         }
         action(photoBrowser, self)
@@ -42,16 +42,16 @@ public class PBActionBarItem: NSObject {
 }
 
 public extension PhotoBrowser {
-    func addActionBarItem(title title: String?, style: UIBarButtonItemStyle, action: BarActionClosure?) {
+    func addActionBarItem(title: String?, style: UIBarButtonItemStyle, action: BarActionClosure?) {
         let barItem = PBActionBarItem(title: title, style: style, action: action)
         barItem.photoBrowser = self
         actionItems.append(barItem)
     }
 
-    func insert(actionBarItem: PBActionBarItem, at index: Int) {
+    func insert(_ actionBarItem: PBActionBarItem, at index: Int) {
         let barItem = actionBarItem
         barItem.photoBrowser = self
-        actionItems.insert(barItem, atIndex: index)
+        actionItems.insert(barItem, at: index)
     }
 
     func removeAllToolbarItems() {
