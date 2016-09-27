@@ -120,7 +120,7 @@ class PhotoPreviewController: UIViewController {
                     newWaitingView.center = view.center
                     view.addSubview(newWaitingView)
                 }
-                imageView.kf_setImage(with: photoUrl, placeholder: photo.localThumbnailPhoto(), options: nil, progressBlock: { (receivedSize, totalSize) -> () in
+                imageView.kf.setImage(with: photoUrl, placeholder: photo.localThumbnailPhoto(), options: nil, progressBlock: { (receivedSize, totalSize) -> () in
                     let progress = CGFloat(receivedSize) / CGFloat(totalSize)
                     if let waitingView = self.waitingView {
                         waitingView.progress = progress
