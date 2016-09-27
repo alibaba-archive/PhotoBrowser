@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import Kingfisher
+import Photos
 
 let ToolbarHeight: CGFloat = 44
 let PadToolbarItemSpace: CGFloat = 72
@@ -57,6 +58,19 @@ open class PhotoBrowser: UIPageViewController {
             }
         }
     }
+
+    open var assets: [PHAsset]? {
+        didSet {
+            if  let assets = assets {
+                var p: [Photo] = []
+                for asset in assets {
+                    p.append(Photo(asset: asset))
+                }
+                self.photos = p
+            }
+        }
+    }
+
     open var toolbar: PBToolbar?
     open var backgroundColor = UIColor.black
     open weak var photoBrowserDelegate: PhotoBrowserDelegate?

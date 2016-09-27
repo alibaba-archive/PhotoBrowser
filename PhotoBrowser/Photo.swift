@@ -8,8 +8,8 @@
 
 import Foundation
 import UIKit
-import Photos
 import Kingfisher
+import Photos
 
 public struct Photo {
     public var image: UIImage?
@@ -18,6 +18,7 @@ public struct Photo {
     public var thumbnailUrl: URL?
     public var title: String?
     public var object: AnyObject?
+    public var asset: PHAsset?
     
     public init(image: UIImage?, title: String? = nil, thumbnailImage: UIImage? = nil, photoUrl: URL? = nil, thumbnailUrl: URL? = nil, object: AnyObject? = nil) {
         self.image = image
@@ -26,6 +27,10 @@ public struct Photo {
         self.photoUrl = photoUrl
         self.thumbnailUrl = thumbnailUrl
         self.object = object
+    }
+
+    public init(asset: PHAsset) {
+        self.asset = asset
     }
     
     public func localOriginalPhoto() -> UIImage? {

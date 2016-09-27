@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import Kingfisher
+import Photos
 
 protocol PhotoPreviewControllerDelegate: class {
     var isFullScreenMode: Bool {get set}
@@ -40,6 +41,16 @@ class PhotoPreviewController: UIViewController {
         extendedLayoutIncludesOpaqueBars = true
         automaticallyAdjustsScrollViewInsets = false
         edgesForExtendedLayout = UIRectEdge.top
+        if let asset = self.photo?.asset, self.photo?.image == nil {
+            let options = PHImageRequestOptions()
+            options.deliveryMode = .highQualityFormat
+            options.isSynchronous = true
+            PHImageManager.default().requestImageData(for: asset, options: options, resultHandler: { [weak self](data, _, _, _) in
+                if let imageData = data {
+                    self?.photo?.image = UIImage(data: imageData)
+                }
+            })
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
