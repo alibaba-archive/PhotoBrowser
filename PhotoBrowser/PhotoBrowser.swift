@@ -287,7 +287,7 @@ extension PhotoBrowser {
 }
 
 extension PhotoBrowser: UIPageViewControllerDataSource, UIPageViewControllerDelegate {
-    public func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
+    open func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         guard let viewController = viewController as? PhotoPreviewController else {
             return nil
         }
@@ -303,7 +303,7 @@ extension PhotoBrowser: UIPageViewControllerDataSource, UIPageViewControllerDele
         return preViewController
     }
     
-    public func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
+    open func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
         guard let viewController = viewController as? PhotoPreviewController else {
             return nil
         }
@@ -323,7 +323,7 @@ extension PhotoBrowser: UIPageViewControllerDataSource, UIPageViewControllerDele
         return nextViewController
     }
 
-    public func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+    open func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
         if completed {
             guard let currentViewController = pageViewController.viewControllers?.last as? PhotoPreviewController else {
                 return
