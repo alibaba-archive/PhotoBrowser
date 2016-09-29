@@ -84,7 +84,7 @@ open class PhotoBrowser: UIPageViewController {
     open var currentPhoto: Photo? {
         return photos?[currentIndex]
     }
-    open lazy var progressView: UIProgressView = {
+    fileprivate lazy var progressView: UIProgressView = {
         let progressView = UIProgressView(progressViewStyle: .default)
         progressView.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: 2)
         progressView.autoresizingMask = [.flexibleWidth, .flexibleBottomMargin]
