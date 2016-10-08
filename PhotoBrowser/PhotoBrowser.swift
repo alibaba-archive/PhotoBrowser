@@ -286,7 +286,7 @@ extension PhotoBrowser {
         }
     }
 
-    func defaultShareAction() {
+    public func defaultShareAction() {
         if let image = currentImageView()?.image, let button = headerView?.rightButton {
             let activityController = UIActivityViewController(activityItems: [image], applicationActivities: nil)
             if UIDevice.current.userInterfaceIdiom == .pad {
