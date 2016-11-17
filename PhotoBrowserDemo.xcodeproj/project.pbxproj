@@ -13,8 +13,7 @@
 		4A52D2131C72D13B001C257B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4A52D2121C72D13B001C257B /* Assets.xcassets */; };
 		4A52D2161C72D13B001C257B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4A52D2141C72D13B001C257B /* LaunchScreen.storyboard */; };
 		4A8EB7231CEF068D0065EAB0 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A6BC7BB1C770DE100DACDA5 /* Kingfisher.framework */; };
-		4AE1715D1D65576500F3A54B /* PhotoBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AE1715C1D65576500F3A54B /* PhotoBrowser.framework */; };
-		4AE1715E1D65576500F3A54B /* PhotoBrowser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4AE1715C1D65576500F3A54B /* PhotoBrowser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A1637F271DDD564C00A17551 /* PhotoBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1637F261DDD564C00A17551 /* PhotoBrowser.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,7 +23,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				4AE1715E1D65576500F3A54B /* PhotoBrowser.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -40,7 +38,7 @@
 		4A52D2151C72D13B001C257B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4A52D2171C72D13B001C257B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4A6BC7BB1C770DE100DACDA5 /* Kingfisher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kingfisher.framework; path = Carthage/Build/iOS/Kingfisher.framework; sourceTree = "<group>"; };
-		4AE1715C1D65576500F3A54B /* PhotoBrowser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = PhotoBrowser.framework; path = "/Users/wangwei/Library/Developer/Xcode/DerivedData/PhotoBrowser-dipxyiugwgioqkardxkfssgenegl/Build/Products/Debug-iphonesimulator/PhotoBrowser.framework"; sourceTree = "<absolute>"; };
+		A1637F261DDD564C00A17551 /* PhotoBrowser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PhotoBrowser.framework; path = Carthage/Build/iOS/PhotoBrowser.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,7 +46,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4AE1715D1D65576500F3A54B /* PhotoBrowser.framework in Frameworks */,
+				A1637F271DDD564C00A17551 /* PhotoBrowser.framework in Frameworks */,
 				4A8EB7231CEF068D0065EAB0 /* Kingfisher.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -59,7 +57,7 @@
 		4A52D1FF1C72D13B001C257B = {
 			isa = PBXGroup;
 			children = (
-				4AE1715C1D65576500F3A54B /* PhotoBrowser.framework */,
+				A1637F261DDD564C00A17551 /* PhotoBrowser.framework */,
 				4A6BC7BB1C770DE100DACDA5 /* Kingfisher.framework */,
 				4A52D20A1C72D13B001C257B /* PhotoBrowserDemo */,
 				4A52D2091C72D13B001C257B /* Products */,
