@@ -65,10 +65,12 @@ extension ViewController {
         
         photoBrowser = PhotoBrowser()
         if let browser = photoBrowser {
+            browser.isFromPhotoPicker = true
+            browser.selectedIndex = [0, 1]
             browser.photos = [photo, photo2, photo3]
             browser.actionItems = [item1, item2, item3]
             browser.photoBrowserDelegate = self
-            browser.currentIndex = 1
+            browser.currentIndex = 0
             presentPhotoBrowser(browser, fromView: imageView)
         }
     }
@@ -111,5 +113,17 @@ extension ViewController: PhotoBrowserDelegate {
 
     func photoBrowser(_ browser: PhotoBrowser, willSharePhoto photo: Photo) {
         print("Custom share action here")
+    }
+
+    func photoBrowser(_ browser: PhotoBrowser, canSelectPhotoAtIndex index: Int) -> Bool {
+        print("canSelectPhotoAtIndex \(index)")
+        if index == 2 {
+            return false
+        }
+        return true
+    }
+
+    func photoBrowser(_ browser: PhotoBrowser, didSelectPhotoAtIndex index: Int) {
+        print("didSelectPhotoAtIndex \(index)")
     }
 }
