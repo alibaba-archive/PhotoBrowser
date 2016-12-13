@@ -63,6 +63,17 @@ class WaitingView: UIView {
 }
 
 class PBNavigationBar: UIView {
+
+    var isFromPhotoPicker: Bool = false
+    var imageSelected: Bool = false {
+        didSet {
+            if isFromPhotoPicker {
+                let imageName = imageSelected ? "checkmark_selected" : "checkmark_unselected"
+                let image = UIImage(named: imageName, in: Bundle(for: classForCoder), compatibleWith: nil)
+                rightButton.setImage(image, for: .normal)
+            }
+        }
+    }
     
     lazy var contentView: UIView = {
         let view = UIView()
@@ -96,8 +107,8 @@ class PBNavigationBar: UIView {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
-    var indexLabel: UILabel = {
+
+    lazy var indexLabel: UILabel = {
         let label = UILabel()
         label.text = "Index"
         label.textColor = UIColor.white
@@ -105,8 +116,8 @@ class PBNavigationBar: UIView {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
-    var leftButton: UIButton = {
+
+    lazy var leftButton: UIButton = {
         let button = UIButton()
         let image = UIImage(named: "icon-cross", in: Bundle(for: classForCoder()), compatibleWith: nil)
         button.setImage(image, for: UIControlState())
@@ -115,17 +126,21 @@ class PBNavigationBar: UIView {
         button.addConstraint(NSLayoutConstraint(item: button, attribute: .height, relatedBy: .greaterThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 40))
         return button
     }()
-    
-    var rightButton: UIButton = {
+
+    lazy var rightButton: UIButton = {
         let button = UIButton()
-        let image = UIImage(named: "icon-share", in: Bundle(for: classForCoder()), compatibleWith: nil)
-        button.setImage(image, for: UIControlState())
+        var image = UIImage(named: "icon-share", in: Bundle(for: classForCoder()), compatibleWith: nil)
+        if self.isFromPhotoPicker {
+            let imageName = self.imageSelected ? "checkmark_selected" : "checkmark_unselected"
+            image = UIImage(named: imageName, in: Bundle(for: classForCoder()), compatibleWith: nil)
+        }
+        button.setImage(image, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addConstraint(NSLayoutConstraint(item: button, attribute: .width, relatedBy: .greaterThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 40))
         button.addConstraint(NSLayoutConstraint(item: button, attribute: .height, relatedBy: .greaterThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 40))
         return button
     }()
-    
+
     var backgroundView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
     
     override init(frame: CGRect) {

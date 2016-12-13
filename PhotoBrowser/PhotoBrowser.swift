@@ -19,6 +19,8 @@ public protocol PhotoBrowserDelegate: class {
     func longPressOnImage(_ gesture: UILongPressGestureRecognizer)
     func photoBrowser(_ browser: PhotoBrowser, didShowPhotoAtIndex index: Int)
     func photoBrowser(_ browser: PhotoBrowser, willSharePhoto photo: Photo)
+    func photoBrowser(_ browser: PhotoBrowser, canSelectPhotoAtIndex index: Int) -> Bool
+    func photoBrowser(_ browser: PhotoBrowser, didSelectPhotoAtIndex index: Int)
 }
 
 public extension PhotoBrowserDelegate {
@@ -26,11 +28,15 @@ public extension PhotoBrowserDelegate {
         photoBrowser.dismiss(animated: false, completion: nil)
     }
     func longPressOnImage(_ gesture: UILongPressGestureRecognizer) {}
-    func photoBrowser(_ browser: PhotoBrowser, willShowPhotoAtIndex: Int) {}
-    func photoBrowser(_ browser: PhotoBrowser, didShowPhotoAtIndex: Int) {}
+    func photoBrowser(_ browser: PhotoBrowser, willShowPhotoAtIndex index: Int) {}
+    func photoBrowser(_ browser: PhotoBrowser, didShowPhotoAtIndex index: Int) {}
     func photoBrowser(_ browser: PhotoBrowser, willSharePhoto photo: Photo) {
         browser.defaultShareAction()
     }
+    func photoBrowser(_ browser: PhotoBrowser, canSelectPhotoAtIndex index: Int) -> Bool {
+        return true
+    }
+    func photoBrowser(_ browser: PhotoBrowser, didSelectPhotoAtIndex index: Int) {}
 }
 
 open class PhotoBrowser: UIPageViewController {
@@ -102,7 +108,10 @@ open class PhotoBrowser: UIPageViewController {
             updateToolbar()
         }
     }
-    
+
+    open var isFromPhotoPicker: Bool = false
+    open var selectedIndex: [Int] = []
+
     public override init(transitionStyle style: UIPageViewControllerTransitionStyle, navigationOrientation: UIPageViewControllerNavigationOrientation, options: [String : Any]?) {
         super.init(transitionStyle: style, navigationOrientation: navigationOrientation, options: options)
     }
@@ -197,6 +206,7 @@ extension PhotoBrowser {
         if headerView == nil {
             headerView = PBNavigationBar()
             if let headerView = headerView {
+                headerView.isFromPhotoPicker = isFromPhotoPicker
                 headerView.alpha = 0
                 view.addSubview(headerView)
                 headerView.translatesAutoresizingMaskIntoConstraints = false
@@ -206,11 +216,13 @@ extension PhotoBrowser {
                 
                 headerView.leftButton.addTarget(self, action: #selector(leftButtonTap(_:)), for: .touchUpInside)
                 headerView.rightButton.addTarget(self, action: #selector(rightButtonTap(_:)), for: .touchUpInside)
+                headerView.imageSelected = selectedIndex.contains(currentIndex)
             }
         }
         if let headerView = headerView {
             headerView.titleLabel.text = photos[currentIndex].title
             headerView.indexLabel.text = "\(currentIndex + 1)/\(photos.count)"
+            headerView.imageSelected = selectedIndex.contains(currentIndex)
         }
     }
     
@@ -279,8 +291,25 @@ extension PhotoBrowser {
         guard let photo = currentPhoto else {
             return
         }
-        if let delegate = photoBrowserDelegate{
-            delegate.photoBrowser(self, willSharePhoto: photo)
+        if let delegate = photoBrowserDelegate {
+            if isFromPhotoPicker {
+                if delegate.photoBrowser(self, canSelectPhotoAtIndex: currentIndex) {
+                    delegate.photoBrowser(self, didSelectPhotoAtIndex: currentIndex)
+                    if let i = selectedIndex.index(of: currentIndex) {
+                        selectedIndex.remove(at: i)
+                        if let headerView = headerView {
+                            headerView.imageSelected = false
+                        }
+                    } else {
+                        selectedIndex.append(currentIndex)
+                        if let headerView = headerView {
+                            headerView.imageSelected = true
+                        }
+                    }
+                }
+            } else {
+                delegate.photoBrowser(self, willSharePhoto: photo)
+            }
         } else {
             defaultShareAction()
         }
