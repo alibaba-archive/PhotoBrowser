@@ -37,8 +37,8 @@ public struct Photo {
         if image != nil {
             return image
         } else if let photoUrl = photoUrl {
-            let image = KingfisherManager.shared.cache.retrieveImageInMemoryCache(forKey: photoUrl.absoluteString)
-            return image ?? KingfisherManager.shared.cache.retrieveImageInDiskCache(forKey: photoUrl.absoluteString)
+            let image = KingfisherManager.shared.cache.retrieveImageInMemoryCache(forKey: photoUrl.kfCacheKey)
+            return image ?? KingfisherManager.shared.cache.retrieveImageInDiskCache(forKey: photoUrl.kfCacheKey)
         }
         return nil
     }
@@ -63,5 +63,15 @@ public struct Photo {
         }
         return nil
         
+    }
+}
+
+extension URL {
+    var kfCacheKey: String {
+        var photoCacheKey = absoluteString
+        if let query = query {
+            photoCacheKey = absoluteString.replacingOccurrences(of: query, with: "")
+        }
+        return photoCacheKey
     }
 }

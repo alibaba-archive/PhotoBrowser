@@ -41,7 +41,7 @@ class ViewController: UIViewController {
 extension ViewController {
     func displayPhotoBrowser() {
         let thumbnail1 = UIImage.init(named: "thumbnail1")
-        let photoUrl1 = URL.init(string: "https://pic4.zhimg.com/453d7ebcdb0c4494e60fa07d09a83a83_r.jpeg")
+        let photoUrl1 = URL.init(string: "https://www.teambition.com/api/works/575d0bbf93e0f8860d73d88e/download/IMG_0005.JPG.jpeg?signature=eyJhbGciOiJIUzI1NiJ9.eyJfd29ya0lkIjoiNTc1ZDBiYmY5M2UwZjg4NjBkNzNkODhlIiwiZmlsZUtleSI6IjExMGg2MzRhOTg3MDQ5MDJmNDY1MmJhZTYzYjI1MTQyZTUyMSIsIl91c2VySWQiOiI1MmE2Y2MyZGVmNjZiYzk4MGMwMDAzMTIiLCJleHAiOjE0ODIwNjA0ODgsInN0b3JhZ2UiOiJzdHJpa2VyLWh6In0.czjEgDdAKqqOm8fK8lDOiE7wA_5H48bh6phlomGQqWo")
         let thumbnail2 = UIImage.init(named: "thumbnail2")
         let photoUrl2 = URL.init(string: "https://pic1.zhimg.com/0f70807392a9f62528b00ec434f5519c_b.png")
         let thumbnail3 = UIImage.init(named: "thumbnail3")
