@@ -1,36 +1,40 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="kqD-hL-Vd7">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16C67" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="kqD-hL-Vd7">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--PhotoBrowser-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="PhotoBrowserDemo" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="PhotoBrowser" id="BYZ-38-t0r" customClass="ViewController" customModule="PhotoBrowserDemo" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="thumbnail2" translatesAutoresizingMaskIntoConstraints="NO" id="s3W-RR-y1R">
-                                <rect key="frame" x="20" y="72" width="120" height="120"/>
+                                <rect key="frame" x="16" y="72" width="120" height="120"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="120" id="NBh-nb-3qB"/>
                                     <constraint firstAttribute="height" constant="120" id="v5L-C6-bEt"/>
                                 </constraints>
                             </imageView>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="s3W-RR-y1R" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="8f9-cY-d3t"/>
-                            <constraint firstItem="s3W-RR-y1R" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" id="ZEV-LN-crt"/>
                             <constraint firstItem="s3W-RR-y1R" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="dJi-M5-yLj"/>
+                            <constraint firstItem="s3W-RR-y1R" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" id="m7w-Bd-YIw"/>
                             <constraint firstItem="s3W-RR-y1R" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="xy9-Ds-ahF"/>
                         </constraints>
                         <variation key="default">
@@ -43,18 +47,49 @@
                     <navigationItem key="navigationItem" title="PhotoBrowser" id="lbC-Qz-mLi"/>
                     <connections>
                         <outlet property="imageView" destination="s3W-RR-y1R" id="YwW-Vv-2AE"/>
+                        <segue destination="AdW-L0-9Ke" kind="show" id="oyt-d5-YRk"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1322" y="313"/>
         </scene>
+        <!--Detail-->
+        <scene sceneID="V5s-IV-KhC">
+            <objects>
+                <viewController storyboardIdentifier="DetailViewController" title="Detail" id="AdW-L0-9Ke" customClass="DetailViewController" customModule="PhotoBrowserDemo" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="fVU-wB-nGA"/>
+                        <viewControllerLayoutGuide type="bottom" id="vtF-70-lbx"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="EOu-BS-Kdc">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Detail" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Y9Z-XM-Oro">
+                                <rect key="frame" x="165" y="323" width="44" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="Y9Z-XM-Oro" firstAttribute="centerX" secondItem="EOu-BS-Kdc" secondAttribute="centerX" id="YiR-fd-h0l"/>
+                            <constraint firstItem="Y9Z-XM-Oro" firstAttribute="centerY" secondItem="EOu-BS-Kdc" secondAttribute="centerY" id="dug-0f-VWp"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="QB6-1G-3pB" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2095" y="313"/>
+        </scene>
         <!--Navigation Controller-->
         <scene sceneID="WXc-1c-rqV">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="kqD-hL-Vd7" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="xVk-61-M13">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="xVk-61-M13">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>

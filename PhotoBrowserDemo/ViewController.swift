@@ -33,7 +33,7 @@ class ViewController: UIViewController {
         if error == nil {
             print("save success")
         } else {
-            print(error)
+            print("error: \(error)")
         }
     }
 }
@@ -58,6 +58,8 @@ extension ViewController {
         let item2 = PBActionBarItem(title: "TWO", style: .plain) { (photoBrowser, item) in
             photoBrowser.enableShare = !photoBrowser.enableShare
             print("item2")
+            let vc = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "DetailViewController")
+            self.photoBrowser?.navigationController?.pushViewController(vc, animated: true)
         }
         let item3 = PBActionBarItem(title: "THREE", style: .plain) { (photoBrowser, item) in
             print("item3")
