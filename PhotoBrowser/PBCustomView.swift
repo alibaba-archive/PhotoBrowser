@@ -34,7 +34,7 @@ class WaitingView: UIView {
         backgroundColor = UIColor.black.withAlphaComponent(0.6)
         clipsToBounds = true
         
-        let image = UIImage.init(named: "icon-logo-white", in: Bundle.init(for: classForCoder), compatibleWith: nil)
+        let image = cacheCustomLogoImage()
         
         logoView = UIImageView.init(image: image)
         logoView.center = center
@@ -60,6 +60,16 @@ class WaitingView: UIView {
         currentContext?.strokePath()
     }
     
+    fileprivate func cacheCustomLogoImage() -> UIImage? {
+        let cachesURL = FileManager.default.urls(for: FileManager.SearchPathDirectory.cachesDirectory, in: FileManager.SearchPathDomainMask.userDomainMask)[0]
+        let fileURL = cachesURL.appendingPathComponent(customLogoURL)
+        if let data = try? Data(contentsOf: fileURL) {
+            return UIImage(data: data)
+        } else {
+            return UIImage.init(named: "icon-logo-white", in: Bundle.init(for: classForCoder), compatibleWith: nil)
+        }
+    }
+    
 }
 
 class PBNavigationBar: UIView {
@@ -68,8 +78,8 @@ class PBNavigationBar: UIView {
     var imageSelected: Bool = false {
         didSet {
             if isFromPhotoPicker {
-                let imageName = imageSelected ? "checkmark_selected" : "checkmark_unselected"
-                let image = UIImage(named: imageName, in: Bundle(for: classForCoder), compatibleWith: nil)
+                let unselectedImage = UIImage(named: "checkmark_unselected", in: Bundle(for: classForCoder), compatibleWith: nil)
+                let image = self.imageSelected ? self.cacheCustomCheckSelectedImage() : unselectedImage
                 rightButton.setImage(image, for: .normal)
             }
         }
@@ -156,8 +166,8 @@ class PBNavigationBar: UIView {
         let button = UIButton()
         var image = UIImage(named: "icon-share", in: Bundle(for: classForCoder()), compatibleWith: nil)
         if self.isFromPhotoPicker {
-            let imageName = self.imageSelected ? "checkmark_selected" : "checkmark_unselected"
-            image = UIImage(named: imageName, in: Bundle(for: classForCoder()), compatibleWith: nil)
+            let unselectedImage = UIImage(named: "checkmark_unselected", in: Bundle(for: classForCoder()), compatibleWith: nil)
+            image = self.imageSelected ? self.cacheCustomCheckSelectedImage() : unselectedImage
         }
         button.setImage(image, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -203,6 +213,16 @@ class PBNavigationBar: UIView {
         addSubview(contentView)
         addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[contentView]-0-|", options: [], metrics: nil, views: ["contentView": contentView]))
         addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-statusBarHeight-[contentView]-0-|", options: [], metrics: ["statusBarHeight":statusBarHeight], views: ["contentView": contentView]))
+    }
+
+    fileprivate func cacheCustomCheckSelectedImage() -> UIImage? {
+        let cachesURL = FileManager.default.urls(for: FileManager.SearchPathDirectory.cachesDirectory, in: FileManager.SearchPathDomainMask.userDomainMask)[0]
+        let fileURL = cachesURL.appendingPathComponent(customCheckSelectedURL)
+        if let data = try? Data(contentsOf: fileURL) {
+            return UIImage(data: data)
+        } else {
+            return UIImage(named: "checkmark_selected", in: Bundle(for: classForCoder), compatibleWith: nil)
+        }
     }
 }
 

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import PhotoBrowser
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
