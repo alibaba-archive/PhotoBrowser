@@ -11,8 +11,6 @@ import UIKit
 import Kingfisher
 import Photos
 
-let customLogoURL = "customLoadingLogo.pdf"
-let customCheckSelectedURL = "customCheckSelected.pdf"
 let ToolbarHeight: CGFloat = 44
 let PadToolbarItemSpace: CGFloat = 72
 
@@ -476,20 +474,12 @@ extension PhotoBrowser {
 
 extension PhotoBrowser {
     open static func customImageSetting(_ loadingLogoImage: UIImage? = nil, checkSelectedImage: UIImage? = nil) {
-        guard let logoImage = loadingLogoImage else {
-            return
+        if let logoImage = loadingLogoImage {
+            CustomPhotoBroswerManager.shared.customLogoLoading = logoImage
         }
-        let cachesURL = FileManager.default.urls(for: FileManager.SearchPathDirectory.cachesDirectory, in: FileManager.SearchPathDomainMask.userDomainMask)[0]
-        let logoFileURL = cachesURL.appendingPathComponent(customLogoURL)
-        if let logoImageData = UIImagePNGRepresentation(logoImage) {
-            try? logoImageData.write(to: logoFileURL, options: [])
-        }
-        guard let checkMarkImage = checkSelectedImage else {
-            return
-        }
-        let checkFileURL = cachesURL.appendingPathComponent(customCheckSelectedURL)
-        if let checkSelectedData = UIImagePNGRepresentation(checkMarkImage) {
-            try? checkSelectedData.write(to: checkFileURL, options: [])
+
+        if let checkSelected = checkSelectedImage {
+            CustomPhotoBroswerManager.shared.customCheckSelected = checkSelected
         }
     }
 }
