@@ -21,6 +21,8 @@ public protocol PhotoBrowserDelegate: class {
     func photoBrowser(_ browser: PhotoBrowser, willSharePhoto photo: Photo)
     func photoBrowser(_ browser: PhotoBrowser, canSelectPhotoAtIndex index: Int) -> Bool
     func photoBrowser(_ browser: PhotoBrowser, didSelectPhotoAtIndex index: Int)
+    func photoBrowser(_ browser: PhotoBrowser, didTapSkitch skitch: Skitch, versionID: String)
+    func photoBrowser(_ browser: PhotoBrowser, didHideSkitchButton isHidden: Bool)
 }
 
 public extension PhotoBrowserDelegate {
@@ -28,7 +30,6 @@ public extension PhotoBrowserDelegate {
         photoBrowser.dismiss(animated: false, completion: nil)
     }
     func longPressOnImage(_ gesture: UILongPressGestureRecognizer) {}
-    func photoBrowser(_ browser: PhotoBrowser, willShowPhotoAtIndex index: Int) {}
     func photoBrowser(_ browser: PhotoBrowser, didShowPhotoAtIndex index: Int) {}
     func photoBrowser(_ browser: PhotoBrowser, willSharePhoto photo: Photo) {
         browser.defaultShareAction()
@@ -37,6 +38,8 @@ public extension PhotoBrowserDelegate {
         return true
     }
     func photoBrowser(_ browser: PhotoBrowser, didSelectPhotoAtIndex index: Int) {}
+    func photoBrowser(_ browser: PhotoBrowser, didTapSkitch skitch: Skitch, versionID: String) {}
+    func photoBrowser(_ browser: PhotoBrowser, didHideSkitchButton isHidden: Bool) {}
 }
 
 open class PhotoBrowser: UIPageViewController {
@@ -56,7 +59,7 @@ open class PhotoBrowser: UIPageViewController {
                     leftButtonTap(nil)
                 } else {
                     currentIndex = min(currentIndex, photos.count - 1)
-                    let initPage = PhotoPreviewController(photo: photos[currentIndex], index: currentIndex)
+                    let initPage = PhotoPreviewController(photo: photos[currentIndex], index: currentIndex, skitches: skitchesDictionary[currentIndex], isSkitchButtonHidden: isSkitchButtonHidden)
                     initPage.delegate = self
                     setViewControllers([initPage], direction: UIPageViewControllerNavigationDirection.forward, animated: false, completion: nil)
                     updateNavigationBarTitle()
@@ -64,6 +67,11 @@ open class PhotoBrowser: UIPageViewController {
             }
         }
     }
+
+    fileprivate var isSkitchButtonHidden: Bool = true
+    fileprivate var isSkitchesSetted: Bool = false
+
+    open var skitchesDictionary: [Int: [[String: Any]]] = [:]
 
     open var assets: [PHAsset]? {
         didSet {
@@ -158,6 +166,20 @@ open class PhotoBrowser: UIPageViewController {
     open override var preferredStatusBarStyle : UIStatusBarStyle {
         return .lightContent
     }
+
+    open func updatePhotoSkitch(at index: Int, skitches: [[String: Any]], versionID: String) {
+        if let previewController = viewControllers?[0] as? PhotoPreviewController, index == currentIndex {
+            if skitchesDictionary[index] == nil || skitchesDictionary[index]?.count == 0 { // first skitches set
+                if isSkitchButtonHidden && !isSkitchesSetted{
+                    isSkitchButtonHidden = false
+                    isSkitchesSetted = true
+                }
+            }
+            skitchesDictionary[index] = skitches
+            previewController.updateSkiches(skitches, versionID: versionID, isHidden: isSkitchButtonHidden)
+            updateNavigationBarTitle()
+        }
+    }
 }
 
 // Mark: -Progress bar update
@@ -180,7 +202,8 @@ public extension PhotoBrowser {
     func setCurrentIndex(to index: Int) {
         if let photos = photos {
             currentIndex = index
-            let initPage = PhotoPreviewController(photo: photos[index], index: index)
+            let initPage = PhotoPreviewController(photo: photos[index], index: index, skitches: skitchesDictionary[currentIndex])
+
             initPage.delegate = self
             setViewControllers([initPage], direction: UIPageViewControllerNavigationDirection.forward, animated: false, completion: nil)
             updateNavigationBarTitle()
@@ -202,7 +225,7 @@ extension PhotoBrowser {
         guard let photos = photos else {
             return
         }
-        
+
         if headerView == nil {
             headerView = PBNavigationBar()
             if let headerView = headerView {
@@ -216,6 +239,7 @@ extension PhotoBrowser {
                 
                 headerView.leftButton.addTarget(self, action: #selector(leftButtonTap(_:)), for: .touchUpInside)
                 headerView.rightButton.addTarget(self, action: #selector(rightButtonTap(_:)), for: .touchUpInside)
+                headerView.showSkitchButton.addTarget(self, action: #selector(showSkitchButtonTap(_:)), for: .touchUpInside)
                 headerView.imageSelected = selectedIndex.contains(currentIndex)
             }
         }
@@ -223,6 +247,11 @@ extension PhotoBrowser {
             headerView.titleLabel.text = photos[currentIndex].title
             headerView.indexLabel.text = "\(currentIndex + 1)/\(photos.count)"
             headerView.imageSelected = selectedIndex.contains(currentIndex)
+        }
+        if let skitches = skitchesDictionary[currentIndex], skitches.count > 0 {
+            headerView?.updateShowSkitchButtonStatus(false, isHiddenSkitch: isSkitchButtonHidden)
+        } else {
+            headerView?.updateShowSkitchButtonStatus(true, isHiddenSkitch: isSkitchButtonHidden)
         }
     }
     
@@ -287,6 +316,19 @@ extension PhotoBrowser {
         }
     }
 
+    func showSkitchButtonTap(_ sender: Any) {
+        if isSkitchButtonHidden {
+            isSkitchButtonHidden = false
+        } else {
+            isSkitchButtonHidden = true
+        }
+        headerView?.updateSkitchButton(isSkitchButtonHidden)
+        if let previewController = viewControllers?[0] as? PhotoPreviewController {
+            previewController.updateSkitchButtonStatus(isSkitchButtonHidden)
+        }
+        photoBrowserDelegate?.photoBrowser(self, didHideSkitchButton: isSkitchButtonHidden)
+    }
+
     func rightButtonTap(_ sender: AnyObject) {
         guard let photo = currentPhoto else {
             return
@@ -341,8 +383,9 @@ extension PhotoBrowser: UIPageViewControllerDataSource, UIPageViewControllerDele
             return nil
         }
         let prePhoto = photos[index - 1]
-        let preViewController = PhotoPreviewController(photo: prePhoto, index: index - 1)
+        let preViewController = PhotoPreviewController(photo: prePhoto, index: index - 1, skitches: skitchesDictionary[index - 1])
         preViewController.delegate = self
+
         return preViewController
     }
     
@@ -360,7 +403,7 @@ extension PhotoBrowser: UIPageViewControllerDataSource, UIPageViewControllerDele
             return nil
         }
         let nextPhoto = photos[index + 1]
-        let nextViewController = PhotoPreviewController(photo: nextPhoto, index: index + 1)
+        let nextViewController = PhotoPreviewController(photo: nextPhoto, index: index + 1, skitches: skitchesDictionary[index + 1])
         nextViewController.delegate = self
         
         return nextViewController
@@ -373,8 +416,8 @@ extension PhotoBrowser: UIPageViewControllerDataSource, UIPageViewControllerDele
             }
             if let index = currentViewController.index {
                 currentIndex = index
-                photoBrowserDelegate?.photoBrowser(self, didShowPhotoAtIndex: index)
                 updateNavigationBarTitle()
+                photoBrowserDelegate?.photoBrowser(self, didShowPhotoAtIndex: index)
             }
         }
     }
@@ -408,6 +451,15 @@ extension PhotoBrowser: PhotoPreviewControllerDelegate {
         } else {
             dismissPhotoBrowser()
         }
+    }
+
+    func didTapSkitch(_ skitch: Skitch, versionID: String) {
+        print("photo index: \(currentIndex), skitch index: \(index)")
+        photoBrowserDelegate?.photoBrowser(self, didTapSkitch: skitch, versionID: versionID)
+    }
+    
+    func didShowPhotoAtIndex(_ index: Int) {
+        photoBrowserDelegate?.photoBrowser(self, didShowPhotoAtIndex: index)
     }
 }
 

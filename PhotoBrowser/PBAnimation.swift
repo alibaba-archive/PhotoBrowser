@@ -14,13 +14,19 @@ var AssociatedObjectHandle: UInt8 = 0
 
 extension UIViewController {
 
-    public func presentPhotoBrowser(_ viewControllerToPresent: UIViewController, fromView: UIView) {
+    public func presentPhotoBrowser(_ viewControllerToPresent: UIViewController, fromView: UIView, animated: Bool? = true, completion: (() -> Void)? = nil) {
         let transitionDelegate = TransitionDelegate(fromView: fromView)
         let navigationController = UINavigationController(rootViewController: viewControllerToPresent)
         navigationController.modalPresentationStyle = .fullScreen
         navigationController.pb_transitionDelegate = transitionDelegate
         navigationController.transitioningDelegate = transitionDelegate
-        present(navigationController, animated: true, completion: nil)
+        if let animated = animated {
+            present(navigationController, animated: animated, completion: {
+                completion?()
+            })
+        } else {
+            present(navigationController, animated: true, completion: nil)
+        }
     }
     
     public func dismissPhotoBrowser(toView: UIView? = nil) {
