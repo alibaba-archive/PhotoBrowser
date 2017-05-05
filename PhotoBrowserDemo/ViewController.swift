@@ -33,7 +33,7 @@ class ViewController: UIViewController {
         if error == nil {
             print("save success")
         } else {
-            print("error: \(error)")
+            print("error: \(String(describing: error))")
         }
     }
 }
@@ -79,9 +79,30 @@ extension ViewController {
 }
 
 extension ViewController: PhotoBrowserDelegate {
+    func photoBrowser(_ browser: PhotoBrowser, didTapSkitch skitch: Skitch, versionID: String) {
+//        print("didTapSkichAtIndex tapped: \(skitch.number)")
+    }
+
+    func photoBrowser(_ browser: PhotoBrowser, willShowPhotoAtIndex index: Int) {
+//        print("will show photo at index: \(index)")
+    }
+    
+    func photoBrowser(_ browser: PhotoBrowser, didHideSkitchButton isHidden: Bool) {
+//        if isHidden {
+//            print("hidden")
+//        } else {
+//            print("visible")
+//        }
+    }
 
     func photoBrowser(_ browser: PhotoBrowser, didShowPhotoAtIndex index: Int) {
-        print("photo browser did show at index: \(index)")
+//        print("photo browser did show at index: \(index)")
+//        let points1 = ["x": 200.0, "y": 112.0]
+        let points2 = ["x": 20.0, "y": 20.0]
+        let points3 = ["x": 80.0, "y": 80.0]
+//        browser.updatePhotoSkitch(at: 0, skitches: [["_id": "123", "num": 1, "type": "point", "coordinate": points1]], versionID: "kkk")
+        browser.updatePhotoSkitch(at: 1, skitches: [["_id": "123", "num": 2, "type": "point", "coordinate": points2]], versionID: "ggg")
+        browser.updatePhotoSkitch(at: 2, skitches: [["_id": "123", "num": 3, "type": "point", "coordinate": points3]], versionID: "zzz")
     }
     
     func dismissPhotoBrowser(_ photoBrowser: PhotoBrowser) {

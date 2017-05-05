@@ -15,28 +15,49 @@ protocol PhotoPreviewControllerDelegate: class {
     var isFullScreenMode: Bool {get set}
     func longPressOn(_ photo: Photo, gesture: UILongPressGestureRecognizer)
     func didTapOnBackground()
+    func didTapSkitch(_ skitch: Skitch, versionID: String)
+    func didShowPhotoAtIndex(_ index: Int)
 }
 
 class PhotoPreviewController: UIViewController {
     
     var index: NSInteger?
     var photo: Photo?
+    var skitches: [Skitch] = []
+    var versionID: String = ""
+    fileprivate var isSkitchButtonHidden = true
+    fileprivate var skitchButtons: [UIButton] = []
+    fileprivate var skitchTopConstraints: [NSLayoutConstraint] = []
+    fileprivate var skitchLeftConstraints: [NSLayoutConstraint] = []
+
     var scrollView: UIScrollView!
     var imageView: UIImageView!
     var waitingView: WaitingView?
+    fileprivate let kfontSizeSkitchButton: CGFloat = CGFloat(15)
+    fileprivate let kDefaultSkitchButton: Int = 777
+    fileprivate let kSkitchButtonRadius: CGFloat = 32
     weak var delegate:PhotoPreviewControllerDelegate?
-    
+
     var imageViewLeadingConstraint: NSLayoutConstraint?
     var imageViewTrailingConstraint: NSLayoutConstraint?
     var imageViewTopConstraint: NSLayoutConstraint?
     var imageViewBottomConstraint: NSLayoutConstraint?
-    
-    init(photo: Photo, index: NSInteger) {
+
+    init(photo: Photo, index: NSInteger, skitches: [[String: Any]]? = nil, isSkitchButtonHidden: Bool = true) {
         super.init(nibName: nil, bundle: nil)
         self.index = index
         self.photo = photo
+        self.isSkitchButtonHidden = isSkitchButtonHidden
+
+        if let skitches = skitches {
+            self.skitches = skitches.flatMap({ (skitchJSON) -> Skitch? in
+                return Skitch(skitchJSON: skitchJSON)
+            })
+        }
+
         scrollView = UIScrollView()
         imageView = UIImageView()
+
         imageView.contentMode = .scaleAspectFill
         extendedLayoutIncludesOpaqueBars = true
         automaticallyAdjustsScrollViewInsets = false
@@ -48,6 +69,7 @@ class PhotoPreviewController: UIViewController {
             PHImageManager.default().requestImageData(for: asset, options: options, resultHandler: { [weak self](data, _, _, _) in
                 if let imageData = data {
                     self?.photo?.image = UIImage(data: imageData)
+                    self?.delegate?.didShowPhotoAtIndex(index)
                 }
             })
         }
@@ -90,7 +112,7 @@ class PhotoPreviewController: UIViewController {
         
         scrollView.addSubview(imageView)
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        
+
         initializeConstraint()
         imageView.isUserInteractionEnabled = true
         
@@ -115,6 +137,11 @@ class PhotoPreviewController: UIViewController {
         if let image = photo.localOriginalPhoto() {
             imageView.image = image
             updateZoom()
+            addSkitches()
+
+            if let index = self.index {
+                self.delegate?.didShowPhotoAtIndex(index)
+            }
         } else {
             if let thumbnail = photo.localThumbnailPhoto() {
                 imageView.image = thumbnail
@@ -145,16 +172,90 @@ class PhotoPreviewController: UIViewController {
                         if let _ = image {
                             self.updateZoom()
                         }
+                        self.addSkitches()
+                        if let index = self.index {
+                            self.delegate?.didShowPhotoAtIndex(index)
+                        }
                 })
             }
         }
     }
+
+    func updateSkiches(_ skitches: [[String: Any]], versionID: String, isHidden: Bool) {
+        self.versionID = versionID
+        self.isSkitchButtonHidden = isHidden
+        self.skitches = skitches.flatMap({ (skitchJSON) -> Skitch? in
+            return Skitch(skitchJSON: skitchJSON)
+        })
+        self.addSkitches()
+        self.updateSkitchButtonStatus()
+    }
     
+    func updateSkitchButtonStatus(_ isHidden: Bool? = nil) {
+        if let isHidden = isHidden {
+            isSkitchButtonHidden = isHidden
+        }
+
+        updateSkitchButtonConstraint()
+        for skitchButton in skitchButtons {
+            skitchButton.isHidden = isSkitchButtonHidden
+        }
+    }
+
+    fileprivate func addSkitches() {
+        if skitches.count <= 0 {
+            return
+        }
+
+        for button in skitchButtons {
+            button.removeFromSuperview()
+        }
+        
+        skitchTopConstraints.removeAll()
+        skitchLeftConstraints.removeAll()
+
+        for i in 0..<skitches.count {
+            let skitch = skitches[i]
+            let (offsetX, offsetY) = getRightPosition(skitch)
+            let skitchButton = UIButton()
+            skitchButton.setTitle(String(skitch.number), for: .normal)
+            skitchButton.titleLabel?.font = UIFont.systemFont(ofSize: kfontSizeSkitchButton)
+            skitchButton.tag = kDefaultSkitchButton + i
+            skitchButton.setTitleColor(UIColor.white, for: .normal)
+            skitchButton.backgroundColor = UIColor(red: 61/255, green: 168/255, blue: 245/255, alpha: 1)
+            skitchButton.addTarget(self, action: #selector(handleSkitchButtonTap(_:)), for: .touchUpInside)
+
+            skitchButton.layer.cornerRadius = kSkitchButtonRadius/2
+            skitchButton.clipsToBounds = false
+            skitchButton.layer.shadowColor = UIColor.black.cgColor
+            skitchButton.layer.shadowOpacity = 0.2
+            skitchButton.layer.shadowOffset = CGSize(width: 0, height: 2)
+            skitchButton.layer.shadowRadius = 4
+
+            scrollView.addSubview(skitchButton)
+            skitchButton.isHidden = isSkitchButtonHidden
+            skitchButton.translatesAutoresizingMaskIntoConstraints = false
+
+            let topConstraint = NSLayoutConstraint(item: skitchButton, attribute: .top, relatedBy: .equal, toItem: scrollView, attribute: .top, multiplier: 1, constant: offsetY)
+            let leftConstraint = NSLayoutConstraint(item: skitchButton, attribute: .left, relatedBy: .equal, toItem: scrollView, attribute: .left, multiplier: 1, constant: offsetX)
+
+            scrollView.addConstraint(topConstraint)
+            scrollView.addConstraint(leftConstraint)
+            scrollView.addConstraint(NSLayoutConstraint(item: skitchButton, attribute: .width , relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: kSkitchButtonRadius))
+            scrollView.addConstraint(NSLayoutConstraint(item: skitchButton, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: kSkitchButtonRadius))
+
+            skitchTopConstraints.append(topConstraint)
+            skitchLeftConstraints.append(leftConstraint)
+            skitchButtons.append(skitchButton)
+        }
+        updateConstraint()
+    }
+
     func initializeConstraint() {
         //layout scrollView in view
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[scrollView]-0-|", options: [], metrics: nil, views: ["scrollView":scrollView]))
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[scrollView]-0-|", options: [], metrics: nil, views: ["scrollView":scrollView]))
-        
+
         //layout imageView in scrollView
         imageViewLeadingConstraint = NSLayoutConstraint(item: imageView, attribute: .leading, relatedBy: .equal, toItem: scrollView, attribute: .leading, multiplier: 1.0, constant: 0)
         imageViewTopConstraint = NSLayoutConstraint(item: imageView, attribute: .top, relatedBy: .equal, toItem: scrollView, attribute: .top, multiplier: 1.0, constant: 0)
@@ -164,8 +265,7 @@ class PhotoPreviewController: UIViewController {
             scrollView.addConstraints([lead, trail, top, bottom])
         }
     }
-    
-    
+
     func updateZoom() {
         guard let image = imageView.image else {
             return
@@ -181,7 +281,6 @@ class PhotoPreviewController: UIViewController {
         }
         scrollView.zoomScale = minZoom
     }
-    
     
     func updateConstraint() {
         
@@ -210,11 +309,43 @@ class PhotoPreviewController: UIViewController {
         trail.constant = hPadding
         top.constant = vPadding
         bottom.constant = vPadding
+
+        updateSkitchButtonConstraint()
         
         view.layoutIfNeeded()
     }
     
-    
+    func getRightPosition(_ skitch: Skitch) -> (CGFloat, CGFloat) {
+
+        guard let lead = imageViewLeadingConstraint, let top = imageViewTopConstraint else {
+            return (0, 0)
+        }
+
+        let zoomScale = scrollView.zoomScale
+        let maxX = min(max(skitch.point.x*zoomScale - kSkitchButtonRadius/2, 0), imageView.frame.size.width - kSkitchButtonRadius)
+        let maxY = min(max(skitch.point.y*zoomScale - kSkitchButtonRadius/2, 0), imageView.frame.size.height - kSkitchButtonRadius)
+        let offsetX: CGFloat = lead.constant + maxX
+        let offsetY: CGFloat = top.constant + maxY
+
+        return (offsetX, offsetY)
+    }
+
+    func updateSkitchButtonConstraint() {
+        if skitches.count <= 0 {
+            return
+        }
+
+        for i in 0..<skitches.count {
+            let skitch = skitches[i]
+            let (offsetX, offsetY) = getRightPosition(skitch)
+
+            if i < skitchTopConstraints.count && i < skitchLeftConstraints.count {
+                skitchTopConstraints[i].constant = offsetY
+                skitchLeftConstraints[i].constant = offsetX
+            }
+        }
+    }
+
     func zoomScaleForDoubleTap() -> CGFloat {
         guard let image = imageView.image else {
             return scrollView.minimumZoomScale
@@ -256,6 +387,7 @@ extension PhotoPreviewController {
             let ysize = scrollView.bounds.size.height / newZoomScale
             scrollView.zoom(to: CGRect(x: touchPoint.x - xsize/2, y: touchPoint.y - ysize/2, width: xsize, height: ysize), animated: true)
         }
+        updateConstraint()
     }
     
     func handleSingleTap(_ sender: UITapGestureRecognizer) {
@@ -277,14 +409,20 @@ extension PhotoPreviewController {
     func handleBackgroundSingleTap(_ sender: UITapGestureRecognizer) {
         delegate?.didTapOnBackground()
     }
+
+    func handleSkitchButtonTap(_ sender: UIButton) {
+        let tag = sender.tag - kDefaultSkitchButton
+        let skitch = skitches[tag]
+        delegate?.didTapSkitch(skitch, versionID: self.versionID)
+    }
 }
 
 extension PhotoPreviewController:UIScrollViewDelegate  {
-    
+
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return imageView
     }
-    
+
     func scrollViewDidZoom(_ scrollView: UIScrollView) {
         if scrollView.zoomScale - scrollView.minimumZoomScale < 0.01 {
             scrollView.isScrollEnabled = false

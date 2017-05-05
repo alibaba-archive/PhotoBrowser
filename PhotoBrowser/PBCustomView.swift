@@ -54,9 +54,9 @@ class WaitingView: UIView {
         UIColor.white.set()
         currentContext?.setLineWidth(2)
         currentContext?.setLineCap(CGLineCap.round)
-        let end = CGFloat( -M_PI_2 + Double(progress) * M_PI * 2 + 0.05)
+        let end = -CGFloat.pi/2 + CGFloat(progress) * CGFloat.pi*2 + 0.05
         let radius = min(rect.size.width, rect.size.height) / 2 - waitingViewMargin
-        currentContext?.addArc(center: center, radius: radius, startAngle: CGFloat(-M_PI_2), endAngle: end, clockwise: false)
+        currentContext?.addArc(center: center, radius: radius, startAngle: -CGFloat.pi / 2, endAngle: end, clockwise: false)
         currentContext?.strokePath()
     }
     
@@ -83,7 +83,15 @@ class PBNavigationBar: UIView {
         view.addSubview(self.rightButton)
         view.addSubview(self.titleLabel)
         view.addSubview(self.indexLabel)
-        
+
+        var titleLabelTrailingConstant: CGFloat = 60
+        if !self.isFromPhotoPicker {
+            view.addSubview(self.showSkitchButton)
+            view.addConstraint(NSLayoutConstraint(item: view, attribute: .centerY, relatedBy: .equal, toItem: self.showSkitchButton, attribute: .centerY, multiplier: 1.0, constant: 0))
+            view.addConstraint(NSLayoutConstraint(item: self.showSkitchButton, attribute: .trailing, relatedBy: .equal, toItem: self.rightButton, attribute: .leading, multiplier: 1.0, constant: 0))
+            titleLabelTrailingConstant = 85
+        }
+
         view.addConstraint(NSLayoutConstraint(item: view, attribute: .centerY, relatedBy: .equal, toItem: self.rightButton, attribute: .centerY, multiplier: 1.0, constant: 0))
         view.addConstraint(NSLayoutConstraint(item: view, attribute: .centerY, relatedBy: .equal, toItem: self.leftButton, attribute: .centerY, multiplier: 1.0, constant: 0))
         
@@ -92,12 +100,18 @@ class PBNavigationBar: UIView {
         
         view.addConstraint(NSLayoutConstraint(item: view, attribute: .top, relatedBy: .equal, toItem: self.titleLabel, attribute: .top, multiplier: 1.0, constant: 0))
         view.addConstraint(NSLayoutConstraint(item: view, attribute: .centerX, relatedBy: .equal, toItem: self.titleLabel, attribute: .centerX, multiplier: 1.0, constant: 0))
-        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-60-[titleLabel]-60-|", options: [], metrics: nil, views: ["titleLabel": self.titleLabel]))
         
+        view.addConstraint(NSLayoutConstraint(item: view, attribute: .leading, relatedBy: .equal, toItem: self.titleLabel, attribute: .leading, multiplier: 1, constant: -60))
+
+        self.titleTrailingConstraint = NSLayoutConstraint(item: view, attribute: .trailing, relatedBy: .equal, toItem: self.titleLabel, attribute: .trailing, multiplier: 1, constant: titleLabelTrailingConstant)
+        view.addConstraint(self.titleTrailingConstraint!)
+
         view.addConstraint(NSLayoutConstraint(item: self.titleLabel, attribute: .bottom, relatedBy: .equal, toItem: self.indexLabel, attribute: .top, multiplier: 1.0, constant: -3))
         view.addConstraint(NSLayoutConstraint(item: self.titleLabel, attribute: .centerX, relatedBy: .equal, toItem: self.indexLabel, attribute: .centerX, multiplier: 1.0, constant: 0))
         return view
     }()
+    
+    var titleTrailingConstraint: NSLayoutConstraint?
     
     lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -126,6 +140,17 @@ class PBNavigationBar: UIView {
         button.addConstraint(NSLayoutConstraint(item: button, attribute: .height, relatedBy: .greaterThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 40))
         return button
     }()
+    
+    lazy var showSkitchButton: UIButton = {
+        let button = UIButton()
+        var image = UIImage(named: "filePreviewVisibleIcon", in: Bundle(for: classForCoder()), compatibleWith: nil)
+        button.setImage(image, for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addConstraint(NSLayoutConstraint(item: button, attribute: .width, relatedBy: .greaterThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 40))
+        button.addConstraint(NSLayoutConstraint(item: button, attribute: .height, relatedBy: .greaterThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 40))
+
+        return button
+    }()
 
     lazy var rightButton: UIButton = {
         let button = UIButton()
@@ -151,7 +176,26 @@ class PBNavigationBar: UIView {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
-    
+
+    func updateShowSkitchButtonStatus(_ isHidden: Bool, isHiddenSkitch: Bool) {
+        self.showSkitchButton.isHidden = isHidden
+        let skitchImage = isHiddenSkitch ? "filePreviewInvisibleIcon" : "filePreviewVisibleIcon"
+        let image = UIImage(named: skitchImage, in: Bundle(for: classForCoder), compatibleWith: nil)
+        showSkitchButton.setImage(image, for: .normal)
+        if isHidden {
+            titleTrailingConstraint?.constant = 60
+        } else {
+            titleTrailingConstraint?.constant = 85
+        }
+        layoutIfNeeded()
+    }
+
+    func updateSkitchButton(_ isHiddenSkitch: Bool) {
+        let skitchImage = isHiddenSkitch ? "filePreviewInvisibleIcon" : "filePreviewVisibleIcon"
+        let image = UIImage(named: skitchImage, in: Bundle(for: classForCoder), compatibleWith: nil)
+        showSkitchButton.setImage(image, for: .normal)
+    }
+
     func setup() {
         addSubview(backgroundView)
         backgroundView.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height)

@@ -16,6 +16,7 @@
 		4A6BC7C11C770F6400DACDA5 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4A6BC7C01C770F6400DACDA5 /* Images.xcassets */; };
 		4A87F61F1C96CF63005A9667 /* PBAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A87F61E1C96CF63005A9667 /* PBAnimation.swift */; };
 		4A8EB7291CEF16020065EAB0 /* PBActionBarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A8EB7281CEF16020065EAB0 /* PBActionBarItem.swift */; };
+		864F45E81E9F0A4900FF9215 /* Skitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 864F45E71E9F0A4900FF9215 /* Skitch.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		4A6BC7C01C770F6400DACDA5 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		4A87F61E1C96CF63005A9667 /* PBAnimation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PBAnimation.swift; sourceTree = "<group>"; };
 		4A8EB7281CEF16020065EAB0 /* PBActionBarItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PBActionBarItem.swift; sourceTree = "<group>"; };
+		864F45E71E9F0A4900FF9215 /* Skitch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Skitch.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +69,7 @@
 				4A6BC7C01C770F6400DACDA5 /* Images.xcassets */,
 				4A52D1E31C72CB2E001C257B /* PhotoBrowser.h */,
 				4A52D22F1C72F47C001C257B /* Photo.swift */,
+				864F45E71E9F0A4900FF9215 /* Skitch.swift */,
 				4A52D1FD1C72CE69001C257B /* PhotoBrowser.swift */,
 				4A8EB7281CEF16020065EAB0 /* PBActionBarItem.swift */,
 				4A52D2371C72F568001C257B /* PhotoPreviewController.swift */,
@@ -158,6 +161,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				864F45E81E9F0A4900FF9215 /* Skitch.swift in Sources */,
 				4A52D2301C72F47C001C257B /* Photo.swift in Sources */,
 				4A0739991C98FB3C0004FEA5 /* PBCustomView.swift in Sources */,
 				4A52D1FE1C72CE69001C257B /* PhotoBrowser.swift in Sources */,
