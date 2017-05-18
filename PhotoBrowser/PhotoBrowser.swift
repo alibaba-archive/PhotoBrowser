@@ -473,7 +473,7 @@ extension PhotoBrowser {
 }
 
 extension PhotoBrowser {
-    open static func customImageSetting(_ loadingLogoImage: UIImage? = nil, checkSelectedImage: UIImage? = nil) {
+    public static func updateCustomImages(_ loadingLogoImage: UIImage? = nil, checkSelectedImage: UIImage? = nil) {
         if let logoImage = loadingLogoImage {
             CustomPhotoBroswerManager.shared.customLogoLoading = logoImage
         }
