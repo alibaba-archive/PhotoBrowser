@@ -471,3 +471,15 @@ extension PhotoBrowser {
         return page.imageView
     }
 }
+
+extension PhotoBrowser {
+    public static func updateCustomImages(_ loadingLogoImage: UIImage? = nil, checkSelectedImage: UIImage? = nil) {
+        if let logoImage = loadingLogoImage {
+            CustomPhotoBroswerManager.shared.customLogoLoading = logoImage
+        }
+
+        if let checkSelected = checkSelectedImage {
+            CustomPhotoBroswerManager.shared.customCheckSelected = checkSelected
+        }
+    }
+}

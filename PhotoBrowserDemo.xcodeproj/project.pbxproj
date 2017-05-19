@@ -13,9 +13,8 @@
 		4A52D2131C72D13B001C257B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4A52D2121C72D13B001C257B /* Assets.xcassets */; };
 		4A52D2161C72D13B001C257B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4A52D2141C72D13B001C257B /* LaunchScreen.storyboard */; };
 		4A8EB7231CEF068D0065EAB0 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A6BC7BB1C770DE100DACDA5 /* Kingfisher.framework */; };
+		A168310B1E7ABDC200AA1DC9 /* PhotoBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A168310A1E7ABDC200AA1DC9 /* PhotoBrowser.framework */; };
 		AC570BBF1E247C550083620C /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC570BBE1E247C550083620C /* DetailViewController.swift */; };
-		EB7B2C0B1D9A6747007878B8 /* PhotoBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB7B2C0A1D9A6747007878B8 /* PhotoBrowser.framework */; };
-		EB7B2C0C1D9A6747007878B8 /* PhotoBrowser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EB7B2C0A1D9A6747007878B8 /* PhotoBrowser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,7 +24,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				EB7B2C0C1D9A6747007878B8 /* PhotoBrowser.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -41,8 +39,8 @@
 		4A52D2151C72D13B001C257B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4A52D2171C72D13B001C257B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4A6BC7BB1C770DE100DACDA5 /* Kingfisher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kingfisher.framework; path = Carthage/Build/iOS/Kingfisher.framework; sourceTree = "<group>"; };
+		A168310A1E7ABDC200AA1DC9 /* PhotoBrowser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PhotoBrowser.framework; sourceTree = "<group>"; };
 		AC570BBE1E247C550083620C /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
-		EB7B2C0A1D9A6747007878B8 /* PhotoBrowser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PhotoBrowser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,7 +48,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EB7B2C0B1D9A6747007878B8 /* PhotoBrowser.framework in Frameworks */,
+				A168310B1E7ABDC200AA1DC9 /* PhotoBrowser.framework in Frameworks */,
 				4A8EB7231CEF068D0065EAB0 /* Kingfisher.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -61,7 +59,7 @@
 		4A52D1FF1C72D13B001C257B = {
 			isa = PBXGroup;
 			children = (
-				EB7B2C0A1D9A6747007878B8 /* PhotoBrowser.framework */,
+				A168310A1E7ABDC200AA1DC9 /* PhotoBrowser.framework */,
 				4A6BC7BB1C770DE100DACDA5 /* Kingfisher.framework */,
 				4A52D20A1C72D13B001C257B /* PhotoBrowserDemo */,
 				4A52D2091C72D13B001C257B /* Products */,
@@ -302,7 +300,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = "";
-				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/Carthage/Build/iOS";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = PhotoBrowserDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.Teambition.PhotoBrowserDemo;
@@ -316,7 +317,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = "";
-				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/Carthage/Build/iOS";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = PhotoBrowserDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.Teambition.PhotoBrowserDemo;
