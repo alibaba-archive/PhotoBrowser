@@ -98,7 +98,7 @@ extension ViewController: PhotoBrowserDelegate {
     func photoBrowser(_ browser: PhotoBrowser, didShowPhotoAtIndex index: Int) {
 //        print("photo browser did show at index: \(index)")
 //        let points1 = ["x": 200.0, "y": 112.0]
-        let points2 = ["x": 20.0, "y": 20.0]
+        let points2 = ["x": 20.0, "y": 20.0, "width": 50, "height": 50]
         let points3 = ["x": 80.0, "y": 80.0]
 //        browser.updatePhotoSkitch(at: 0, skitches: [["_id": "123", "num": 1, "type": "point", "coordinate": points1]], versionID: "kkk")
         browser.updatePhotoSkitch(at: 1, skitches: [["_id": "123", "num": 2, "type": "point", "coordinate": points2]], versionID: "ggg")

@@ -11,6 +11,7 @@ import UIKit
 import Kingfisher
 import Photos
 
+// MARK: - PhotoPreviewControllerDelegate
 protocol PhotoPreviewControllerDelegate: class {
     var isFullScreenMode: Bool {get set}
     func longPressOn(_ photo: Photo, gesture: UILongPressGestureRecognizer)
@@ -19,23 +20,38 @@ protocol PhotoPreviewControllerDelegate: class {
     func didShowPhotoAtIndex(_ index: Int)
 }
 
+
+// MARK: - PhotoPreviewConstant
+struct PhotoPreviewConstant {
+    static let skitchButtonFontSize: CGFloat = CGFloat(15)
+    static let skitchButtonTag: Int = 777
+    static let skitchButtonRadius: CGFloat = 32
+    static let skitchButtonBgColor = UIColor(red: 61/255, green: 168/255, blue: 245/255, alpha: 1)
+    static let skitchRectangleButtonBgColor = UIColor(red: 61/255, green: 168/255, blue: 245/255, alpha: 0.24)
+}
+
+// MARK: - PhotoPreviewController
 class PhotoPreviewController: UIViewController {
     
     var index: NSInteger?
     var photo: Photo?
     var skitches: [Skitch] = []
     var versionID: String = ""
+
     fileprivate var isSkitchButtonHidden = true
     fileprivate var skitchButtons: [UIButton] = []
+    fileprivate var skitchRectangleButtons: [UIButton] = []
     fileprivate var skitchTopConstraints: [NSLayoutConstraint] = []
     fileprivate var skitchLeftConstraints: [NSLayoutConstraint] = []
+    fileprivate var skitchRectangleTopConstraints: [NSLayoutConstraint] = []
+    fileprivate var skitchRectangleLeftConstraints: [NSLayoutConstraint] = []
+    fileprivate var skitchRectangleWidthConstraints: [NSLayoutConstraint] = []
+    fileprivate var skitchRectangleHeightConstraints: [NSLayoutConstraint] = []
 
     var scrollView: UIScrollView!
     var imageView: UIImageView!
     var waitingView: WaitingView?
-    fileprivate let kfontSizeSkitchButton: CGFloat = CGFloat(15)
-    fileprivate let kDefaultSkitchButton: Int = 777
-    fileprivate let kSkitchButtonRadius: CGFloat = 32
+    
     weak var delegate:PhotoPreviewControllerDelegate?
 
     var imageViewLeadingConstraint: NSLayoutConstraint?
@@ -200,6 +216,9 @@ class PhotoPreviewController: UIViewController {
         for skitchButton in skitchButtons {
             skitchButton.isHidden = isSkitchButtonHidden
         }
+        for skitchButton in skitchRectangleButtons {
+            skitchButton.isHidden = isSkitchButtonHidden
+        }
     }
 
     fileprivate func addSkitches() {
@@ -210,45 +229,94 @@ class PhotoPreviewController: UIViewController {
         for button in skitchButtons {
             button.removeFromSuperview()
         }
+
+        for button in skitchRectangleButtons {
+            button.removeFromSuperview()
+        }
         
         skitchTopConstraints.removeAll()
         skitchLeftConstraints.removeAll()
+        skitchRectangleTopConstraints.removeAll()
+        skitchRectangleLeftConstraints.removeAll()
+        skitchRectangleWidthConstraints.removeAll()
+        skitchRectangleHeightConstraints.removeAll()
 
         for i in 0..<skitches.count {
-            let skitch = skitches[i]
-            let (offsetX, offsetY) = getRightPosition(skitch)
-            let skitchButton = UIButton()
-            skitchButton.setTitle(String(skitch.number), for: .normal)
-            skitchButton.titleLabel?.font = UIFont.systemFont(ofSize: kfontSizeSkitchButton)
-            skitchButton.tag = kDefaultSkitchButton + i
-            skitchButton.setTitleColor(UIColor.white, for: .normal)
-            skitchButton.backgroundColor = UIColor(red: 61/255, green: 168/255, blue: 245/255, alpha: 1)
-            skitchButton.addTarget(self, action: #selector(handleSkitchButtonTap(_:)), for: .touchUpInside)
-
-            skitchButton.layer.cornerRadius = kSkitchButtonRadius/2
-            skitchButton.clipsToBounds = false
-            skitchButton.layer.shadowColor = UIColor.black.cgColor
-            skitchButton.layer.shadowOpacity = 0.2
-            skitchButton.layer.shadowOffset = CGSize(width: 0, height: 2)
-            skitchButton.layer.shadowRadius = 4
-
-            scrollView.addSubview(skitchButton)
-            skitchButton.isHidden = isSkitchButtonHidden
-            skitchButton.translatesAutoresizingMaskIntoConstraints = false
-
-            let topConstraint = NSLayoutConstraint(item: skitchButton, attribute: .top, relatedBy: .equal, toItem: scrollView, attribute: .top, multiplier: 1, constant: offsetY)
-            let leftConstraint = NSLayoutConstraint(item: skitchButton, attribute: .left, relatedBy: .equal, toItem: scrollView, attribute: .left, multiplier: 1, constant: offsetX)
-
-            scrollView.addConstraint(topConstraint)
-            scrollView.addConstraint(leftConstraint)
-            scrollView.addConstraint(NSLayoutConstraint(item: skitchButton, attribute: .width , relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: kSkitchButtonRadius))
-            scrollView.addConstraint(NSLayoutConstraint(item: skitchButton, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: kSkitchButtonRadius))
-
-            skitchTopConstraints.append(topConstraint)
-            skitchLeftConstraints.append(leftConstraint)
-            skitchButtons.append(skitchButton)
+            addSkitchRectangle(i)
+            addSkitchButton(i)
         }
         updateConstraint()
+    }
+
+    fileprivate func addSkitchRectangle(_ i: Int) {
+        let skitch = skitches[i]
+        let (offsetX, offsetY) = getRightPosition(skitch)
+        let (width, height) = getRightWidthHeight(skitch)
+        let skitchRectangleButton = UIButton()
+
+        skitchRectangleButton.layer.masksToBounds = true
+        skitchRectangleButton.layer.cornerRadius = 2
+        skitchRectangleButton.layer.borderWidth = 1
+        skitchRectangleButton.layer.borderColor = PhotoPreviewConstant.skitchButtonBgColor.cgColor
+        skitchRectangleButton.backgroundColor = PhotoPreviewConstant.skitchRectangleButtonBgColor
+        skitchRectangleButton.tag = PhotoPreviewConstant.skitchButtonTag + i
+        skitchRectangleButton.addTarget(self, action: #selector(handleSkitchButtonTap(_:)), for: .touchUpInside)
+
+        scrollView.addSubview(skitchRectangleButton)
+        skitchRectangleButton.isHidden = isSkitchButtonHidden
+        skitchRectangleButton.translatesAutoresizingMaskIntoConstraints = false
+
+        let topConstraint = NSLayoutConstraint(item: skitchRectangleButton, attribute: .top, relatedBy: .equal, toItem: scrollView, attribute: .top, multiplier: 1, constant: offsetY + PhotoPreviewConstant.skitchButtonRadius/2)
+        let leftConstraint = NSLayoutConstraint(item: skitchRectangleButton, attribute: .left, relatedBy: .equal, toItem: scrollView, attribute: .left, multiplier: 1, constant: offsetX + PhotoPreviewConstant.skitchButtonRadius/2)
+        let widthConstraint = NSLayoutConstraint(item: skitchRectangleButton, attribute: .width , relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: width)
+        let heightConstraint = NSLayoutConstraint(item: skitchRectangleButton, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: height)
+
+        scrollView.addConstraint(topConstraint)
+        scrollView.addConstraint(leftConstraint)
+        scrollView.addConstraint(widthConstraint)
+        scrollView.addConstraint(heightConstraint)
+
+        skitchRectangleTopConstraints.append(topConstraint)
+        skitchRectangleLeftConstraints.append(leftConstraint)
+        skitchRectangleWidthConstraints.append(widthConstraint)
+        skitchRectangleHeightConstraints.append(heightConstraint)
+        skitchRectangleButtons.append(skitchRectangleButton)
+    }
+
+    fileprivate func addSkitchButton(_ i: Int) {
+        let skitch = skitches[i]
+        let (offsetX, offsetY) = getRightPosition(skitch)
+        let skitchButton = UIButton()
+
+        skitchButton.setTitle(String(skitch.number), for: .normal)
+        skitchButton.titleLabel?.font = UIFont.systemFont(ofSize: PhotoPreviewConstant.skitchButtonFontSize)
+        skitchButton.tag = PhotoPreviewConstant.skitchButtonTag + i
+        skitchButton.setTitleColor(UIColor.white, for: .normal)
+        skitchButton.backgroundColor = PhotoPreviewConstant.skitchButtonBgColor
+        skitchButton.addTarget(self, action: #selector(handleSkitchButtonTap(_:)), for: .touchUpInside)
+
+        skitchButton.layer.cornerRadius = PhotoPreviewConstant.skitchButtonRadius/2
+        skitchButton.clipsToBounds = false
+        skitchButton.layer.shadowColor = UIColor.black.cgColor
+        skitchButton.layer.shadowOpacity = 0.2
+        skitchButton.layer.shadowOffset = CGSize(width: 0, height: 2)
+        skitchButton.layer.shadowRadius = 4
+
+        scrollView.addSubview(skitchButton)
+        skitchButton.isHidden = isSkitchButtonHidden
+        skitchButton.translatesAutoresizingMaskIntoConstraints = false
+
+        let topConstraint = NSLayoutConstraint(item: skitchButton, attribute: .top, relatedBy: .equal, toItem: scrollView, attribute: .top, multiplier: 1, constant: offsetY)
+        let leftConstraint = NSLayoutConstraint(item: skitchButton, attribute: .left, relatedBy: .equal, toItem: scrollView, attribute: .left, multiplier: 1, constant: offsetX)
+
+        scrollView.addConstraint(topConstraint)
+        scrollView.addConstraint(leftConstraint)
+        scrollView.addConstraint(NSLayoutConstraint(item: skitchButton, attribute: .width , relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: PhotoPreviewConstant.skitchButtonRadius))
+        scrollView.addConstraint(NSLayoutConstraint(item: skitchButton, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: PhotoPreviewConstant.skitchButtonRadius))
+
+        skitchTopConstraints.append(topConstraint)
+        skitchLeftConstraints.append(leftConstraint)
+        skitchButtons.append(skitchButton)
     }
 
     func initializeConstraint() {
@@ -311,26 +379,55 @@ class PhotoPreviewController: UIViewController {
         bottom.constant = vPadding
 
         updateSkitchButtonConstraint()
-        
+        updateSkitchRectangleConstraint()
         view.layoutIfNeeded()
     }
     
     func getRightPosition(_ skitch: Skitch) -> (CGFloat, CGFloat) {
-
         guard let lead = imageViewLeadingConstraint, let top = imageViewTopConstraint else {
             return (0, 0)
         }
 
         let zoomScale = scrollView.zoomScale
-        let maxX = min(max(skitch.point.x*zoomScale - kSkitchButtonRadius/2, 0), imageView.frame.size.width - kSkitchButtonRadius)
-        let maxY = min(max(skitch.point.y*zoomScale - kSkitchButtonRadius/2, 0), imageView.frame.size.height - kSkitchButtonRadius)
+        let maxX = min(max(skitch.point.x*zoomScale - PhotoPreviewConstant.skitchButtonRadius/2, 0), imageView.frame.size.width - PhotoPreviewConstant.skitchButtonRadius)
+        let maxY = min(max(skitch.point.y*zoomScale - PhotoPreviewConstant.skitchButtonRadius/2, 0), imageView.frame.size.height - PhotoPreviewConstant.skitchButtonRadius)
         let offsetX: CGFloat = lead.constant + maxX
         let offsetY: CGFloat = top.constant + maxY
 
         return (offsetX, offsetY)
     }
 
-    func updateSkitchButtonConstraint() {
+    func getRightWidthHeight(_ skitch: Skitch) -> (CGFloat, CGFloat) {
+        guard let _ = imageViewLeadingConstraint, let _ = imageViewTopConstraint else {
+            return (0, 0)
+        }
+
+        let zoomScale = scrollView.zoomScale
+        let width = skitch.point.width * zoomScale
+        let height = skitch.point.height * zoomScale
+        return (width, height)
+    }
+
+    fileprivate func updateSkitchRectangleConstraint() {
+        if skitches.count <= 0 {
+            return
+        }
+
+        for i in 0..<skitches.count {
+            let skitch = skitches[i]
+            let (width, height) = getRightWidthHeight(skitch)
+            let (offsetX, offsetY) = getRightPosition(skitch)
+
+            if i < skitchRectangleLeftConstraints.count {
+                skitchRectangleTopConstraints[i].constant = offsetY + PhotoPreviewConstant.skitchButtonRadius/2
+                skitchRectangleLeftConstraints[i].constant = offsetX  + PhotoPreviewConstant.skitchButtonRadius/2
+                skitchRectangleWidthConstraints[i].constant = width
+                skitchRectangleHeightConstraints[i].constant = height
+            }
+        }
+    }
+
+    fileprivate func updateSkitchButtonConstraint() {
         if skitches.count <= 0 {
             return
         }
@@ -411,7 +508,7 @@ extension PhotoPreviewController {
     }
 
     func handleSkitchButtonTap(_ sender: UIButton) {
-        let tag = sender.tag - kDefaultSkitchButton
+        let tag = sender.tag - PhotoPreviewConstant.skitchButtonTag
         let skitch = skitches[tag]
         delegate?.didTapSkitch(skitch, versionID: self.versionID)
     }

@@ -11,11 +11,19 @@ import Foundation
 public struct Point {
     var x: CGFloat!
     var y: CGFloat!
+    var width: CGFloat = 0
+    var height: CGFloat = 0
 
     init(pointJSON: [String: Any]) {
+        self.width = 0
+        self.height = 0
         if let x = pointJSON["x"] as? Double, let y = pointJSON["y"] as? Double {
             self.x = CGFloat(x)
             self.y = CGFloat(y)
+        }
+        if let width = pointJSON["width"] as? Double, let height = pointJSON["height"] as? Double {
+            self.width = CGFloat(width)
+            self.height = CGFloat(height)
         }
     }
 
@@ -32,6 +40,7 @@ public struct Point {
 
 public enum SkitchType: String {
     case point
+    case rectangle
 }
 
 public struct Skitch {
@@ -43,6 +52,8 @@ public struct Skitch {
     init?(skitchJSON: [String: Any]) {
         if let skitchType = skitchJSON["type"] as? String, skitchType == "point" {
             self.type = .point
+        } else if let skitchType = skitchJSON["type"] as? String, skitchType == "rectangle" {
+            self.type = .rectangle
         } else {
             return nil
         }
