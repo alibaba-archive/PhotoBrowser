@@ -97,12 +97,16 @@ extension ViewController: PhotoBrowserDelegate {
 
     func photoBrowser(_ browser: PhotoBrowser, didShowPhotoAtIndex index: Int) {
 //        print("photo browser did show at index: \(index)")
-//        let points1 = ["x": 200.0, "y": 112.0]
-        let points2 = ["x": 20.0, "y": 20.0, "width": 50, "height": 50]
-        let points3 = ["x": 80.0, "y": 80.0]
-//        browser.updatePhotoSkitch(at: 0, skitches: [["_id": "123", "num": 1, "type": "point", "coordinate": points1]], versionID: "kkk")
-        browser.updatePhotoSkitch(at: 1, skitches: [["_id": "123", "num": 2, "type": "point", "coordinate": points2]], versionID: "ggg")
-        browser.updatePhotoSkitch(at: 2, skitches: [["_id": "123", "num": 3, "type": "point", "coordinate": points3]], versionID: "zzz")
+//        let points1 = ["x": 100.0, "y": 50.0, "width": 50.0, "height": 50.0]
+        let points21 = ["x": 0, "y": 0, "width": 20.0, "height": 20.0]
+        let points22 = ["x": 230.0, "y": 230.0, "width": 20.0, "height": 20.0]
+        let points23 = ["x": 250.0, "y": 250.0, "width": 50.0, "height": 50.0]
+        let points3 = ["x": 80.0, "y": 80.0, "width": 10.0, "height": 10.0]
+//        browser.updatePhotoSkitch(at: 0, skitches: [["_id": "120", "num": 1, "type": "point", "coordinate": points1]], versionID: "kkk")
+        browser.updatePhotoSkitch(at: 1, skitches: [["_id": "121", "num": 2, "type": "point", "coordinate": points21],
+                                                    ["_id": "122", "num": 3, "type": "point", "coordinate": points22],
+                                                    ["_id": "123", "num": 4, "type": "point", "coordinate": points23]], versionID: "ggg")
+        browser.updatePhotoSkitch(at: 2, skitches: [["_id": "124", "num": 3, "type": "point", "coordinate": points3]], versionID: "zzz")
     }
     
     func dismissPhotoBrowser(_ photoBrowser: PhotoBrowser) {

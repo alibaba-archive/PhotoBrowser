@@ -9,14 +9,12 @@
 import Foundation
 
 public struct Point {
-    var x: CGFloat!
-    var y: CGFloat!
+    var x: CGFloat = 0
+    var y: CGFloat = 0
     var width: CGFloat = 0
     var height: CGFloat = 0
 
     init(pointJSON: [String: Any]) {
-        self.width = 0
-        self.height = 0
         if let x = pointJSON["x"] as? Double, let y = pointJSON["y"] as? Double {
             self.x = CGFloat(x)
             self.y = CGFloat(y)
