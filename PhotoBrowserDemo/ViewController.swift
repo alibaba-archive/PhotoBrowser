@@ -56,7 +56,7 @@ extension ViewController {
             photoBrowser.photos = photos
         }
         let item2 = PBActionBarItem(title: "TWO", style: .plain) { (photoBrowser, item) in
-            photoBrowser.enableShare = !photoBrowser.enableShare
+//            photoBrowser.enableShare = !photoBrowser.enableShare
             print("item2")
             let vc = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "DetailViewController")
             self.photoBrowser?.navigationController?.pushViewController(vc, animated: true)
@@ -64,15 +64,21 @@ extension ViewController {
         let item3 = PBActionBarItem(title: "THREE", style: .plain) { (photoBrowser, item) in
             print("item3")
         }
+        let item4 = PBActionBarItem(title: "FOUR", style: .plain) { (photoBrowser, item) in
+            print("item3")
+        }
+
         
         photoBrowser = PhotoBrowser()
         if let browser = photoBrowser {
-            browser.isFromPhotoPicker = true
+//            browser.isFromPhotoPicker = true
+
             browser.selectedIndex = [0, 1]
             browser.photos = [photo, photo2, photo3]
-            browser.actionItems = [item1, item2, item3]
+            browser.actionItems = [item1, item2, item3, item4]
             browser.photoBrowserDelegate = self
             browser.currentIndex = 0
+            browser.enableShare = false
             presentPhotoBrowser(browser, fromView: imageView)
         }
     }
@@ -113,29 +119,17 @@ extension ViewController: PhotoBrowserDelegate {
         dismissPhotoBrowser(toView: imageView)
     }
     
-    func longPressOnImage(_ gesture: UILongPressGestureRecognizer) {
-        guard let imageView = gesture.view as? UIImageView else {
-            return
-        }
+    func photoBrowser(_ browser: PhotoBrowser, longPressOnPhoto photo: Photo, index: Int) {
         let alertController = UIAlertController.init(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
         let cancelAction = UIAlertAction.init(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil)
         let saveAction = UIAlertAction.init(title: "Save", style: UIAlertActionStyle.default) {[unowned self] (action) -> Void in
-            if let image = imageView.image {
+            if let image = photo.imageToSave() {
                 self.saveToAlbum(image)
             }
         }
         alertController.addAction(saveAction)
         alertController.addAction(cancelAction)
-        if UIDevice.current.userInterfaceIdiom == .phone {
-            self.photoBrowser?.present(alertController, animated: true, completion: nil)
-        } else {
-            let location = gesture.location(in: gesture.view)
-            let rect = CGRect(x: location.x - 5, y: location.y - 5, width: 10, height: 10)
-            alertController.modalPresentationStyle = .popover
-            alertController.popoverPresentationController?.sourceRect = rect
-            alertController.popoverPresentationController?.sourceView = gesture.view
-            self.photoBrowser?.present(alertController, animated: true, completion: nil)
-        }
+        self.photoBrowser?.present(alertController, animated: true, completion: nil)
     }
 
     func photoBrowser(_ browser: PhotoBrowser, willSharePhoto photo: Photo) {

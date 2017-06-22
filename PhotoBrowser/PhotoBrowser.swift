@@ -16,20 +16,21 @@ let PadToolbarItemSpace: CGFloat = 72
 
 public protocol PhotoBrowserDelegate: class {
     func dismissPhotoBrowser(_ photoBrowser: PhotoBrowser)
-    func longPressOnImage(_ gesture: UILongPressGestureRecognizer)
+    func photoBrowser(_ browser: PhotoBrowser, longPressOnPhoto photo: Photo, index: Int)
     func photoBrowser(_ browser: PhotoBrowser, didShowPhotoAtIndex index: Int)
     func photoBrowser(_ browser: PhotoBrowser, willSharePhoto photo: Photo)
     func photoBrowser(_ browser: PhotoBrowser, canSelectPhotoAtIndex index: Int) -> Bool
     func photoBrowser(_ browser: PhotoBrowser, didSelectPhotoAtIndex index: Int)
     func photoBrowser(_ browser: PhotoBrowser, didTapSkitch skitch: Skitch, versionID: String)
     func photoBrowser(_ browser: PhotoBrowser, didHideSkitchButton isHidden: Bool)
+    func didShowMoreFiles(_ browser: PhotoBrowser)
 }
 
 public extension PhotoBrowserDelegate {
     func dismissPhotoBrowser(_ photoBrowser: PhotoBrowser) {
         photoBrowser.dismiss(animated: false, completion: nil)
     }
-    func longPressOnImage(_ gesture: UILongPressGestureRecognizer) {}
+    func photoBrowser(_ browser: PhotoBrowser, longPressOnPhoto photo: Photo, index: Int) {}
     func photoBrowser(_ browser: PhotoBrowser, didShowPhotoAtIndex index: Int) {}
     func photoBrowser(_ browser: PhotoBrowser, willSharePhoto photo: Photo) {
         browser.defaultShareAction()
@@ -40,6 +41,7 @@ public extension PhotoBrowserDelegate {
     func photoBrowser(_ browser: PhotoBrowser, didSelectPhotoAtIndex index: Int) {}
     func photoBrowser(_ browser: PhotoBrowser, didTapSkitch skitch: Skitch, versionID: String) {}
     func photoBrowser(_ browser: PhotoBrowser, didHideSkitchButton isHidden: Bool) {}
+    func didShowMoreFiles(_ browser: PhotoBrowser) {}
 }
 
 open class PhotoBrowser: UIPageViewController {
@@ -68,7 +70,7 @@ open class PhotoBrowser: UIPageViewController {
         }
     }
 
-    fileprivate var isSkitchButtonHidden: Bool = true
+    open var isSkitchButtonHidden: Bool = true
     fileprivate var isSkitchesSetted: Bool = false
 
     open var skitchesDictionary: [Int: [[String: Any]]] = [:]
@@ -91,6 +93,9 @@ open class PhotoBrowser: UIPageViewController {
     open var enableShare = true {
         didSet {
             headerView?.rightButton.isHidden = !enableShare
+            if !enableShare {
+                headerView?.updateShareStatus(false)
+            }
         }
     }
     
@@ -118,6 +123,7 @@ open class PhotoBrowser: UIPageViewController {
     }
 
     open var isFromPhotoPicker: Bool = false
+    open var isPreviewMode: Bool = false
     open var selectedIndex: [Int] = []
 
     public override init(transitionStyle style: UIPageViewControllerTransitionStyle, navigationOrientation: UIPageViewControllerNavigationOrientation, options: [String : Any]?) {
@@ -140,6 +146,7 @@ open class PhotoBrowser: UIPageViewController {
         edgesForExtendedLayout = UIRectEdge.top
         dataSource = self
         delegate = self
+        
         self.updateToolbar()
     }
     
@@ -230,6 +237,7 @@ extension PhotoBrowser {
             headerView = PBNavigationBar()
             if let headerView = headerView {
                 headerView.isFromPhotoPicker = isFromPhotoPicker
+                headerView.isPreviewMode = isPreviewMode
                 headerView.alpha = 0
                 view.addSubview(headerView)
                 headerView.translatesAutoresizingMaskIntoConstraints = false
@@ -239,20 +247,20 @@ extension PhotoBrowser {
                 
                 headerView.leftButton.addTarget(self, action: #selector(leftButtonTap(_:)), for: .touchUpInside)
                 headerView.rightButton.addTarget(self, action: #selector(rightButtonTap(_:)), for: .touchUpInside)
-                headerView.showSkitchButton.addTarget(self, action: #selector(showSkitchButtonTap(_:)), for: .touchUpInside)
+                headerView.moreButton.addTarget(self, action: #selector(showMoreFiles(_:)), for: .touchUpInside)
                 headerView.imageSelected = selectedIndex.contains(currentIndex)
             }
         }
         if let headerView = headerView {
             headerView.titleLabel.text = photos[currentIndex].title
-            headerView.indexLabel.text = "\(currentIndex + 1)/\(photos.count)"
+//            headerView.indexLabel.text = "\(currentIndex + 1)/\(photos.count)"
             headerView.imageSelected = selectedIndex.contains(currentIndex)
         }
-        if let skitches = skitchesDictionary[currentIndex], skitches.count > 0 {
-            headerView?.updateShowSkitchButtonStatus(false, isHiddenSkitch: isSkitchButtonHidden)
-        } else {
-            headerView?.updateShowSkitchButtonStatus(true, isHiddenSkitch: isSkitchButtonHidden)
-        }
+//        if let skitches = skitchesDictionary[currentIndex], skitches.count > 0 {
+//            headerView?.updateShowSkitchButtonStatus(false, isHiddenSkitch: isSkitchButtonHidden)
+//        } else {
+//            headerView?.updateShowSkitchButtonStatus(true, isHiddenSkitch: isSkitchButtonHidden)
+//        }
     }
     
     func updateToolbar() {
@@ -316,13 +324,17 @@ extension PhotoBrowser {
         }
     }
 
-    func showSkitchButtonTap(_ sender: Any) {
+    func showMoreFiles(_ sender: Any) {
+        photoBrowserDelegate?.didShowMoreFiles(self)
+    }
+
+    open func showSkitchButtonTapped() {
         if isSkitchButtonHidden {
             isSkitchButtonHidden = false
         } else {
             isSkitchButtonHidden = true
         }
-        headerView?.updateSkitchButton(isSkitchButtonHidden)
+//        headerView?.updateSkitchButton(isSkitchButtonHidden)
         if let previewController = viewControllers?[0] as? PhotoPreviewController {
             previewController.updateSkitchButtonStatus(isSkitchButtonHidden)
         }
@@ -442,7 +454,7 @@ extension PhotoBrowser: PhotoPreviewControllerDelegate {
     }
     
     func longPressOn(_ photo: Photo, gesture: UILongPressGestureRecognizer) {
-        photoBrowserDelegate?.longPressOnImage(gesture)
+        photoBrowserDelegate?.photoBrowser(self, longPressOnPhoto: photo, index: currentIndex)
     }
 
     func didTapOnBackground() {
