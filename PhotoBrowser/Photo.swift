@@ -19,14 +19,16 @@ public struct Photo {
     public var title: String?
     public var object: AnyObject?
     public var asset: PHAsset?
+    public var fileKey: String?
     
-    public init(image: UIImage?, title: String? = nil, thumbnailImage: UIImage? = nil, photoUrl: URL? = nil, thumbnailUrl: URL? = nil, object: AnyObject? = nil) {
+    public init(image: UIImage?, title: String? = nil, thumbnailImage: UIImage? = nil, photoUrl: URL? = nil, thumbnailUrl: URL? = nil, object: AnyObject? = nil, fileKey: String?) {
         self.image = image
         self.title = title
         self.thumbnailImage = thumbnailImage
         self.photoUrl = photoUrl
         self.thumbnailUrl = thumbnailUrl
         self.object = object
+        self.fileKey = fileKey
     }
 
     public init(asset: PHAsset) {
@@ -36,9 +38,12 @@ public struct Photo {
     public func localOriginalPhoto() -> UIImage? {
         if image != nil {
             return image
+        } else if let originFileKey = fileKey {
+            let image = KingfisherManager.shared.cache.retrieveImageInMemoryCache(forKey: originFileKey)
+            return image ?? KingfisherManager.shared.cache.retrieveImageInDiskCache(forKey: originFileKey)
         } else if let photoUrl = photoUrl {
-            let image = KingfisherManager.shared.cache.retrieveImageInMemoryCache(forKey: photoUrl.kfCacheKey)
-            return image ?? KingfisherManager.shared.cache.retrieveImageInDiskCache(forKey: photoUrl.kfCacheKey)
+            let image = KingfisherManager.shared.cache.retrieveImageInMemoryCache(forKey: photoUrl.absoluteString)
+            return image ?? KingfisherManager.shared.cache.retrieveImageInDiskCache(forKey: photoUrl.absoluteString)
         }
         return nil
     }
@@ -63,15 +68,5 @@ public struct Photo {
         }
         return nil
         
-    }
-}
-
-extension URL {
-    var kfCacheKey: String {
-        var photoCacheKey = absoluteString
-        if let query = query {
-            photoCacheKey = absoluteString.replacingOccurrences(of: query, with: "")
-        }
-        return photoCacheKey
     }
 }

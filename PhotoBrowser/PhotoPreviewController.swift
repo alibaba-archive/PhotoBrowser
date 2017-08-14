@@ -163,7 +163,7 @@ class PhotoPreviewController: UIViewController {
                 waitingView.removeFromSuperview()
             }
             
-            if let photoUrl = photo.photoUrl {
+            if let photoUrl = photo.photoUrl, let photoFileKey = photo.fileKey {
                 waitingView = WaitingView.init(frame: CGRect(x: 0, y: 0, width: 70, height: 70))
                 
                 if let newWaitingView = waitingView {
@@ -171,7 +171,7 @@ class PhotoPreviewController: UIViewController {
                     view.addSubview(newWaitingView)
                 }
                 
-                let resource = ImageResource(downloadURL: photoUrl, cacheKey: photoUrl.kfCacheKey)
+                let resource = ImageResource(downloadURL: photoUrl, cacheKey: photoFileKey)
                 imageView.kf.setImage(with: resource, placeholder: photo.localThumbnailPhoto(), options: nil, progressBlock: { (receivedSize, totalSize) -> () in
                     let progress = CGFloat(receivedSize) / CGFloat(totalSize)
                     if let waitingView = self.waitingView {
