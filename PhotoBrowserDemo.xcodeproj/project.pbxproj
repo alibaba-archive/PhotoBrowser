@@ -13,7 +13,7 @@
 		4A52D2131C72D13B001C257B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4A52D2121C72D13B001C257B /* Assets.xcassets */; };
 		4A52D2161C72D13B001C257B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4A52D2141C72D13B001C257B /* LaunchScreen.storyboard */; };
 		4A8EB7231CEF068D0065EAB0 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A6BC7BB1C770DE100DACDA5 /* Kingfisher.framework */; };
-		86AEF72E1EDEB9D100034DBA /* PhotoBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86AEF72D1EDEB9D100034DBA /* PhotoBrowser.framework */; };
+		869D74FB1F6784CF00765F38 /* PhotoBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86AEF72D1EDEB9D100034DBA /* PhotoBrowser.framework */; };
 		AC570BBF1E247C550083620C /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC570BBE1E247C550083620C /* DetailViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -40,7 +40,6 @@
 		4A52D2171C72D13B001C257B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4A6BC7BB1C770DE100DACDA5 /* Kingfisher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kingfisher.framework; path = Carthage/Build/iOS/Kingfisher.framework; sourceTree = "<group>"; };
 		86AEF72D1EDEB9D100034DBA /* PhotoBrowser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PhotoBrowser.framework; path = "../Library/Developer/Xcode/DerivedData/PhotoBrowser-atvddxmpufwrrkfytkysyblmhonv/Build/Products/Debug-iphonesimulator/PhotoBrowser.framework"; sourceTree = "<group>"; };
-		A168310A1E7ABDC200AA1DC9 /* PhotoBrowser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PhotoBrowser.framework; sourceTree = "<group>"; };
 		AC570BBE1E247C550083620C /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -49,7 +48,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				86AEF72E1EDEB9D100034DBA /* PhotoBrowser.framework in Frameworks */,
+				869D74FB1F6784CF00765F38 /* PhotoBrowser.framework in Frameworks */,
 				4A8EB7231CEF068D0065EAB0 /* Kingfisher.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -60,7 +59,6 @@
 		4A52D1FF1C72D13B001C257B = {
 			isa = PBXGroup;
 			children = (
-				A168310A1E7ABDC200AA1DC9 /* PhotoBrowser.framework */,
 				4A6BC7BB1C770DE100DACDA5 /* Kingfisher.framework */,
 				4A52D20A1C72D13B001C257B /* PhotoBrowserDemo */,
 				4A52D2091C72D13B001C257B /* Products */,

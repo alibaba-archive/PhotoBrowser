@@ -78,7 +78,10 @@ extension ViewController {
             browser.actionItems = [item1, item2, item3, item4]
             browser.photoBrowserDelegate = self
             browser.currentIndex = 0
-            browser.enableShare = false
+//            browser.isFromPhotoPicker = true
+            browser.isShowMoreButton = false
+            
+//            browser.isPreviewMode = false
             presentPhotoBrowser(browser, fromView: imageView)
         }
     }
