@@ -122,6 +122,11 @@ open class PhotoBrowser: UIPageViewController {
         }
     }
 
+    open var isShowMoreButton: Bool = true {
+        didSet {
+            headerView?.isShowMoreButton = isShowMoreButton
+        }
+    }
     open var isFromPhotoPicker: Bool = false
     open var isPreviewMode: Bool = false
     open var selectedIndex: [Int] = []
@@ -238,6 +243,7 @@ extension PhotoBrowser {
             if let headerView = headerView {
                 headerView.isFromPhotoPicker = isFromPhotoPicker
                 headerView.isPreviewMode = isPreviewMode
+                headerView.isShowMoreButton = isShowMoreButton
                 headerView.alpha = 0
                 view.addSubview(headerView)
                 headerView.translatesAutoresizingMaskIntoConstraints = false

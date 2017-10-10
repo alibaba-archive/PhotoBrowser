@@ -95,6 +95,11 @@ class PBNavigationBar: UIView {
             }
         }
     }
+    var isShowMoreButton: Bool = true {
+        didSet {
+            self.updateMoreButtonStatus(!isShowMoreButton)
+        }
+    }
     
     lazy var contentView: UIView = {
         let view = UIView()
