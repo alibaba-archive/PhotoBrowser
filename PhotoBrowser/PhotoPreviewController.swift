@@ -393,7 +393,7 @@ extension PhotoPreviewController: SkitchViewDelegate {
 
 extension PhotoPreviewController {
     
-    func handleDoubleTap(_ sender: UITapGestureRecognizer) {
+    @objc func handleDoubleTap(_ sender: UITapGestureRecognizer) {
         if scrollView.zoomScale != scrollView.minimumZoomScale {
             scrollView.setZoomScale(scrollView.minimumZoomScale, animated: true)
         } else {
@@ -406,14 +406,14 @@ extension PhotoPreviewController {
         updateConstraint()
     }
     
-    func handleSingleTap(_ sender: UITapGestureRecognizer) {
+    @objc func handleSingleTap(_ sender: UITapGestureRecognizer) {
         guard let delegate = delegate else {
             return
         }
         delegate.isFullScreenMode = !delegate.isFullScreenMode
     }
     
-    func handleLongPress(_ sender: UILongPressGestureRecognizer) {
+    @objc func handleLongPress(_ sender: UILongPressGestureRecognizer) {
         guard let delegate = delegate, let photo = photo else {
             return
         }
@@ -422,7 +422,7 @@ extension PhotoPreviewController {
         }
     }
 
-    func handleBackgroundSingleTap(_ sender: UITapGestureRecognizer) {
+    @objc func handleBackgroundSingleTap(_ sender: UITapGestureRecognizer) {
         delegate?.didTapOnBackground()
     }
 }

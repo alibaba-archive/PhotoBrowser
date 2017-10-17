@@ -33,7 +33,7 @@ open class PBActionBarItem: NSObject {
         self.action = action
     }
 
-    func triggerAction() {
+    @objc func triggerAction() {
         guard let photoBrowser = photoBrowser, let action = action else {
             return
         }

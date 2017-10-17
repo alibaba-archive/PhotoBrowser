@@ -150,7 +150,7 @@ class PBNavigationBar: UIView {
 
     lazy var leftButton: UIButton = {
         let button = UIButton()
-        let image = UIImage(named: "icon-cross", in: Bundle(for: classForCoder()), compatibleWith: nil)
+        let image = UIImage(named: "icon-cross", in: Bundle(for: classForCoder), compatibleWith: nil)
         button.setImage(image, for: UIControlState())
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addConstraint(NSLayoutConstraint(item: button, attribute: .width, relatedBy: .greaterThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 40))
@@ -160,7 +160,7 @@ class PBNavigationBar: UIView {
     
     lazy var moreButton: UIButton = {
         let button = UIButton()
-        var image = UIImage(named: "moreIcon", in: Bundle(for: classForCoder()), compatibleWith: nil)
+        var image = UIImage(named: "moreIcon", in: Bundle(for: classForCoder), compatibleWith: nil)
         button.setImage(image, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addConstraint(NSLayoutConstraint(item: button, attribute: .width, relatedBy: .greaterThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 40))
@@ -171,9 +171,9 @@ class PBNavigationBar: UIView {
 
     lazy var rightButton: UIButton = {
         let button = UIButton()
-        var image = UIImage(named: "icon-share", in: Bundle(for: classForCoder()), compatibleWith: nil)
+        var image = UIImage(named: "icon-share", in: Bundle(for: classForCoder), compatibleWith: nil)
         if self.isFromPhotoPicker {
-            let unselectedImage = UIImage(named: "checkmark_unselected", in: Bundle(for: classForCoder()), compatibleWith: nil)
+            let unselectedImage = UIImage(named: "checkmark_unselected", in: Bundle(for: classForCoder), compatibleWith: nil)
             image = self.imageSelected ? self.getCheckedSelectedImage() : unselectedImage
         }
         button.setImage(image, for: .normal)

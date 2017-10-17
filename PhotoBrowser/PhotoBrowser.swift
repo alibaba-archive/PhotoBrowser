@@ -322,7 +322,7 @@ extension PhotoBrowser {
         return itemsArray
     }
     
-    func leftButtonTap(_ sender: AnyObject?) {
+    @objc func leftButtonTap(_ sender: AnyObject?) {
         if let delegate = photoBrowserDelegate {
             delegate.dismissPhotoBrowser(self)
         } else {
@@ -330,7 +330,7 @@ extension PhotoBrowser {
         }
     }
 
-    func showMoreFiles(_ sender: Any) {
+    @objc func showMoreFiles(_ sender: Any) {
         photoBrowserDelegate?.didShowMoreFiles(self)
     }
 
@@ -347,7 +347,7 @@ extension PhotoBrowser {
         photoBrowserDelegate?.photoBrowser(self, didHideSkitchButton: isSkitchButtonHidden)
     }
 
-    func rightButtonTap(_ sender: AnyObject) {
+    @objc func rightButtonTap(_ sender: AnyObject) {
         guard let photo = currentPhoto else {
             return
         }

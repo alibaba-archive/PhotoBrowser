@@ -1,5 +1,5 @@
 ## Features
-A simple photo browser to display remote photos. [Kingfisher] (https://github.com/onevcat/Kingfisher) is used to download and cache images.
+A simple photo browser to display remote photos. [Kingfisher](https://github.com/onevcat/Kingfisher) is used to download and cache images.
 Support:
 
 * Double-tap to zoom out & zoom in
@@ -28,7 +28,7 @@ If Kingfisher is not used in your project, you have to **drag it your self into 
 ## Run Demo
 
 ``` bash
-$ git clone git@github.com:teambition/PhotoBrowser.git
+$ git clone https://github.com/teambition/PhotoBrowser.git
 ```
 And then
 

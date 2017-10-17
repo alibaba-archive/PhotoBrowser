@@ -31,11 +31,6 @@ class DetailViewController: UIViewController {
         super.viewWillDisappear(animated)
         navigationController?.navigationBar.removeObserver(self, forKeyPath: navigationBarHiddenKeyPath, context: &navigationBarKVOContext)
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
 }
 
 // MARK: - KVO for NavigationBar

@@ -21,15 +21,11 @@ class ViewController: UIViewController {
         imageView.addGestureRecognizer(gesture)
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-    }
-
     func saveToAlbum(_ image: UIImage) {
         UIImageWriteToSavedPhotosAlbum(image, self, #selector(self.image(_:didFinishSavingWithError:contextInfo:)), nil)
     }
 
-    func image(_ image: UIImage, didFinishSavingWithError error:NSError?, contextInfo:UnsafeRawPointer) {
+    @objc func image(_ image: UIImage, didFinishSavingWithError error:NSError?, contextInfo:UnsafeRawPointer) {
         if error == nil {
             print("save success")
         } else {
@@ -39,7 +35,7 @@ class ViewController: UIViewController {
 }
 
 extension ViewController {
-    func displayPhotoBrowser() {
+    @objc func displayPhotoBrowser() {
         let thumbnail1 = UIImage.init(named: "thumbnail1")
         let photoUrl1 = URL.init(string: "https://www.teambition.com/api/works/575d0bbf93e0f8860d73d88e/download/IMG_0005.JPG.jpeg?signature=eyJhbGciOiJIUzI1NiJ9.eyJfd29ya0lkIjoiNTc1ZDBiYmY5M2UwZjg4NjBkNzNkODhlIiwiZmlsZUtleSI6IjExMGg2MzRhOTg3MDQ5MDJmNDY1MmJhZTYzYjI1MTQyZTUyMSIsIl91c2VySWQiOiI1MmE2Y2MyZGVmNjZiYzk4MGMwMDAzMTIiLCJleHAiOjE0ODIwNjA0ODgsInN0b3JhZ2UiOiJzdHJpa2VyLWh6In0.czjEgDdAKqqOm8fK8lDOiE7wA_5H48bh6phlomGQqWo")
         let thumbnail2 = UIImage.init(named: "thumbnail2")

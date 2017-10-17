@@ -13,8 +13,9 @@
 		4A52D2131C72D13B001C257B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4A52D2121C72D13B001C257B /* Assets.xcassets */; };
 		4A52D2161C72D13B001C257B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4A52D2141C72D13B001C257B /* LaunchScreen.storyboard */; };
 		4A8EB7231CEF068D0065EAB0 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A6BC7BB1C770DE100DACDA5 /* Kingfisher.framework */; };
-		869D74FB1F6784CF00765F38 /* PhotoBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86AEF72D1EDEB9D100034DBA /* PhotoBrowser.framework */; };
 		AC570BBF1E247C550083620C /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC570BBE1E247C550083620C /* DetailViewController.swift */; };
+		D3F284BF1F96059000E8EE4D /* PhotoBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D3F284BE1F96059000E8EE4D /* PhotoBrowser.framework */; };
+		D3F284C01F96059000E8EE4D /* PhotoBrowser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D3F284BE1F96059000E8EE4D /* PhotoBrowser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,6 +25,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				D3F284C01F96059000E8EE4D /* PhotoBrowser.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -41,6 +43,7 @@
 		4A6BC7BB1C770DE100DACDA5 /* Kingfisher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kingfisher.framework; path = Carthage/Build/iOS/Kingfisher.framework; sourceTree = "<group>"; };
 		86AEF72D1EDEB9D100034DBA /* PhotoBrowser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PhotoBrowser.framework; path = "../Library/Developer/Xcode/DerivedData/PhotoBrowser-atvddxmpufwrrkfytkysyblmhonv/Build/Products/Debug-iphonesimulator/PhotoBrowser.framework"; sourceTree = "<group>"; };
 		AC570BBE1E247C550083620C /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
+		D3F284BE1F96059000E8EE4D /* PhotoBrowser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PhotoBrowser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,7 +51,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				869D74FB1F6784CF00765F38 /* PhotoBrowser.framework in Frameworks */,
+				D3F284BF1F96059000E8EE4D /* PhotoBrowser.framework in Frameworks */,
 				4A8EB7231CEF068D0065EAB0 /* Kingfisher.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -59,6 +62,7 @@
 		4A52D1FF1C72D13B001C257B = {
 			isa = PBXGroup;
 			children = (
+				D3F284BE1F96059000E8EE4D /* PhotoBrowser.framework */,
 				4A6BC7BB1C770DE100DACDA5 /* Kingfisher.framework */,
 				4A52D20A1C72D13B001C257B /* PhotoBrowserDemo */,
 				4A52D2091C72D13B001C257B /* Products */,
@@ -125,12 +129,12 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0720;
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = Teambition;
 				TargetAttributes = {
 					4A52D2071C72D13B001C257B = {
 						CreatedOnToolsVersion = 7.2.1;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0900;
 					};
 				};
 			};
@@ -223,14 +227,20 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -253,7 +263,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -270,14 +280,20 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -294,7 +310,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -316,7 +332,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.Teambition.PhotoBrowserDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -333,7 +350,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.Teambition.PhotoBrowserDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};

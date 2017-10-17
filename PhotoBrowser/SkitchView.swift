@@ -81,7 +81,7 @@ class SkitchView: UIView {
         skitchRectangleButton.tag = PhotoPreviewConstant.skitchButtonTag + index
     }
 
-    func handleSkitchButtonTap(_ button: UIButton) {
+    @objc func handleSkitchButtonTap(_ button: UIButton) {
         let index = button.tag - PhotoPreviewConstant.skitchButtonTag
 
         UIView.animate(withDuration: 0.15, delay: 0, options: [.curveEaseInOut], animations: {
