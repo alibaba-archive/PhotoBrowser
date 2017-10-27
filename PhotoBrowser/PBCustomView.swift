@@ -196,12 +196,22 @@ class PBNavigationBar: UIView {
 
     func updateShareStatus(_ isEnableShare: Bool) {
         self.removeConstraint(self.moreTrailingConstraint!)
-        self.moreTrailingConstraint = NSLayoutConstraint(item: self.moreButton, attribute: .trailing, relatedBy: .equal, toItem: self, attribute: .trailing, multiplier: 1.0, constant: -15)
-        self.addConstraint(self.moreTrailingConstraint!)
-
+        
         if !isEnableShare {
+            rightButton.isHidden = true
+
+//            self.moreTrailingConstraint = NSLayoutConstraint(item: self, attribute: .trailing, relatedBy: .equal, toItem: contentView, attribute: .trailing, multiplier: 1.0, constant: -15)
+            
+            self.moreTrailingConstraint = NSLayoutConstraint(item: self.moreButton, attribute: .trailing, relatedBy: .equal, toItem: contentView, attribute: .trailing, multiplier: 1.0, constant: -15)
+            self.addConstraint(self.moreTrailingConstraint!)
+            
             titleTrailingConstraint?.constant = 60
         } else {
+            rightButton.isHidden = false
+
+            self.moreTrailingConstraint = NSLayoutConstraint(item: self.moreButton, attribute: .trailing, relatedBy: .equal, toItem: self.rightButton, attribute: .leading, multiplier: 1.0, constant: 0)
+            self.addConstraint(self.moreTrailingConstraint!)
+
             titleTrailingConstraint?.constant = 85
         }
         layoutIfNeeded()
@@ -217,12 +227,6 @@ class PBNavigationBar: UIView {
         }
         layoutIfNeeded()
     }
-
-//    func updateSkitchButton(_ isHiddenSkitch: Bool) {
-//        let skitchImage = isHiddenSkitch ? "filePreviewInvisibleIcon" : "filePreviewVisibleIcon"
-//        let image = UIImage(named: skitchImage, in: Bundle(for: classForCoder), compatibleWith: nil)
-//        moreButton.setImage(image, for: .normal)
-//    }
 
     func setup() {
         addSubview(backgroundView)
