@@ -93,9 +93,7 @@ open class PhotoBrowser: UIPageViewController {
     open var enableShare = true {
         didSet {
             headerView?.rightButton.isHidden = !enableShare
-            if !enableShare {
-                headerView?.updateShareStatus(false)
-            }
+            headerView?.updateShareStatus(enableShare)
         }
     }
     
