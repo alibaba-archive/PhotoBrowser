@@ -46,6 +46,8 @@ public extension PhotoBrowserDelegate {
 
 open class PhotoBrowser: UIPageViewController {
     
+    static var accessToken: String?
+    
     var isFullScreen = false
     var toolbarHeightConstraint: NSLayoutConstraint?
     var toolbarBottomConstraint: NSLayoutConstraint?
