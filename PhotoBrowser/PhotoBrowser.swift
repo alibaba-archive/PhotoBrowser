@@ -47,11 +47,6 @@ public extension PhotoBrowserDelegate {
 open class PhotoBrowser: UIPageViewController {
     
     var isFullScreen = false
-    var toolbarHeightConstraint: NSLayoutConstraint?
-    var toolbarBottomConstraint: NSLayoutConstraint?
-    var navigationTopConstraint: NSLayoutConstraint?
-    var navigationHeightConstraint: NSLayoutConstraint?
-    
     var headerView: PBNavigationBar?
     
     open var photos: [Photo]? {
@@ -246,7 +241,11 @@ extension PhotoBrowser {
                 view.addSubview(headerView)
                 headerView.translatesAutoresizingMaskIntoConstraints = false
                 view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[headerView]-0-|", options: [], metrics: nil, views: ["headerView":headerView]))
-                headerView.addConstraint(NSLayoutConstraint(item: headerView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 64))
+                if #available(iOS 11.0, *) {
+                    view.addConstraint(NSLayoutConstraint(item: headerView, attribute: .bottom, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .top, multiplier: 1.0, constant: 44))
+                } else {
+                    headerView.addConstraint(NSLayoutConstraint(item: headerView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 64))
+                }
                 view.addConstraint(NSLayoutConstraint(item: view, attribute: .top, relatedBy: .equal, toItem: headerView, attribute: .top, multiplier: 1.0, constant: 0))
                 
                 headerView.leftButton.addTarget(self, action: #selector(leftButtonTap(_:)), for: .touchUpInside)
@@ -278,8 +277,14 @@ extension PhotoBrowser {
                 view.addSubview(toolbar)
                 toolbar.translatesAutoresizingMaskIntoConstraints = false
                 view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[toolbar]-0-|", options: [], metrics: nil , views: ["toolbar":toolbar]))
-                view.addConstraint(NSLayoutConstraint(item: bottomLayoutGuide, attribute: .top, relatedBy: .equal, toItem: toolbar, attribute: .bottom, multiplier: 1.0, constant: 0))
-                toolbar.addConstraint(NSLayoutConstraint(item: toolbar, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: ToolbarHeight))
+                
+                view.addConstraint(NSLayoutConstraint(item: view, attribute: .bottom, relatedBy: .equal, toItem: toolbar, attribute: .bottom, multiplier: 1.0, constant: 0))
+                if #available(iOS 11.0, *) {
+                    view.addConstraint(NSLayoutConstraint(item: toolbar, attribute: .top, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .bottom, multiplier: 1.0, constant: -ToolbarHeight))
+                } else {
+                    view.addConstraint(NSLayoutConstraint(item: toolbar, attribute: .top, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1.0, constant: -ToolbarHeight))
+                }
+                
             }
         }
         if let toolbar = toolbar {

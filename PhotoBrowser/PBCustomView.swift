@@ -118,20 +118,18 @@ class PBNavigationBar: UIView {
             titleLabelTrailingConstant = 85
         }
 
-        view.addConstraint(NSLayoutConstraint(item: view, attribute: .centerY, relatedBy: .equal, toItem: self.rightButton, attribute: .centerY, multiplier: 1.0, constant: 0))
-        view.addConstraint(NSLayoutConstraint(item: view, attribute: .centerY, relatedBy: .equal, toItem: self.leftButton, attribute: .centerY, multiplier: 1.0, constant: 0))
+        NSLayoutConstraint(item: view, attribute: .centerY, relatedBy: .equal, toItem: self.leftButton, attribute: .centerY, multiplier: 1.0, constant: 0).isActive = true
+        NSLayoutConstraint(item: view, attribute: .leading, relatedBy: .equal, toItem: self.leftButton, attribute: .leading, multiplier: 1.0, constant: -8).isActive = true
         
-        view.addConstraint(NSLayoutConstraint(item: view, attribute: .leading, relatedBy: .equal, toItem: self.leftButton, attribute: .leading, multiplier: 1.0, constant: -8))
-        view.addConstraint(NSLayoutConstraint(item: view, attribute: .trailing, relatedBy: .equal, toItem: self.rightButton, attribute: .trailing, multiplier: 1.0, constant: 8))
+        NSLayoutConstraint(item: view, attribute: .centerY, relatedBy: .equal, toItem: self.rightButton, attribute: .centerY, multiplier: 1.0, constant: 0).isActive = true
+        NSLayoutConstraint(item: view, attribute: .trailing, relatedBy: .equal, toItem: self.rightButton, attribute: .trailing, multiplier: 1.0, constant: 8).isActive = true
         
-        view.addConstraint(NSLayoutConstraint(item: view, attribute: .top, relatedBy: .equal, toItem: self.titleLabel, attribute: .top, multiplier: 1.0, constant: 0))
-        view.addConstraint(NSLayoutConstraint(item: view, attribute: .bottom, relatedBy: .equal, toItem: self.titleLabel, attribute: .bottom, multiplier: 1.0, constant: 0))
-        view.addConstraint(NSLayoutConstraint(item: view, attribute: .centerX, relatedBy: .equal, toItem: self.titleLabel, attribute: .centerX, multiplier: 1.0, constant: 0))
-        
-        view.addConstraint(NSLayoutConstraint(item: view, attribute: .leading, relatedBy: .equal, toItem: self.titleLabel, attribute: .leading, multiplier: 1, constant: -60))
-
+        NSLayoutConstraint(item: view, attribute: .top, relatedBy: .equal, toItem: self.titleLabel, attribute: .top, multiplier: 1.0, constant: 0).isActive = true
+        NSLayoutConstraint(item: view, attribute: .bottom, relatedBy: .equal, toItem: self.titleLabel, attribute: .bottom, multiplier: 1.0, constant: 0).isActive = true
+        NSLayoutConstraint(item: view, attribute: .centerX, relatedBy: .equal, toItem: self.titleLabel, attribute: .centerX, multiplier: 1.0, constant: 0).isActive = true
+        NSLayoutConstraint(item: view, attribute: .leading, relatedBy: .equal, toItem: self.titleLabel, attribute: .leading, multiplier: 1, constant: -60).isActive = true
         self.titleTrailingConstraint = NSLayoutConstraint(item: view, attribute: .trailing, relatedBy: .equal, toItem: self.titleLabel, attribute: .trailing, multiplier: 1, constant: titleLabelTrailingConstant)
-        view.addConstraint(self.titleTrailingConstraint!)
+        self.titleTrailingConstraint?.isActive = true
 
         return view
     }()
@@ -232,9 +230,17 @@ class PBNavigationBar: UIView {
         addSubview(backgroundView)
         backgroundView.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height)
         backgroundView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
+        
         addSubview(contentView)
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[contentView]-0-|", options: [], metrics: nil, views: ["contentView": contentView]))
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-statusBarHeight-[contentView]-0-|", options: [], metrics: ["statusBarHeight":statusBarHeight], views: ["contentView": contentView]))
+        if #available(iOS 11.0, *) {
+            contentView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 0).isActive = true
+            contentView.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 0).isActive = true
+            contentView.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor, constant: 0).isActive = true
+            contentView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0).isActive = true
+        } else {
+            addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[contentView]-0-|", options: [], metrics: nil, views: ["contentView": contentView]))
+            addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-statusBarHeight-[contentView]-0-|", options: [], metrics: ["statusBarHeight":statusBarHeight], views: ["contentView": contentView]))
+        }
     }
 
     fileprivate func getCheckedSelectedImage() -> UIImage? {
@@ -246,20 +252,50 @@ class PBNavigationBar: UIView {
     }
 }
 
-open class PBToolbar: UIToolbar {
+open class PBToolbar: UIView {
     
     var backgroundView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
     
+    lazy var toolbar: UIToolbar = {
+        let toolbar = UIToolbar(frame: frame)
+        toolbar.translatesAutoresizingMaskIntoConstraints = false
+        toolbar.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
+        toolbar.clipsToBounds = true
+        return toolbar
+    }()
+    
+    open var items: [UIBarButtonItem]? {
+        get {
+            return toolbar.items
+        }
+        set {
+            toolbar.items = items
+        }
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
-        clipsToBounds = true
         addSubview(backgroundView)
         backgroundView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        
+        self.addSubview(toolbar)
+        NSLayoutConstraint(item: toolbar, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1.0, constant: 0).isActive = true
+        NSLayoutConstraint(item: toolbar, attribute: .left, relatedBy: .equal, toItem: self, attribute: .left, multiplier: 1.0, constant: 0).isActive = true
+        NSLayoutConstraint(item: toolbar, attribute: .right, relatedBy: .equal, toItem: self, attribute: .right, multiplier: 1.0, constant: 0).isActive = true
+        if #available(iOS 11.0, *) {
+            NSLayoutConstraint(item: toolbar, attribute: .bottom, relatedBy: .equal, toItem: safeAreaLayoutGuide, attribute: .bottom, multiplier: 1.0, constant: 0).isActive = true
+        } else {
+            NSLayoutConstraint(item: toolbar, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1.0, constant: 0).isActive = true
+        }
+        
     }
     
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+    }
+    
+    func setItems(_ items: [UIBarButtonItem]?, animated: Bool) {
+        toolbar.setItems(items, animated: animated)
     }
 }
 

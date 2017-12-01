@@ -427,6 +427,7 @@ extension PhotoPreviewController {
     }
 }
 
+// MARK: - UIScrollViewDelegate
 extension PhotoPreviewController:UIScrollViewDelegate  {
 
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
