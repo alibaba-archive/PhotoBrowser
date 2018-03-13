@@ -24,6 +24,7 @@ public struct Photo {
     public init(image: UIImage?, title: String? = nil, thumbnailImage: UIImage? = nil, photoUrl: URL? = nil, thumbnailUrl: URL? = nil, object: AnyObject? = nil, fileKey: String?) {
         self.image = image
         self.title = title
+        
         self.thumbnailImage = thumbnailImage
         self.photoUrl = photoUrl
         self.thumbnailUrl = thumbnailUrl

@@ -19,6 +19,7 @@
 		864F45E81E9F0A4900FF9215 /* Skitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 864F45E71E9F0A4900FF9215 /* Skitch.swift */; };
 		86AEF7301EDEC8A000034DBA /* SkitchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86AEF72F1EDEC8A000034DBA /* SkitchView.swift */; };
 		A18117E01E83B66900F8CE8E /* CustomPhotoBroswerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A18117DF1E83B66900F8CE8E /* CustomPhotoBroswerManager.swift */; };
+		C4C79EA12057808200C92C0C /* UIView+Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4C79EA02057808200C92C0C /* UIView+Frame.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +37,7 @@
 		864F45E71E9F0A4900FF9215 /* Skitch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Skitch.swift; sourceTree = "<group>"; };
 		86AEF72F1EDEC8A000034DBA /* SkitchView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SkitchView.swift; sourceTree = "<group>"; };
 		A18117DF1E83B66900F8CE8E /* CustomPhotoBroswerManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomPhotoBroswerManager.swift; sourceTree = "<group>"; };
+		C4C79EA02057808200C92C0C /* UIView+Frame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Frame.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +58,7 @@
 				4A0B3FDE1C76DB300049338C /* Kingfisher.framework */,
 				4A52D1E21C72CB2E001C257B /* PhotoBrowser */,
 				4A52D1E11C72CB2E001C257B /* Products */,
+				C4C79EA42057B6B000C92C0C /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -81,9 +84,17 @@
 				4A87F61E1C96CF63005A9667 /* PBAnimation.swift */,
 				4A0739981C98FB3C0004FEA5 /* PBCustomView.swift */,
 				A18117DF1E83B66900F8CE8E /* CustomPhotoBroswerManager.swift */,
+				C4C79EA02057808200C92C0C /* UIView+Frame.swift */,
 				4A52D1E51C72CB2E001C257B /* Info.plist */,
 			);
 			path = PhotoBrowser;
+			sourceTree = "<group>";
+		};
+		C4C79EA42057B6B000C92C0C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -173,6 +184,7 @@
 				4A52D1FE1C72CE69001C257B /* PhotoBrowser.swift in Sources */,
 				4A87F61F1C96CF63005A9667 /* PBAnimation.swift in Sources */,
 				4A52D2381C72F568001C257B /* PhotoPreviewController.swift in Sources */,
+				C4C79EA12057808200C92C0C /* UIView+Frame.swift in Sources */,
 				4A8EB7291CEF16020065EAB0 /* PBActionBarItem.swift in Sources */,
 				A18117E01E83B66900F8CE8E /* CustomPhotoBroswerManager.swift in Sources */,
 				86AEF7301EDEC8A000034DBA /* SkitchView.swift in Sources */,
