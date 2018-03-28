@@ -13,9 +13,21 @@ let DismissDuration = 0.35
 var AssociatedObjectHandle: UInt8 = 0
 
 extension UIViewController {
+    var windowShot: UIImageView {
+        guard let window = UIApplication.shared.keyWindow else { return UIImageView() }
+        UIGraphicsBeginImageContextWithOptions(window.bounds.size, false, 0)
+        window.layer.render(in: UIGraphicsGetCurrentContext()!)
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        let snapshot: UIImageView
+        snapshot = UIImageView(image: image)
+        
+        return snapshot
+    }
 
     public func presentPhotoBrowser(_ viewControllerToPresent: UIViewController, fromView: UIView, animated: Bool? = true, completion: (() -> Void)? = nil) {
-        let transitionDelegate = TransitionDelegate(fromView: fromView)
+        let shot = self.windowShot
+        let transitionDelegate = TransitionDelegate(fromView: fromView, snapshot: shot)
         let navigationController = UINavigationController(rootViewController: viewControllerToPresent)
         navigationController.modalPresentationStyle = .fullScreen
         navigationController.pb_transitionDelegate = transitionDelegate
@@ -30,9 +42,9 @@ extension UIViewController {
     }
     
     public func dismissPhotoBrowser(toView: UIView? = nil) {
-        if let viewController = presentedViewController {
-            viewController.pb_transitionDelegate.toView = toView
-        }
+//        if let viewController = presentedViewController {
+//            viewController.pb_transitionDelegate.toView = toView
+//        }
         dismiss(animated: true, completion: nil)
     }
 
@@ -49,15 +61,17 @@ extension UIViewController {
 open class TransitionDelegate: NSObject, UIViewControllerTransitioningDelegate {
     open var fromView: UIView!
     open var toView: UIView?
+    open var snapshot: UIView!
     
-    init(fromView: UIView) {
+    init(fromView: UIView, snapshot: UIView) {
         super.init()
         self.fromView = fromView
         self.toView = fromView
+        self.snapshot = snapshot
     }
     
     open func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return PresentAnimation(fromView: fromView)
+        return PresentAnimation(fromView: fromView, snapshot: snapshot)
     }
     
     open func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
@@ -71,10 +85,12 @@ open class TransitionDelegate: NSObject, UIViewControllerTransitioningDelegate {
 
 open class PresentAnimation: NSObject, UIViewControllerAnimatedTransitioning {
     open var fromView: UIView!
+    open var snapshot: UIView!
     
-    public init(fromView: UIView) {
+    public init(fromView: UIView, snapshot: UIView) {
         super.init()
         self.fromView = fromView
+        self.snapshot = snapshot
     }
 
     open func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
@@ -85,6 +101,7 @@ open class PresentAnimation: NSObject, UIViewControllerAnimatedTransitioning {
         let toVC = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to)!
         let container = transitionContext.containerView
  
+        container.addSubview(self.snapshot)
         container.addSubview(toVC.view)
         let fromFrame = container.convert(fromView.frame, from: fromView.superview)
         let toFrame = transitionContext.finalFrame(for: toVC)

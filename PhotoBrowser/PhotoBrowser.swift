@@ -142,6 +142,7 @@ open class PhotoBrowser: UIPageViewController {
         extendedLayoutIncludesOpaqueBars = true
         automaticallyAdjustsScrollViewInsets = false
         edgesForExtendedLayout = UIRectEdge.top
+        modalPresentationStyle = .custom
         dataSource = self
         delegate = self
         
@@ -156,16 +157,12 @@ open class PhotoBrowser: UIPageViewController {
     open override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         navigationController?.setNavigationBarHidden(false, animated: true)
+//        navigationController?.setNavigationBarHidden(false, animated: true)
     }
     
     open override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         isFullScreenMode = false
-    }
-    
-    open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransition(to: size, with: coordinator)
-        updateToolbar()
     }
     
     open override var preferredStatusBarStyle : UIStatusBarStyle {
@@ -240,6 +237,7 @@ extension PhotoBrowser {
                 headerView.alpha = 0
                 view.addSubview(headerView)
                 headerView.translatesAutoresizingMaskIntoConstraints = false
+                
                 view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[headerView]-0-|", options: [], metrics: nil, views: ["headerView":headerView]))
                 if #available(iOS 11.0, *) {
                     view.addConstraint(NSLayoutConstraint(item: headerView, attribute: .bottom, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .top, multiplier: 1.0, constant: 44))
@@ -444,6 +442,7 @@ extension PhotoBrowser: UIPageViewControllerDataSource, UIPageViewControllerDele
     }
 }
 
+// MARK: - PhotoPreviewControllerDelegate
 extension PhotoBrowser: PhotoPreviewControllerDelegate {
     
     var isFullScreenMode: Bool {
@@ -453,12 +452,23 @@ extension PhotoBrowser: PhotoPreviewControllerDelegate {
         
         set(newValue) {
             isFullScreen = newValue
-            UIView.animate(withDuration: 0.3, animations: { () -> Void in
-                self.setNeedsStatusBarAppearanceUpdate()
-                self.view.backgroundColor = newValue ? UIColor.black : self.backgroundColor
-                self.headerView?.alpha = newValue ? 0 : 1
-                self.toolbar?.alpha = newValue ? 0 : 1
-            }) 
+            
+            if isFullScreen { // fix status bar dimiss animation bug
+                UIView.animate(withDuration: 0.25, animations: { () -> Void in
+                    self.view.backgroundColor = UIColor.black
+                    self.headerView?.alpha = 0
+                    self.toolbar?.alpha = 0
+                }) { (_) in
+                    self.setNeedsStatusBarAppearanceUpdate()
+                }
+            } else {
+                UIView.animate(withDuration: 0.25, animations: { () -> Void in
+                    self.setNeedsStatusBarAppearanceUpdate()
+                    self.view.backgroundColor = self.backgroundColor
+                    self.headerView?.alpha = 1
+                    self.toolbar?.alpha = 1
+                })
+            }
         }
     }
     
@@ -481,6 +491,28 @@ extension PhotoBrowser: PhotoPreviewControllerDelegate {
     
     func didShowPhotoAtIndex(_ index: Int) {
         photoBrowserDelegate?.photoBrowser(self, didShowPhotoAtIndex: index)
+    }
+    
+    func doDraging(_ dragProgress: CGFloat) {
+        let progress = min(1, (1-dragProgress))
+        view.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: progress)
+    }
+
+    func doDownDrag(_ isBegin: Bool, view: PhotoPreviewController, needBack: Bool, imageFrame: CGRect, imageView: UIImageView?) {
+        if needBack { // 页面消失
+            guard let imageView = imageView else { return }
+            UIView.animate(withDuration: 0.25, animations: {
+                imageView.alpha = 0
+                self.view.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0)
+            }, completion: { (completion) in
+                self.dismiss(animated: false, completion: nil)
+            })
+        } else {
+            guard let vcs = viewControllers else { return }
+            for vc in vcs where vc != view {
+                vc.view.isHidden = isBegin
+            }
+        }
     }
 }
 

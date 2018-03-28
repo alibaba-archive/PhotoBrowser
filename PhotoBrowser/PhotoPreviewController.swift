@@ -18,8 +18,10 @@ protocol PhotoPreviewControllerDelegate: class {
     func didTapOnBackground()
     func didTapSkitch(_ skitch: Skitch, versionID: String)
     func didShowPhotoAtIndex(_ index: Int)
+    
+    func doDraging(_ dragProgress: CGFloat)
+    func doDownDrag(_ isBegin: Bool, view: PhotoPreviewController, needBack: Bool, imageFrame: CGRect, imageView: UIImageView?)
 }
-
 
 // MARK: - PhotoPreviewConstant
 struct PhotoPreviewConstant {
@@ -30,9 +32,14 @@ struct PhotoPreviewConstant {
     static let skitchRectangleButtonBgColor = UIColor(red: 61/255, green: 168/255, blue: 245/255, alpha: 0.24)
 }
 
+fileprivate struct PopConstant {
+    static let springBounciness: CGFloat = 0
+    static let springSpeed: CGFloat = 20
+}
+
 // MARK: - PhotoPreviewController
 class PhotoPreviewController: UIViewController {
-    
+
     var index: NSInteger?
     var photo: Photo?
     var skitches: [Skitch] = []
@@ -45,16 +52,37 @@ class PhotoPreviewController: UIViewController {
     fileprivate var skitchWidthConstraints: [NSLayoutConstraint] = []
     fileprivate var skitchHeightConstraints: [NSLayoutConstraint] = []
 
-    var scrollView: UIScrollView!
-    var imageView: UIImageView!
+    lazy var scrollView: UIScrollView = self.makeScrollView()
+    lazy var imageView: UIImageView = self.makeImageView()
     var waitingView: WaitingView?
     
     weak var delegate:PhotoPreviewControllerDelegate?
-
-    var imageViewLeadingConstraint: NSLayoutConstraint?
-    var imageViewTrailingConstraint: NSLayoutConstraint?
-    var imageViewTopConstraint: NSLayoutConstraint?
-    var imageViewBottomConstraint: NSLayoutConstraint?
+    
+    fileprivate let maxMoveOfY: CGFloat = 250
+    fileprivate let minZoom: CGFloat = 0.3
+    fileprivate let screenWidth: CGFloat = UIScreen.main.bounds.size.width
+    fileprivate let screenHeight: CGFloat = UIScreen.main.bounds.size.height
+    
+    fileprivate var moveImage: UIImageView? // 拖拽图片
+    fileprivate var isPanning: Bool = false // 正在拖拽
+    fileprivate var isZooming: Bool = false // 正在缩放
+    fileprivate var panningProgress: CGFloat = 0  // 拖拽进度
+    fileprivate var isDirectionDown: Bool = false // 拖拽是否向下
+    
+    fileprivate var dragCoefficient: CGFloat = 0 // 拖拽系数
+    fileprivate var panBeginX: CGFloat = 0 // 向下拖拽开始的X
+    fileprivate var panBeginY: CGFloat = 0 // 向下拖拽开始的Y
+    fileprivate var imageWidthBeforeDrag: CGFloat = 0 // 向下拖拽开始时，图片的宽
+    fileprivate var imageHeightBeforeDrag: CGFloat = 0 // 向下拖拽开始时，图片的高
+    fileprivate var imageCenterXBeforeDrag: CGFloat = 0 // 向下拖拽开始时，图片的中心X
+    fileprivate var imageYBeforeDrag: CGFloat = 0 // 向下拖拽开始时，图片的Y
+    fileprivate var scrollOffsetX: CGFloat = 0 // 向下拖拽开始时，滚动控件的offsetX
+    
+    fileprivate var scrollNewY: CGFloat = 0
+    fileprivate var scrollOldY: CGFloat = 0
+    fileprivate var isFullScreenMode: Bool = false
+    
+    fileprivate var panLastY: CGFloat = 0
 
     init(photo: Photo, index: NSInteger, skitches: [[String: Any]]? = nil, isSkitchButtonHidden: Bool = true) {
         super.init(nibName: nil, bundle: nil)
@@ -68,10 +96,6 @@ class PhotoPreviewController: UIViewController {
             })
         }
 
-        scrollView = UIScrollView()
-        imageView = UIImageView()
-
-        imageView.contentMode = .scaleAspectFill
         extendedLayoutIncludesOpaqueBars = true
         automaticallyAdjustsScrollViewInsets = false
         edgesForExtendedLayout = UIRectEdge.top
@@ -88,6 +112,33 @@ class PhotoPreviewController: UIViewController {
         }
     }
     
+    fileprivate func makeScrollView() -> UIScrollView {
+        let scrollView = UIScrollView(frame: self.view.frame)
+        scrollView.delegate = self
+        scrollView.backgroundColor = UIColor.clear
+        scrollView.clipsToBounds = true
+        scrollView.showsVerticalScrollIndicator = false
+        scrollView.showsHorizontalScrollIndicator = false
+        scrollView.alwaysBounceHorizontal = true
+        scrollView.alwaysBounceVertical = true
+        scrollView.minimumZoomScale = 1.0
+        scrollView.maximumZoomScale = 3.0
+        scrollView.zoomScale = 1.0
+        scrollView.contentOffset = CGPoint.zero
+        if #available(iOS 11.0, *) {
+            scrollView.contentInsetAdjustmentBehavior = .never
+        }
+        return scrollView
+    }
+    
+    fileprivate func makeImageView() -> UIImageView {
+        let imageView = UIImageView()
+        imageView.layer.masksToBounds = true
+        imageView.contentMode = .scaleAspectFill
+
+        return imageView
+    }
+    
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
@@ -96,36 +147,30 @@ class PhotoPreviewController: UIViewController {
         commonInit()
     }
     
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransition(to: size, with: coordinator)
-        if scrollView.zoomScale != scrollView.minimumZoomScale {
-            scrollView.zoomScale = scrollView.minimumZoomScale
-        }
-        coordinator.animate(alongsideTransition: { (_) -> Void in
-            self.updateZoom()
-            if let waitingView = self.waitingView {
-                waitingView.center = CGPoint(x: size.width / 2, y: size.height / 2)
-            }
-            }, completion: nil)
+    fileprivate func computeImageViewCenter(_ scrollView: UIScrollView) -> CGPoint {
+        let offsetX = (scrollView.bounds.size.width > scrollView.contentSize.width) ? (scrollView.bounds.size.width - scrollView.contentSize.width) * 0.5 : 0.0 //x偏移
+        let offsetY = (scrollView.bounds.size.height > scrollView.contentSize.height) ? (scrollView.bounds.size.height - scrollView.contentSize.height) * 0.5 : 0.0 //y偏移
+        let actualCenter = CGPoint(x: scrollView.contentSize.width * 0.5 + offsetX, y: scrollView.contentSize.height * 0.5 + offsetY);
+        return actualCenter
+    }
+    
+    fileprivate func setImageViewFrame(_ image: UIImage) {
+        imageView.width = screenWidth
+        imageView.height = image.size.height / image.size.width * screenWidth
+        imageView.center = self.view.center
+        scrollView.contentSize = imageView.frame.size
     }
     
     func commonInit() {
         guard let photo = photo else {
             return
         }
-        view.backgroundColor = UIColor.clear
-        
-        scrollView.delegate = self
-        scrollView.maximumZoomScale = 3.0
-        scrollView.minimumZoomScale = 1.0
-        scrollView.isScrollEnabled = false
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(scrollView)
-        
-        scrollView.addSubview(imageView)
-        imageView.translatesAutoresizingMaskIntoConstraints = false
 
-        initializeConstraint()
+        isFullScreenMode = delegate?.isFullScreenMode ?? false
+        view.backgroundColor = UIColor.clear
+        view.addSubview(scrollView)
+
+        scrollView.addSubview(imageView)
         imageView.isUserInteractionEnabled = true
         
         let doubleTap = UITapGestureRecognizer.init(target: self, action: #selector(handleDoubleTap(_:)))
@@ -145,10 +190,9 @@ class PhotoPreviewController: UIViewController {
         
         singleTap.require(toFail: doubleTap)
         
-        
         if let image = photo.localOriginalPhoto() {
+            setImageViewFrame(image)
             imageView.image = image
-            updateZoom()
             addSkitches()
 
             if let index = self.index {
@@ -156,8 +200,8 @@ class PhotoPreviewController: UIViewController {
             }
         } else {
             if let thumbnail = photo.localThumbnailPhoto() {
+                setImageViewFrame(thumbnail)
                 imageView.image = thumbnail
-                updateZoom()
             }
             if let waitingView = waitingView {
                 waitingView.removeFromSuperview()
@@ -181,8 +225,8 @@ class PhotoPreviewController: UIViewController {
                         if let waitingView = self.waitingView {
                             waitingView.removeFromSuperview()
                         }
-                        if let _ = image {
-                            self.updateZoom()
+                        if let image = image {
+                            self.setImageViewFrame(image)
                         }
                         self.addSkitches()
                         if let index = self.index {
@@ -192,195 +236,17 @@ class PhotoPreviewController: UIViewController {
             }
         }
     }
-
-    func updateSkiches(_ skitches: [[String: Any]], versionID: String, isHidden: Bool) {
-        self.versionID = versionID
-        self.isSkitchButtonHidden = isHidden
-        self.skitches = skitches.flatMap({ (skitchJSON) -> Skitch? in
-            return Skitch(skitchJSON: skitchJSON)
-        })
-        self.addSkitches()
-        self.updateSkitchButtonStatus()
-    }
-    
-    func updateSkitchButtonStatus(_ isHidden: Bool? = nil) {
-        if let isHidden = isHidden {
-            isSkitchButtonHidden = isHidden
-        }
-
-        updateSkitchViewConstraint()
-        for skitchView in skitchViews {
-            skitchView.isHidden = isSkitchButtonHidden
-        }
-    }
-
-    fileprivate func addSkitches() {
-        if skitches.count <= 0 {
-            return
-        }
-        for skitchView in skitchViews {
-            skitchView.removeFromSuperview()
-        }
-
-        skitchTopConstraints.removeAll()
-        skitchLeftConstraints.removeAll()
-        skitchWidthConstraints.removeAll()
-        skitchHeightConstraints.removeAll()
-
-        for i in 0..<skitches.count {
-            addSkitchView(i)
-        }
-        updateConstraint()
-    }
-    
-    fileprivate func addSkitchView(_ i: Int) {
-        let skitch = skitches[i]
-        let skitchView = SkitchView()
-        let skitchViewFrame = getSkitchViewFrame(skitch)
-
-        skitchView.delegate = self
-        skitchView.setTitle(String(skitch.number), index: i)
-        scrollView.addSubview(skitchView)
-        skitchView.isHidden = isSkitchButtonHidden
-        skitchView.translatesAutoresizingMaskIntoConstraints = false
-
-        let topConstraint = NSLayoutConstraint(item: skitchView, attribute: .top, relatedBy: .equal, toItem: scrollView, attribute: .top, multiplier: 1, constant: skitchViewFrame.origin.y)
-        let leftConstraint = NSLayoutConstraint(item: skitchView, attribute: .left, relatedBy: .equal, toItem: scrollView, attribute: .left, multiplier: 1, constant: skitchViewFrame.origin.x)
-        let widthConstraint = NSLayoutConstraint(item: skitchView, attribute: .width , relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: skitchViewFrame.width)
-        let heightConstraint = NSLayoutConstraint(item: skitchView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: skitchViewFrame.height)
-
-        scrollView.addConstraint(topConstraint)
-        scrollView.addConstraint(leftConstraint)
-        scrollView.addConstraint(widthConstraint)
-        scrollView.addConstraint(heightConstraint)
-
-        skitchTopConstraints.append(topConstraint)
-        skitchLeftConstraints.append(leftConstraint)
-        skitchWidthConstraints.append(widthConstraint)
-        skitchHeightConstraints.append(heightConstraint)
-        skitchViews.append(skitchView)
-    }
-
-    func initializeConstraint() {
-        //layout scrollView in view
-        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[scrollView]-0-|", options: [], metrics: nil, views: ["scrollView":scrollView]))
-        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[scrollView]-0-|", options: [], metrics: nil, views: ["scrollView":scrollView]))
-
-        //layout imageView in scrollView
-        imageViewLeadingConstraint = NSLayoutConstraint(item: imageView, attribute: .leading, relatedBy: .equal, toItem: scrollView, attribute: .leading, multiplier: 1.0, constant: 0)
-        imageViewTopConstraint = NSLayoutConstraint(item: imageView, attribute: .top, relatedBy: .equal, toItem: scrollView, attribute: .top, multiplier: 1.0, constant: 0)
-        imageViewTrailingConstraint = NSLayoutConstraint(item: scrollView, attribute: .trailing, relatedBy: .equal, toItem: imageView, attribute: .trailing, multiplier: 1.0, constant: 0)
-        imageViewBottomConstraint = NSLayoutConstraint(item: scrollView, attribute: .bottom, relatedBy: .equal, toItem: imageView, attribute: .bottom, multiplier: 1.0, constant: 0)
-        if let lead = imageViewLeadingConstraint, let trail = imageViewTrailingConstraint, let top = imageViewTopConstraint, let bottom = imageViewBottomConstraint {
-            scrollView.addConstraints([lead, trail, top, bottom])
-        }
-    }
-
-    func updateZoom() {
-        guard let image = imageView.image else {
-            return
-        }
-        //Zoom to show as much image as possible unless image is smaller than screen
-        var minZoom = min(view.bounds.size.width / image.size.width, view.bounds.size.height / image.size.height)
-        minZoom = min(minZoom, 1)
-        scrollView.minimumZoomScale = minZoom
-
-        //Force scrollViewDidZoom fire if zoom did not change
-        if scrollView.zoomScale == minZoom {
-            minZoom += 0.000001
-        }
-        scrollView.zoomScale = minZoom
-    }
     
     func updateConstraint() {
-        
-        guard let image = imageView.image else {
-            return
-        }
-        
-        guard let lead = imageViewLeadingConstraint, let trail = imageViewTrailingConstraint, let top = imageViewTopConstraint, let bottom = imageViewBottomConstraint else {
-            return
-        }
-        
-        let imageWidth = image.size.width
-        let imageHeight = image.size.height
-        
-        let viewWidth = view.bounds.size.width
-        let viewHeight = view.bounds.size.height
-        
-        //center image if it is smaller than screen
-        var hPadding = (viewWidth - scrollView.zoomScale * imageWidth) / 2
-        hPadding = max(hPadding, 0)
-        
-        var vPadding = (viewHeight - scrollView.zoomScale * imageHeight) / 2
-        vPadding = max(vPadding, 0)
-        
-        lead.constant = hPadding
-        trail.constant = hPadding
-        top.constant = vPadding
-        bottom.constant = vPadding
-
         updateSkitchViewConstraint()
         view.layoutIfNeeded()
     }
-    
-    func getSkitchViewFrame(_ skitch: Skitch) -> CGRect {
-        guard let lead = imageViewLeadingConstraint, let top = imageViewTopConstraint else {
-            return CGRect(x: 0, y: 0, width: 0, height: 0)
-        }
 
-        let zoomScale = scrollView.zoomScale
-        let offsetX: CGFloat = lead.constant + skitch.point.x*zoomScale
-        let offsetY: CGFloat = top.constant + skitch.point.y*zoomScale
-        let width = skitch.point.width * zoomScale
-        let height = skitch.point.height * zoomScale
-
-        return CGRect(x: offsetX, y: offsetY, width: width, height: height)
-    }
-
-    fileprivate func updateSkitchViewConstraint() {
-        if skitches.count <= 0 {
-            return
-        }
-
-        for i in 0..<skitches.count {
-            let skitch = skitches[i]
-            let skitchFrame = getSkitchViewFrame(skitch)
-
-            if i < skitchLeftConstraints.count {
-                skitchTopConstraints[i].constant = skitchFrame.origin.y
-                skitchLeftConstraints[i].constant = skitchFrame.origin.x
-                skitchWidthConstraints[i].constant = skitchFrame.width
-                skitchHeightConstraints[i].constant = skitchFrame.height
-            }
-        }
-    }
-
-    func zoomScaleForDoubleTap() -> CGFloat {
-        guard let image = imageView.image else {
+    fileprivate func zoomScaleForDoubleTap() -> CGFloat {
+        guard imageView.image != nil  else {
             return scrollView.minimumZoomScale
         }
-        
-        //Zoom to fit the smaller edge to screen if possible
-        //but at least double the minimumZoomScale
-        
-        var maxZoomScale: CGFloat = 2
-        
-        let imageSize = image.size
-        let boundSize = view.bounds.size
-        
-        let xScale = boundSize.width / imageSize.width
-        let yScale = boundSize.height / imageSize.height
-        
-        let minScale = min(xScale, yScale)
-        let maxScale = max(xScale, yScale)
-        
-        if minScale > 1 {
-            maxZoomScale = max(maxZoomScale, maxScale)
-        } else {
-            maxZoomScale = max(maxZoomScale, maxScale / minScale)
-        }
-        return maxZoomScale * scrollView.minimumZoomScale
+        return 2 * scrollView.minimumZoomScale
     }
 }
 
@@ -428,19 +294,249 @@ extension PhotoPreviewController {
 }
 
 // MARK: - UIScrollViewDelegate
-extension PhotoPreviewController:UIScrollViewDelegate  {
+extension PhotoPreviewController: UIScrollViewDelegate {
 
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return imageView
     }
 
     func scrollViewDidZoom(_ scrollView: UIScrollView) {
-        if scrollView.zoomScale - scrollView.minimumZoomScale < 0.01 {
-            scrollView.isScrollEnabled = false
-        } else {
-            scrollView.isScrollEnabled = true
-        }
+        imageView.center = computeImageViewCenter(scrollView)
+//        scrollView.contentSize = imageView.size
+        isZooming = false
         updateConstraint()
+    }
+    
+    func scrollViewWillBeginZooming(_ scrollView: UIScrollView, with view: UIView?) {
+        isZooming = true
+    }
+    
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        endPan()
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        scrollNewY = scrollView.contentOffset.y
+        if (scrollView.contentOffset.y < 0 || isPanning) && !isZooming {
+            doPan(scrollView.panGestureRecognizer)
+        }
+        scrollOldY = scrollNewY
     }
 }
 
+// MARK: - pan gesture
+extension PhotoPreviewController {
+    fileprivate func saveFrameBeginPan() {
+        updateSkitchButtonStatus(true)
+        imageWidthBeforeDrag = imageView.width
+        imageHeightBeforeDrag = imageView.height
+
+        //计算图片centerY需要考虑到图片此时的高
+        let imageBeginY = (imageHeightBeforeDrag < screenHeight) ? (screenHeight - imageHeightBeforeDrag) * 0.5 : 0.0
+        imageYBeforeDrag = imageBeginY
+        
+        //centerX需要考虑到offset
+        scrollOffsetX = self.scrollView.contentOffset.x
+        let imageX = -scrollOffsetX
+        imageCenterXBeforeDrag = imageX + imageWidthBeforeDrag * 0.5
+
+//        imageCenterXBeforeDrag = imageView.center.x // 更正后
+        dragCoefficient = 1.0 + imageHeightBeforeDrag / 2000.0
+    }
+    
+    fileprivate func doPan(_ pan: UIPanGestureRecognizer) {
+        if pan.state == .ended || pan.state == .possible { // 手势已结束
+            panBeginX = 0
+            panBeginY = 0
+            isPanning = false
+            if !isDirectionDown {
+                delegate?.isFullScreenMode = isFullScreenMode
+            }
+            return
+        }
+        
+        if pan.numberOfTouches != 1 || isZooming { // 两个手指在拖，此时在缩放
+            moveImage = nil
+            isPanning = false
+            panBeginX = 0
+            panBeginY = 0
+            return
+        }
+        
+        if panBeginX == 0.0 && panBeginY == 0.0 { // 新的一次下拉开始了
+            panBeginX = pan.location(in: self.view).x
+            panBeginY = pan.location(in: self.view).y
+            print(panBeginX, panBeginY)
+            isPanning = true
+            imageView.isHidden = true
+            delegate?.isFullScreenMode = true
+            saveFrameBeginPan()
+            delegate?.doDownDrag(true, view: self, needBack: false, imageFrame: CGRect.zero, imageView: nil)
+        }
+        
+        if moveImage == nil { // 添加moveImage
+            moveImage = UIImageView()
+            view.addSubview(moveImage!)
+            moveImage?.contentMode = UIViewContentMode.scaleAspectFill
+            moveImage?.backgroundColor = UIColor.white
+            moveImage?.layer.masksToBounds = true
+            moveImage?.image = imageView.image
+            moveImage?.width = imageWidthBeforeDrag
+            moveImage?.height = imageHeightBeforeDrag
+            moveImage?.center.x = imageCenterXBeforeDrag
+            moveImage?.originY = imageYBeforeDrag
+        }
+        
+        let panCurrentX: CGFloat = pan.location(in: view).x
+        let panCurrentY: CGFloat = pan.location(in: view).y
+        
+        // 判断是否向下拖拽
+        isDirectionDown = panCurrentY > panLastY
+        panLastY = panCurrentY
+        
+        // 拖拽进度
+        let progress = (panCurrentY - panBeginY) / maxMoveOfY
+        panningProgress = min(progress, 1.0)
+        delegate?.doDraging(panningProgress)
+        
+        if panCurrentY > panBeginY {
+            moveImage?.width = imageWidthBeforeDrag - (imageWidthBeforeDrag - imageWidthBeforeDrag * minZoom) * panningProgress
+            moveImage?.height = imageHeightBeforeDrag - (imageHeightBeforeDrag - imageHeightBeforeDrag * minZoom) * panningProgress
+        } else {
+            moveImage?.width = imageWidthBeforeDrag
+            moveImage?.height = imageHeightBeforeDrag
+        }
+        moveImage?.center.x = (panCurrentX - panBeginX) + imageCenterXBeforeDrag
+        moveImage?.originY = (panCurrentY - panBeginY) * dragCoefficient + imageYBeforeDrag
+    }
+    
+    fileprivate func endPan() {
+        if !isDirectionDown { // 不退回页面
+            guard moveImage != nil else {
+                self.panningProgress = 0
+                self.panBeginX = 0
+                self.panBeginY = 0
+                return
+            }
+            UIView.animate(withDuration: 0.25, animations: {
+                self.panningProgress = 0
+                self.delegate?.doDraging(self.panningProgress)
+                self.moveImage?.width = self.imageWidthBeforeDrag
+                self.moveImage?.height = self.imageHeightBeforeDrag
+                self.moveImage?.center.x = self.imageCenterXBeforeDrag
+                self.moveImage?.originY = self.imageYBeforeDrag
+            }, completion: { (_) in
+                self.scrollView.contentOffset = CGPoint(x: self.scrollOffsetX, y: 0)
+                self.panBeginX = 0
+                self.panBeginY = 0
+                self.moveImage?.isHidden = true
+                self.imageView.isHidden = false
+                self.moveImage?.removeFromSuperview()
+                self.moveImage = nil
+                self.updateSkitchButtonStatus(false)
+            })
+        } else {
+            guard let image = moveImage else { return }
+            self.delegate?.doDownDrag(false, view: self, needBack: true, imageFrame: image.frame, imageView: image)
+        }
+    }
+}
+
+// MARK: - Skitch
+extension PhotoPreviewController {
+    func updateSkiches(_ skitches: [[String: Any]], versionID: String, isHidden: Bool) {
+        self.versionID = versionID
+        self.isSkitchButtonHidden = isHidden
+        self.skitches = skitches.flatMap({ (skitchJSON) -> Skitch? in
+            return Skitch(skitchJSON: skitchJSON)
+        })
+        self.addSkitches()
+        self.updateSkitchButtonStatus()
+    }
+
+    func updateSkitchButtonStatus(_ isHidden: Bool? = nil) {
+        if let isHidden = isHidden {
+            isSkitchButtonHidden = isHidden
+        }
+
+        updateSkitchViewConstraint()
+        for skitchView in skitchViews {
+            skitchView.isHidden = isSkitchButtonHidden
+        }
+    }
+
+    fileprivate func addSkitches() {
+        if skitches.count <= 0 {
+            return
+        }
+        for skitchView in skitchViews {
+            skitchView.removeFromSuperview()
+        }
+
+        skitchTopConstraints.removeAll()
+        skitchLeftConstraints.removeAll()
+        skitchWidthConstraints.removeAll()
+        skitchHeightConstraints.removeAll()
+
+        for i in 0..<skitches.count {
+            addSkitchView(i)
+        }
+        updateConstraint()
+    }
+
+    fileprivate func addSkitchView(_ i: Int) {
+        let skitch = skitches[i]
+        let skitchView = SkitchView()
+        let skitchViewFrame = getSkitchViewFrame(skitch)
+
+        skitchView.delegate = self
+        skitchView.setTitle(String(skitch.number), index: i)
+        scrollView.addSubview(skitchView)
+        skitchView.isHidden = isSkitchButtonHidden
+        skitchView.translatesAutoresizingMaskIntoConstraints = false
+
+        let topConstraint = NSLayoutConstraint(item: skitchView, attribute: .top, relatedBy: .equal, toItem: scrollView, attribute: .top, multiplier: 1, constant: skitchViewFrame.origin.y)
+        let leftConstraint = NSLayoutConstraint(item: skitchView, attribute: .left, relatedBy: .equal, toItem: scrollView, attribute: .left, multiplier: 1, constant: skitchViewFrame.origin.x)
+        let widthConstraint = NSLayoutConstraint(item: skitchView, attribute: .width , relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: skitchViewFrame.width)
+        let heightConstraint = NSLayoutConstraint(item: skitchView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: skitchViewFrame.height)
+
+        scrollView.addConstraint(topConstraint)
+        scrollView.addConstraint(leftConstraint)
+        scrollView.addConstraint(widthConstraint)
+        scrollView.addConstraint(heightConstraint)
+
+        skitchTopConstraints.append(topConstraint)
+        skitchLeftConstraints.append(leftConstraint)
+        skitchWidthConstraints.append(widthConstraint)
+        skitchHeightConstraints.append(heightConstraint)
+        skitchViews.append(skitchView)
+    }
+
+    func getSkitchViewFrame(_ skitch: Skitch) -> CGRect {
+        let zoomScale = scrollView.zoomScale
+        let offsetX: CGFloat = imageView.frame.origin.x + skitch.point.x*zoomScale
+        let offsetY: CGFloat = imageView.frame.origin.y + skitch.point.y*zoomScale
+        let width = skitch.point.width * zoomScale
+        let height = skitch.point.height * zoomScale
+
+        return CGRect(x: offsetX, y: offsetY, width: width, height: height)
+    }
+
+    fileprivate func updateSkitchViewConstraint() {
+        if skitches.count <= 0 {
+            return
+        }
+
+        for i in 0..<skitches.count {
+            let skitch = skitches[i]
+            let skitchFrame = getSkitchViewFrame(skitch)
+
+            if i < skitchLeftConstraints.count {
+                skitchTopConstraints[i].constant = skitchFrame.origin.y
+                skitchLeftConstraints[i].constant = skitchFrame.origin.x
+                skitchWidthConstraints[i].constant = skitchFrame.width
+                skitchHeightConstraints[i].constant = skitchFrame.height
+            }
+        }
+    }
+}

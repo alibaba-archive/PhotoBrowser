@@ -78,6 +78,7 @@ extension ViewController {
             browser.isShowMoreButton = false
             
 //            browser.isPreviewMode = false
+//            present(browser, animated: true, completion: nil)
             presentPhotoBrowser(browser, fromView: imageView)
         }
     }

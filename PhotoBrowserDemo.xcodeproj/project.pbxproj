@@ -12,9 +12,11 @@
 		4A52D2111C72D13B001C257B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4A52D20F1C72D13B001C257B /* Main.storyboard */; };
 		4A52D2131C72D13B001C257B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4A52D2121C72D13B001C257B /* Assets.xcassets */; };
 		4A52D2161C72D13B001C257B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4A52D2141C72D13B001C257B /* LaunchScreen.storyboard */; };
-		4A8EB7231CEF068D0065EAB0 /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A6BC7BB1C770DE100DACDA5 /* Kingfisher.framework */; };
-		AC2425E91FD0085B0033B5FC /* PhotoBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC2425E81FD0085B0033B5FC /* PhotoBrowser.framework */; };
 		AC570BBF1E247C550083620C /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC570BBE1E247C550083620C /* DetailViewController.swift */; };
+		C4C79EAB2057B76800C92C0C /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A6BC7BB1C770DE100DACDA5 /* Kingfisher.framework */; };
+		C4C79EAC2057B76800C92C0C /* Kingfisher.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4A6BC7BB1C770DE100DACDA5 /* Kingfisher.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C4C79EAE2057B89600C92C0C /* PhotoBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4C79EAD2057B89600C92C0C /* PhotoBrowser.framework */; };
+		C4C79EAF2057B89600C92C0C /* PhotoBrowser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C4C79EAD2057B89600C92C0C /* PhotoBrowser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,6 +26,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				C4C79EAF2057B89600C92C0C /* PhotoBrowser.framework in Embed Frameworks */,
+				C4C79EAC2057B76800C92C0C /* Kingfisher.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -40,8 +44,8 @@
 		4A52D2171C72D13B001C257B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4A6BC7BB1C770DE100DACDA5 /* Kingfisher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kingfisher.framework; path = Carthage/Build/iOS/Kingfisher.framework; sourceTree = "<group>"; };
 		86AEF72D1EDEB9D100034DBA /* PhotoBrowser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PhotoBrowser.framework; path = "../Library/Developer/Xcode/DerivedData/PhotoBrowser-atvddxmpufwrrkfytkysyblmhonv/Build/Products/Debug-iphonesimulator/PhotoBrowser.framework"; sourceTree = "<group>"; };
-		AC2425E81FD0085B0033B5FC /* PhotoBrowser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PhotoBrowser.framework; sourceTree = "<group>"; };
 		AC570BBE1E247C550083620C /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
+		C4C79EAD2057B89600C92C0C /* PhotoBrowser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PhotoBrowser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,8 +53,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AC2425E91FD0085B0033B5FC /* PhotoBrowser.framework in Frameworks */,
-				4A8EB7231CEF068D0065EAB0 /* Kingfisher.framework in Frameworks */,
+				C4C79EAE2057B89600C92C0C /* PhotoBrowser.framework in Frameworks */,
+				C4C79EAB2057B76800C92C0C /* Kingfisher.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -60,7 +64,7 @@
 		4A52D1FF1C72D13B001C257B = {
 			isa = PBXGroup;
 			children = (
-				AC2425E81FD0085B0033B5FC /* PhotoBrowser.framework */,
+				C4C79EAD2057B89600C92C0C /* PhotoBrowser.framework */,
 				4A6BC7BB1C770DE100DACDA5 /* Kingfisher.framework */,
 				4A52D20A1C72D13B001C257B /* PhotoBrowserDemo */,
 				4A52D2091C72D13B001C257B /* Products */,
