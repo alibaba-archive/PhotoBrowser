@@ -58,6 +58,7 @@ class PhotoPreviewController: UIViewController {
     
     weak var delegate:PhotoPreviewControllerDelegate?
     
+    fileprivate let minPanY: CGFloat = -10
     fileprivate let maxMoveOfY: CGFloat = 250
     fileprivate let minZoom: CGFloat = 0.3
     fileprivate let screenWidth: CGFloat = UIScreen.main.bounds.size.width
@@ -317,7 +318,7 @@ extension PhotoPreviewController: UIScrollViewDelegate {
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         scrollNewY = scrollView.contentOffset.y
-        if (scrollView.contentOffset.y < 0 || isPanning) && !isZooming {
+        if (scrollView.contentOffset.y < minPanY || isPanning) && !isZooming {
             doPan(scrollView.panGestureRecognizer)
         }
         scrollOldY = scrollNewY
