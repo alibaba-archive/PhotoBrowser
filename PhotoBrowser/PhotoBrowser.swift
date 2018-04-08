@@ -48,7 +48,6 @@ open class PhotoBrowser: UIPageViewController {
     
     var isFullScreen = false
     var headerView: PBNavigationBar?
-    
     open var photos: [Photo]? {
         didSet {
             if let photos = photos {
@@ -85,10 +84,15 @@ open class PhotoBrowser: UIPageViewController {
     open var toolbar: PBToolbar?
     open var backgroundColor = UIColor.black
     open weak var photoBrowserDelegate: PhotoBrowserDelegate?
-    open var enableShare = true {
+    open var enableShare: Bool = true {
         didSet {
             headerView?.rightButton.isHidden = !enableShare
             headerView?.updateShareStatus(enableShare)
+        }
+    }
+    open var enableSelect: Bool = true {
+        didSet {
+            headerView?.rightButton.isHidden = !enableSelect
         }
     }
     
