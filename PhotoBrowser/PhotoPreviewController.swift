@@ -92,7 +92,7 @@ class PhotoPreviewController: UIViewController {
         self.isSkitchButtonHidden = isSkitchButtonHidden
 
         if let skitches = skitches {
-            self.skitches = skitches.flatMap({ (skitchJSON) -> Skitch? in
+            self.skitches = skitches.compactMap({ (skitchJSON) -> Skitch? in
                 return Skitch(skitchJSON: skitchJSON)
             })
         }
@@ -448,7 +448,7 @@ extension PhotoPreviewController {
     func updateSkiches(_ skitches: [[String: Any]], versionID: String, isHidden: Bool) {
         self.versionID = versionID
         self.isSkitchButtonHidden = isHidden
-        self.skitches = skitches.flatMap({ (skitchJSON) -> Skitch? in
+        self.skitches = skitches.compactMap({ (skitchJSON) -> Skitch? in
             return Skitch(skitchJSON: skitchJSON)
         })
         self.addSkitches()
