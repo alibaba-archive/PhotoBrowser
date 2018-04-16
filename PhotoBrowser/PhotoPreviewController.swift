@@ -90,26 +90,53 @@ class PhotoPreviewController: UIViewController {
         self.index = index
         self.photo = photo
         self.isSkitchButtonHidden = isSkitchButtonHidden
-
+        
         if let skitches = skitches {
             self.skitches = skitches.compactMap({ (skitchJSON) -> Skitch? in
                 return Skitch(skitchJSON: skitchJSON)
             })
         }
-
+        
         extendedLayoutIncludesOpaqueBars = true
         automaticallyAdjustsScrollViewInsets = false
         edgesForExtendedLayout = UIRectEdge.top
-        if let asset = self.photo?.asset, self.photo?.image == nil {
+        if let asset = self.photo?.asset, self.photo?.image == nil /* CloudKit or ... */ {
+            if let waitingView = waitingView {
+                waitingView.removeFromSuperview()
+            }
+            
+            waitingView = WaitingView(frame: CGRect(x: 0, y: 0, width: 70, height: 70))
+            
+            if let newWaitingView = waitingView {
+                newWaitingView.center = view.center
+                view.addSubview(newWaitingView)
+            }
+            
             let options = PHImageRequestOptions()
             options.deliveryMode = .highQualityFormat
-            options.isSynchronous = true
-            PHImageManager.default().requestImageData(for: asset, options: options, resultHandler: { [weak self](data, _, _, _) in
-                if let imageData = data {
-                    self?.photo?.image = UIImage(data: imageData)
-                    self?.delegate?.didShowPhotoAtIndex(index)
+            options.isSynchronous = false
+            options.isNetworkAccessAllowed = true
+            options.progressHandler = { progress, _, _, _ in
+                DispatchQueue.main.async { [weak self] in
+                    self?.waitingView?.progress = CGFloat(progress)
                 }
-            })
+            }
+            
+            PHImageManager.default().requestImageData(for: asset, options: options) { [weak self] data, _, _, _ in
+                DispatchQueue.main.async {
+                    if let imageData = data, let image = UIImage(data: imageData) {
+                        self?.photo?.image = image
+                        self?.setImageViewFrame(image)
+                        self?.imageView.image = image
+                        self?.addSkitches()
+                        self?.delegate?.didShowPhotoAtIndex(index)
+                    }
+                    
+                    if let waitingView = self?.waitingView {
+                        waitingView.removeFromSuperview()
+                    }
+                }
+            }
         }
     }
     
