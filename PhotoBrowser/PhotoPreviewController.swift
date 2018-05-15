@@ -369,7 +369,6 @@ extension PhotoPreviewController: UIScrollViewDelegate {
             miniMap?.isHidden = true
         } else {
             miniMap?.isHidden = scrollView.contentSize.width <= view.frame.width
-
         }
         
         miniMap?.ratios =

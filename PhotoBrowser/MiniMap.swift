@@ -51,8 +51,8 @@ public class MiniMap: UIView {
     private var realSize: CGSize
     
     required public init(size: CGSize) {
-        self._size = size
-        self.realSize = size
+        _size = size
+        realSize = size
         super.init(frame: .zero)
         setup()
         addLayer()
