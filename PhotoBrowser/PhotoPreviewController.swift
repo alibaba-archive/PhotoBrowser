@@ -84,6 +84,8 @@ class PhotoPreviewController: UIViewController {
     fileprivate var isFullScreenMode: Bool = false
     
     fileprivate var panLastY: CGFloat = 0
+    
+    fileprivate var miniMap: MiniMap?
 
     init(photo: Photo, index: NSInteger, skitches: [[String: Any]]? = nil, isSkitchButtonHidden: Bool = true) {
         super.init(nibName: nil, bundle: nil)
@@ -183,6 +185,7 @@ class PhotoPreviewController: UIViewController {
     }
     
     fileprivate func setImageViewFrame(_ image: UIImage) {
+        miniMap?.image = image
         imageView.width = screenWidth
         imageView.height = image.size.height / image.size.width * screenWidth
         imageView.center = self.view.center
@@ -217,6 +220,18 @@ class PhotoPreviewController: UIViewController {
         view.addGestureRecognizer(backgroudSingleTap)
         
         singleTap.require(toFail: doubleTap)
+        
+        let size = CGSize(width: 100, height: 100)
+        let miniMap = MiniMap(size: size)
+        miniMap.isHidden = true
+        view.addSubview(miniMap)
+        miniMap.translatesAutoresizingMaskIntoConstraints = false
+        miniMap.widthAnchor.constraint(equalToConstant: size.width).isActive = true
+        miniMap.heightAnchor.constraint(equalToConstant: size.height).isActive = true
+        miniMap.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -10).isActive = true
+        miniMap.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50).isActive = true
+        
+        self.miniMap = miniMap
         
         if let image = photo.localOriginalPhoto() {
             setImageViewFrame(image)
@@ -349,6 +364,21 @@ extension PhotoPreviewController: UIScrollViewDelegate {
             doPan(scrollView.panGestureRecognizer)
         }
         scrollOldY = scrollNewY
+        
+        if moveImage != nil {
+            miniMap?.isHidden = true
+        } else {
+            miniMap?.isHidden = scrollView.contentSize.width <= view.frame.width
+
+        }
+        
+        miniMap?.ratios =
+            Ratios(
+                top: 0,
+                left: scrollView.contentOffset.x / scrollView.contentSize.width,
+                width: view.frame.width / scrollView.contentSize.width,
+                height: 1
+        )
     }
 }
 
@@ -421,12 +451,12 @@ extension PhotoPreviewController {
         // 判断是否向下拖拽
         isDirectionDown = panCurrentY > panLastY
         panLastY = panCurrentY
-        
+
         // 拖拽进度
         let progress = (panCurrentY - panBeginY) / maxMoveOfY
         panningProgress = min(progress, 1.0)
         delegate?.doDraging(panningProgress)
-        
+
         if panCurrentY > panBeginY {
             moveImage?.width = imageWidthBeforeDrag - (imageWidthBeforeDrag - imageWidthBeforeDrag * minZoom) * panningProgress
             moveImage?.height = imageHeightBeforeDrag - (imageHeightBeforeDrag - imageHeightBeforeDrag * minZoom) * panningProgress
@@ -462,6 +492,7 @@ extension PhotoPreviewController {
                 self.moveImage?.removeFromSuperview()
                 self.moveImage = nil
                 self.updateSkitchButtonStatus(false)
+                self.miniMap?.isHidden = self.scrollView.contentSize.width <= self.view.frame.width
             })
         } else {
             guard let image = moveImage else { return }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1E11D49920AAC4CD00E48785 /* MiniMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E11D49820AAC4CD00E48785 /* MiniMap.swift */; };
 		4A0739991C98FB3C0004FEA5 /* PBCustomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A0739981C98FB3C0004FEA5 /* PBCustomView.swift */; };
 		4A0B3FDF1C76DB300049338C /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A0B3FDE1C76DB300049338C /* Kingfisher.framework */; };
 		4A52D1E41C72CB2E001C257B /* PhotoBrowser.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A52D1E31C72CB2E001C257B /* PhotoBrowser.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -23,6 +24,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1E11D49820AAC4CD00E48785 /* MiniMap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MiniMap.swift; sourceTree = "<group>"; };
 		4A0739981C98FB3C0004FEA5 /* PBCustomView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PBCustomView.swift; sourceTree = "<group>"; };
 		4A0B3FDE1C76DB300049338C /* Kingfisher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kingfisher.framework; path = Carthage/Build/iOS/Kingfisher.framework; sourceTree = "<group>"; };
 		4A52D1E01C72CB2E001C257B /* PhotoBrowser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PhotoBrowser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -85,6 +87,7 @@
 				4A0739981C98FB3C0004FEA5 /* PBCustomView.swift */,
 				A18117DF1E83B66900F8CE8E /* CustomPhotoBroswerManager.swift */,
 				C4C79EA02057808200C92C0C /* UIView+Frame.swift */,
+				1E11D49820AAC4CD00E48785 /* MiniMap.swift */,
 				4A52D1E51C72CB2E001C257B /* Info.plist */,
 			);
 			path = PhotoBrowser;
@@ -178,6 +181,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1E11D49920AAC4CD00E48785 /* MiniMap.swift in Sources */,
 				864F45E81E9F0A4900FF9215 /* Skitch.swift in Sources */,
 				4A52D2301C72F47C001C257B /* Photo.swift in Sources */,
 				4A0739991C98FB3C0004FEA5 /* PBCustomView.swift in Sources */,
@@ -241,7 +245,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -293,7 +297,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
