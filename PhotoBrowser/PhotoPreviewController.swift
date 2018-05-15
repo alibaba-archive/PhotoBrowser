@@ -229,7 +229,7 @@ class PhotoPreviewController: UIViewController {
         miniMap.widthAnchor.constraint(equalToConstant: miniMapSize.width).isActive = true
         miniMap.heightAnchor.constraint(equalToConstant: miniMapSize.height).isActive = true
         miniMap.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -10).isActive = true
-        miniMap.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50).isActive = true
+        miniMap.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -100).isActive = true
         
         self.miniMap = miniMap
         
