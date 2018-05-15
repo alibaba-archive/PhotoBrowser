@@ -86,7 +86,8 @@ class PhotoPreviewController: UIViewController {
     fileprivate var panLastY: CGFloat = 0
     
     fileprivate var miniMap: MiniMap?
-
+    public var miniMapSize: CGSize = CGSize(width: 100, height: 100)
+    
     init(photo: Photo, index: NSInteger, skitches: [[String: Any]]? = nil, isSkitchButtonHidden: Bool = true) {
         super.init(nibName: nil, bundle: nil)
         self.index = index
@@ -221,13 +222,12 @@ class PhotoPreviewController: UIViewController {
         
         singleTap.require(toFail: doubleTap)
         
-        let size = CGSize(width: 100, height: 100)
-        let miniMap = MiniMap(size: size)
+        let miniMap = MiniMap(size: miniMapSize)
         miniMap.isHidden = true
         view.addSubview(miniMap)
         miniMap.translatesAutoresizingMaskIntoConstraints = false
-        miniMap.widthAnchor.constraint(equalToConstant: size.width).isActive = true
-        miniMap.heightAnchor.constraint(equalToConstant: size.height).isActive = true
+        miniMap.widthAnchor.constraint(equalToConstant: miniMapSize.width).isActive = true
+        miniMap.heightAnchor.constraint(equalToConstant: miniMapSize.height).isActive = true
         miniMap.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -10).isActive = true
         miniMap.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50).isActive = true
         
