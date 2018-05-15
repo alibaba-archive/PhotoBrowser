@@ -374,11 +374,11 @@ extension PhotoPreviewController: UIScrollViewDelegate {
         
         miniMap?.ratios =
             Ratios(
-                top: 0,
+                top: scrollView.contentOffset.y / scrollView.contentSize.height,
                 left: scrollView.contentOffset.x / scrollView.contentSize.width,
                 width: view.frame.width / scrollView.contentSize.width,
-                height: 1
-        )
+                height: view.frame.height / scrollView.contentSize.height
+            )
     }
 }
 
