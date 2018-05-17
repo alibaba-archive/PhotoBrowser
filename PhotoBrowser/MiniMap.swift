@@ -27,7 +27,7 @@ struct Ratios {
 public class MiniMap: UIView {
     public var image = UIImage() {
         didSet {
-            updateRealSize()
+            updateimageViewSize()
             imageView.image = image
         }
     }
@@ -48,11 +48,11 @@ public class MiniMap: UIView {
         }
     }
     
-    private var realSize: CGSize
+    private var imageViewSize: CGSize
     
     required public init(size: CGSize) {
         _size = size
-        realSize = size
+        imageViewSize = size
         super.init(frame: .zero)
         setup()
         addLayer()
@@ -82,24 +82,24 @@ public class MiniMap: UIView {
     }
     
     private func updateLayer() {
-        var top: CGFloat = realSize.height * ratios.top
-        var left: CGFloat = realSize.width * ratios.left
-        let width: CGFloat = realSize.width * ratios.width
-        let height: CGFloat = realSize.height * ratios.height
+        var top: CGFloat = imageViewSize.height * ratios.top
+        var left: CGFloat = imageViewSize.width * ratios.left
+        let width: CGFloat = imageViewSize.width * ratios.width
+        let height: CGFloat = imageViewSize.height * ratios.height
         
-        if top + height > realSize.height {
-            top = realSize.height - height
+        if top + height > imageViewSize.height {
+            top = imageViewSize.height - height
         }
         
-        if left + width > realSize.width {
-            left = realSize.width - width
+        if left + width > imageViewSize.width {
+            left = imageViewSize.width - width
         }
         
         let maskBezierPath = UIBezierPath()
         maskBezierPath.move(to: CGPoint(x: 0, y: 0))
-        maskBezierPath.addLine(to: CGPoint(x: 0, y: realSize.height))
-        maskBezierPath.addLine(to: CGPoint(x: realSize.width, y: realSize.height))
-        maskBezierPath.addLine(to: CGPoint(x: realSize.width, y: 0))
+        maskBezierPath.addLine(to: CGPoint(x: 0, y: imageViewSize.height))
+        maskBezierPath.addLine(to: CGPoint(x: imageViewSize.width, y: imageViewSize.height))
+        maskBezierPath.addLine(to: CGPoint(x: imageViewSize.width, y: 0))
         maskBezierPath.move(to: CGPoint(x: left, y: top))
         maskBezierPath.addLine(to: CGPoint(x: left + width, y: top))
         maskBezierPath.addLine(to: CGPoint(x: left + width, y: top + height))
@@ -119,20 +119,20 @@ public class MiniMap: UIView {
         lineLayer.path = lineBezierPath.cgPath
     }
     
-    private func updateRealSize() {
+    private func updateimageViewSize() {
         let ratio = image.size.width / image.size.height
         
         if image.size.width > image.size.height {
-            realSize = CGSize(width: _size.width, height: _size.width / ratio)
+            imageViewSize = CGSize(width: _size.width, height: _size.width / ratio)
         } else {
-            realSize = CGSize(width: _size.height * ratio, height: _size.height)
+            imageViewSize = CGSize(width: _size.height * ratio, height: _size.height)
         }
         
         updateImageViewSize()
     }
     
     private func updateImageViewSize() {
-        imageView.widthAnchor.constraint(equalToConstant: realSize.width).isActive = true
-        imageView.heightAnchor.constraint(equalToConstant: realSize.height).isActive = true
+        imageView.widthAnchor.constraint(equalToConstant: imageViewSize.width).isActive = true
+        imageView.heightAnchor.constraint(equalToConstant: imageViewSize.height).isActive = true
     }
 }
