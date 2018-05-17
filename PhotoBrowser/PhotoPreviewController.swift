@@ -11,6 +11,20 @@ import UIKit
 import Kingfisher
 import Photos
 
+private extension UIDevice {
+    static let isIPhoneX = (UIScreen.main.bounds.size == DeviceSize.Portrait.iPhoneX || UIScreen.main.bounds.size == DeviceSize.Landscape.iPhoneX)
+}
+
+private struct DeviceSize {
+    struct Landscape {
+        static let iPhoneX = CGSize(width: 812, height: 375)
+    }
+    
+    struct Portrait {
+        static let iPhoneX = CGSize(width: 375, height: 812)
+    }
+}
+
 // MARK: - PhotoPreviewControllerDelegate
 protocol PhotoPreviewControllerDelegate: class {
     var isFullScreenMode: Bool {get set}
@@ -56,7 +70,7 @@ class PhotoPreviewController: UIViewController {
     lazy var imageView: UIImageView = self.makeImageView()
     var waitingView: WaitingView?
     
-    weak var delegate:PhotoPreviewControllerDelegate?
+    weak var delegate: PhotoPreviewControllerDelegate?
     
     fileprivate let minPanY: CGFloat = -10
     fileprivate let maxMoveOfY: CGFloat = 250
@@ -81,11 +95,35 @@ class PhotoPreviewController: UIViewController {
     
     fileprivate var scrollNewY: CGFloat = 0
     fileprivate var scrollOldY: CGFloat = 0
-    fileprivate var isFullScreenMode: Bool = false
+    fileprivate var isFullScreenMode: Bool = false {
+        didSet {
+            updateMiniMapLayout()
+        }
+    }
     
     fileprivate var panLastY: CGFloat = 0
     
     fileprivate var miniMap: MiniMap?
+    
+    fileprivate var miniMapTopConstraint: NSLayoutConstraint?
+    
+    private func makeMiniMap() -> MiniMap {
+        let miniMap = MiniMap(size: miniMapSize)
+        miniMap.isHidden = true
+        view.addSubview(miniMap)
+        miniMap.translatesAutoresizingMaskIntoConstraints = false
+        miniMap.widthAnchor.constraint(equalToConstant: miniMapSize.width).isActive = true
+        miniMap.heightAnchor.constraint(equalToConstant: miniMapSize.height).isActive = true
+        miniMap.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -15).isActive = true
+        if #available(iOS 11.0, *), UIDevice.isIPhoneX {
+            miniMapTopConstraint = miniMap.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: isFullScreenMode ? 15 : 15 + 44)
+        } else {
+            miniMapTopConstraint = miniMap.topAnchor.constraint(equalTo: view.topAnchor, constant: isFullScreenMode ? 15 : 15 + 64)
+        }
+        miniMapTopConstraint?.isActive = true
+        return miniMap
+    }
+    
     public var miniMapSize: CGSize = CGSize(width: 100, height: 100)
     
     init(photo: Photo, index: NSInteger, skitches: [[String: Any]]? = nil, isSkitchButtonHidden: Bool = true) {
@@ -222,16 +260,7 @@ class PhotoPreviewController: UIViewController {
         
         singleTap.require(toFail: doubleTap)
         
-        let miniMap = MiniMap(size: miniMapSize)
-        miniMap.isHidden = true
-        view.addSubview(miniMap)
-        miniMap.translatesAutoresizingMaskIntoConstraints = false
-        miniMap.widthAnchor.constraint(equalToConstant: miniMapSize.width).isActive = true
-        miniMap.heightAnchor.constraint(equalToConstant: miniMapSize.height).isActive = true
-        miniMap.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -10).isActive = true
-        miniMap.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -100).isActive = true
-        
-        self.miniMap = miniMap
+        miniMap = makeMiniMap()
         
         if let image = photo.localOriginalPhoto() {
             setImageViewFrame(image)
@@ -291,6 +320,23 @@ class PhotoPreviewController: UIViewController {
         }
         return 2 * scrollView.minimumZoomScale
     }
+    
+    fileprivate func updateMiniMapLayout() {
+        guard miniMap != nil else {
+            return
+        }
+        
+        if UIDevice.isIPhoneX {
+            miniMapTopConstraint?.constant = isFullScreenMode ? 15 : 15 + 44
+        } else {
+            miniMapTopConstraint?.constant = isFullScreenMode ? 15 : 15 + 64
+        }
+        
+        UIView.animate(withDuration: 0.25) { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.view.layoutIfNeeded()
+        }
+    }
 }
 
 extension PhotoPreviewController: SkitchViewDelegate {
@@ -319,6 +365,7 @@ extension PhotoPreviewController {
         guard let delegate = delegate else {
             return
         }
+        isFullScreenMode = !isFullScreenMode
         delegate.isFullScreenMode = !delegate.isFullScreenMode
     }
     
@@ -365,11 +412,7 @@ extension PhotoPreviewController: UIScrollViewDelegate {
         }
         scrollOldY = scrollNewY
         
-        if moveImage != nil {
-            miniMap?.isHidden = true
-        } else {
-            miniMap?.isHidden = scrollView.contentSize.width <= view.frame.width
-        }
+        miniMap?.isHidden = scrollView.contentSize.width <= view.frame.width || moveImage != nil
         
         miniMap?.ratios =
             Ratios(
