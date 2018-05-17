@@ -332,9 +332,8 @@ class PhotoPreviewController: UIViewController {
             miniMapTopConstraint?.constant = isFullScreenMode ? 15 : 15 + 64
         }
         
-        UIView.animate(withDuration: 0.25) { [weak self] in
-            guard let strongSelf = self else { return }
-            strongSelf.view.layoutIfNeeded()
+        UIView.animate(withDuration: 0.25) {
+            self.view.layoutIfNeeded()
         }
     }
 }
