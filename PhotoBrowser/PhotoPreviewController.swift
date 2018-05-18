@@ -309,6 +309,10 @@ class PhotoPreviewController: UIViewController {
         }
     }
     
+    @objc fileprivate func hideMiniMap() {
+        miniMap?.isHidden = true
+    }
+    
     func updateConstraint() {
         updateSkitchViewConstraint()
         view.layoutIfNeeded()
@@ -405,6 +409,8 @@ extension PhotoPreviewController: UIScrollViewDelegate {
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(hideMiniMap), object: nil)
+        
         scrollNewY = scrollView.contentOffset.y
         if (scrollView.contentOffset.y < minPanY || isPanning) && !isZooming {
             doPan(scrollView.panGestureRecognizer)
@@ -420,6 +426,10 @@ extension PhotoPreviewController: UIScrollViewDelegate {
                 width: view.frame.width / scrollView.contentSize.width,
                 height: view.frame.height / scrollView.contentSize.height
             )
+    }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        perform(#selector(hideMiniMap), with: self, afterDelay: 3)
     }
 }
 
@@ -459,6 +469,7 @@ extension PhotoPreviewController {
             isPanning = false
             panBeginX = 0
             panBeginY = 0
+            perform(#selector(hideMiniMap), with: self, afterDelay: 3)
             return
         }
         
