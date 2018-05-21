@@ -429,7 +429,11 @@ extension PhotoPreviewController: UIScrollViewDelegate {
     }
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        perform(#selector(hideMiniMap), with: self, afterDelay: 3)
+        if scrollView.panGestureRecognizer.state == .ended {
+            perform(#selector(hideMiniMap), with: self, afterDelay: 3)
+        } else {
+            NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(hideMiniMap), object: nil)
+        }
     }
 }
 
@@ -469,7 +473,6 @@ extension PhotoPreviewController {
             isPanning = false
             panBeginX = 0
             panBeginY = 0
-            perform(#selector(hideMiniMap), with: self, afterDelay: 3)
             return
         }
         
