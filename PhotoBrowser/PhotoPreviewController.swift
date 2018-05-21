@@ -11,6 +11,20 @@ import UIKit
 import Kingfisher
 import Photos
 
+private extension UIDevice {
+    static let isIPhoneX = (UIScreen.main.bounds.size == DeviceSize.Portrait.iPhoneX || UIScreen.main.bounds.size == DeviceSize.Landscape.iPhoneX)
+}
+
+private struct DeviceSize {
+    struct Landscape {
+        static let iPhoneX = CGSize(width: 812, height: 375)
+    }
+    
+    struct Portrait {
+        static let iPhoneX = CGSize(width: 375, height: 812)
+    }
+}
+
 // MARK: - PhotoPreviewControllerDelegate
 protocol PhotoPreviewControllerDelegate: class {
     var isFullScreenMode: Bool {get set}
@@ -56,7 +70,7 @@ class PhotoPreviewController: UIViewController {
     lazy var imageView: UIImageView = self.makeImageView()
     var waitingView: WaitingView?
     
-    weak var delegate:PhotoPreviewControllerDelegate?
+    weak var delegate: PhotoPreviewControllerDelegate?
     
     fileprivate let minPanY: CGFloat = -10
     fileprivate let maxMoveOfY: CGFloat = 250
@@ -81,10 +95,37 @@ class PhotoPreviewController: UIViewController {
     
     fileprivate var scrollNewY: CGFloat = 0
     fileprivate var scrollOldY: CGFloat = 0
-    fileprivate var isFullScreenMode: Bool = false
+    fileprivate var isFullScreenMode: Bool = false {
+        didSet {
+            updateMiniMapLayout()
+        }
+    }
     
     fileprivate var panLastY: CGFloat = 0
-
+    
+    fileprivate var miniMap: MiniMap?
+    
+    fileprivate var miniMapTopConstraint: NSLayoutConstraint?
+    
+    private func makeMiniMap() -> MiniMap {
+        let miniMap = MiniMap(size: miniMapSize)
+        miniMap.isHidden = true
+        view.addSubview(miniMap)
+        miniMap.translatesAutoresizingMaskIntoConstraints = false
+        miniMap.widthAnchor.constraint(equalToConstant: miniMapSize.width).isActive = true
+        miniMap.heightAnchor.constraint(equalToConstant: miniMapSize.height).isActive = true
+        miniMap.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -15).isActive = true
+        if #available(iOS 11.0, *), UIDevice.isIPhoneX {
+            miniMapTopConstraint = miniMap.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: isFullScreenMode ? 15 : 15 + 44)
+        } else {
+            miniMapTopConstraint = miniMap.topAnchor.constraint(equalTo: view.topAnchor, constant: isFullScreenMode ? 15 : 15 + 64)
+        }
+        miniMapTopConstraint?.isActive = true
+        return miniMap
+    }
+    
+    public var miniMapSize: CGSize = CGSize(width: 100, height: 100)
+    
     init(photo: Photo, index: NSInteger, skitches: [[String: Any]]? = nil, isSkitchButtonHidden: Bool = true) {
         super.init(nibName: nil, bundle: nil)
         self.index = index
@@ -183,6 +224,7 @@ class PhotoPreviewController: UIViewController {
     }
     
     fileprivate func setImageViewFrame(_ image: UIImage) {
+        miniMap?.image = image
         imageView.width = screenWidth
         imageView.height = image.size.height / image.size.width * screenWidth
         imageView.center = self.view.center
@@ -217,6 +259,8 @@ class PhotoPreviewController: UIViewController {
         view.addGestureRecognizer(backgroudSingleTap)
         
         singleTap.require(toFail: doubleTap)
+        
+        miniMap = makeMiniMap()
         
         if let image = photo.localOriginalPhoto() {
             setImageViewFrame(image)
@@ -265,6 +309,10 @@ class PhotoPreviewController: UIViewController {
         }
     }
     
+    @objc fileprivate func hideMiniMap() {
+        miniMap?.isHidden = true
+    }
+    
     func updateConstraint() {
         updateSkitchViewConstraint()
         view.layoutIfNeeded()
@@ -275,6 +323,22 @@ class PhotoPreviewController: UIViewController {
             return scrollView.minimumZoomScale
         }
         return 2 * scrollView.minimumZoomScale
+    }
+    
+    fileprivate func updateMiniMapLayout() {
+        guard miniMap != nil else {
+            return
+        }
+        
+        if UIDevice.isIPhoneX {
+            miniMapTopConstraint?.constant = isFullScreenMode ? 15 : 15 + 44
+        } else {
+            miniMapTopConstraint?.constant = isFullScreenMode ? 15 : 15 + 64
+        }
+        
+        UIView.animate(withDuration: 0.25) {
+            self.view.layoutIfNeeded()
+        }
     }
 }
 
@@ -304,6 +368,7 @@ extension PhotoPreviewController {
         guard let delegate = delegate else {
             return
         }
+        isFullScreenMode = !isFullScreenMode
         delegate.isFullScreenMode = !delegate.isFullScreenMode
     }
     
@@ -344,11 +409,31 @@ extension PhotoPreviewController: UIScrollViewDelegate {
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(hideMiniMap), object: nil)
+        
         scrollNewY = scrollView.contentOffset.y
         if (scrollView.contentOffset.y < minPanY || isPanning) && !isZooming {
             doPan(scrollView.panGestureRecognizer)
         }
         scrollOldY = scrollNewY
+        
+        miniMap?.isHidden = scrollView.contentSize.width <= view.frame.width || moveImage != nil
+        
+        miniMap?.ratios =
+            Ratios(
+                top: scrollView.contentOffset.y / scrollView.contentSize.height,
+                left: scrollView.contentOffset.x / scrollView.contentSize.width,
+                width: view.frame.width / scrollView.contentSize.width,
+                height: view.frame.height / scrollView.contentSize.height
+            )
+    }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if scrollView.panGestureRecognizer.state == .ended {
+            perform(#selector(hideMiniMap), with: self, afterDelay: 3)
+        } else {
+            NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(hideMiniMap), object: nil)
+        }
     }
 }
 
@@ -421,12 +506,12 @@ extension PhotoPreviewController {
         // 判断是否向下拖拽
         isDirectionDown = panCurrentY > panLastY
         panLastY = panCurrentY
-        
+
         // 拖拽进度
         let progress = (panCurrentY - panBeginY) / maxMoveOfY
         panningProgress = min(progress, 1.0)
         delegate?.doDraging(panningProgress)
-        
+
         if panCurrentY > panBeginY {
             moveImage?.width = imageWidthBeforeDrag - (imageWidthBeforeDrag - imageWidthBeforeDrag * minZoom) * panningProgress
             moveImage?.height = imageHeightBeforeDrag - (imageHeightBeforeDrag - imageHeightBeforeDrag * minZoom) * panningProgress
@@ -462,6 +547,7 @@ extension PhotoPreviewController {
                 self.moveImage?.removeFromSuperview()
                 self.moveImage = nil
                 self.updateSkitchButtonStatus(false)
+                self.miniMap?.isHidden = self.scrollView.contentSize.width <= self.view.frame.width
             })
         } else {
             guard let image = moveImage else { return }
