@@ -93,8 +93,9 @@ class PhotoPreviewController: UIViewController {
     fileprivate var imageYBeforeDrag: CGFloat = 0 // 向下拖拽开始时，图片的Y
     fileprivate var scrollOffsetX: CGFloat = 0 // 向下拖拽开始时，滚动控件的offsetX
     
-    fileprivate var scrollNewY: CGFloat = 0
-    fileprivate var scrollOldY: CGFloat = 0
+    fileprivate var scrollNewOffset: CGPoint = CGPoint.zero
+    fileprivate var scrollOldOffset: CGPoint = CGPoint.zero
+
     fileprivate var isFullScreenMode: Bool = false {
         didSet {
             updateMiniMapLayout()
@@ -411,11 +412,18 @@ extension PhotoPreviewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(hideMiniMap), object: nil)
         
-        scrollNewY = scrollView.contentOffset.y
-        if (scrollView.contentOffset.y < minPanY || isPanning) && !isZooming {
-            doPan(scrollView.panGestureRecognizer)
+        if scrollView.panGestureRecognizer.state == .began {
+            scrollOldOffset = scrollView.contentOffset
         }
-        scrollOldY = scrollNewY
+        
+        scrollNewOffset = scrollView.contentOffset
+        if !isZooming {
+            if isPanning {
+                doPan(scrollView.panGestureRecognizer)
+            } else {
+                checkPanGesture(scrollView)
+            }
+        }
         
         miniMap?.isHidden = scrollView.contentSize.width <= view.frame.width || moveImage != nil
         
@@ -433,6 +441,22 @@ extension PhotoPreviewController: UIScrollViewDelegate {
             perform(#selector(hideMiniMap), with: self, afterDelay: 3)
         } else {
             NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(hideMiniMap), object: nil)
+        }
+    }
+    
+    /// Check pan gesture condition
+    fileprivate func checkPanGesture(_ scrollView: UIScrollView) {
+        guard scrollNewOffset.y < scrollOldOffset.y else {
+            return
+        }
+
+        if scrollView.contentOffset.y < minPanY {
+            let x = abs(scrollNewOffset.x - scrollOldOffset.x)
+            let y = abs(scrollNewOffset.y - scrollOldOffset.y)
+            let minTan: CGFloat = 0.577 // tan 30
+            if x / y < minTan {
+                doPan(scrollView.panGestureRecognizer)
+            }
         }
     }
 }
