@@ -97,6 +97,7 @@ class PhotoPreviewController: UIViewController {
     
     fileprivate var scrollNewOffset: CGPoint = CGPoint.zero
     fileprivate var scrollOldOffset: CGPoint = CGPoint.zero
+    fileprivate var imageOriginWidth: CGFloat = 0
 
     fileprivate var isFullScreenMode: Bool = false {
         didSet {
@@ -228,6 +229,7 @@ class PhotoPreviewController: UIViewController {
     
     fileprivate func setImageViewFrame(_ image: UIImage) {
         miniMap?.image = image
+        imageOriginWidth = image.size.width
         imageView.width = screenWidth
         imageView.height = image.size.height / image.size.width * screenWidth
         if imageView.height > screenHeight {
@@ -519,7 +521,6 @@ extension PhotoPreviewController {
         if panBeginX == 0.0 && panBeginY == 0.0 { // 新的一次下拉开始了
             panBeginX = pan.location(in: self.view).x
             panBeginY = pan.location(in: self.view).y
-            print(panBeginX, panBeginY)
             isPanning = true
             imageView.isHidden = true
             delegate?.isFullScreenMode = true
@@ -667,7 +668,7 @@ extension PhotoPreviewController {
     }
 
     func getSkitchViewFrame(_ skitch: Skitch) -> CGRect {
-        let zoomScale = scrollView.zoomScale
+        let zoomScale = imageView.size.width / imageOriginWidth
         let offsetX: CGFloat = imageView.frame.origin.x + skitch.point.x*zoomScale
         let offsetY: CGFloat = imageView.frame.origin.y + skitch.point.y*zoomScale
         let width = skitch.point.width * zoomScale
