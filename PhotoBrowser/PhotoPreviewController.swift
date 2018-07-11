@@ -72,7 +72,9 @@ class PhotoPreviewController: UIViewController {
     
     weak var delegate: PhotoPreviewControllerDelegate?
     
-    fileprivate let minPanY: CGFloat = -10
+    fileprivate var minPanY: CGFloat {
+        return (miniMap?.isHidden ?? true) ? -10 : -CGFloat.greatestFiniteMagnitude
+    }
     fileprivate let maxMoveOfY: CGFloat = 250
     fileprivate let minZoom: CGFloat = 0.3
     fileprivate let screenWidth: CGFloat = UIScreen.main.bounds.size.width
@@ -192,7 +194,7 @@ class PhotoPreviewController: UIViewController {
         scrollView.alwaysBounceHorizontal = true
         scrollView.alwaysBounceVertical = true
         scrollView.minimumZoomScale = 1.0
-        scrollView.maximumZoomScale = 3.0
+        scrollView.maximumZoomScale = CGFloat.greatestFiniteMagnitude
         scrollView.zoomScale = 1.0
         scrollView.contentOffset = CGPoint.zero
         if #available(iOS 11.0, *) {
