@@ -73,7 +73,7 @@ class PhotoPreviewController: UIViewController {
     weak var delegate: PhotoPreviewControllerDelegate?
     
     fileprivate var minPanY: CGFloat {
-        return (miniMap?.isHidden ?? true) ? -10 : -CGFloat.greatestFiniteMagnitude
+        return  (miniMap?.isHidden ?? true) ? -10 : -CGFloat.greatestFiniteMagnitude
     }
     fileprivate let maxMoveOfY: CGFloat = 250
     fileprivate let minZoom: CGFloat = 0.3
@@ -105,10 +105,10 @@ class PhotoPreviewController: UIViewController {
     }
     
     fileprivate var panLastY: CGFloat = 0
-    
     fileprivate var miniMap: MiniMap?
-    
     fileprivate var miniMapTopConstraint: NSLayoutConstraint?
+    fileprivate var afterZooming = false
+
     
     private func makeMiniMap() -> MiniMap {
         let miniMap = MiniMap(size: miniMapSize)
@@ -412,8 +412,13 @@ extension PhotoPreviewController: UIScrollViewDelegate {
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(hideMiniMap), object: nil)
-        
+        /// sometime, iOS called once `scrollViewDidScroll` when after `scrollViewDidEndZooming`
+        if afterZooming {
+            afterZooming = false
+        } else {
+            NSObject.cancelPreviousPerformRequests(withTarget: self)
+        }
+
         if scrollView.panGestureRecognizer.state == .began {
             scrollOldOffset = scrollView.contentOffset
         }
@@ -440,10 +445,15 @@ extension PhotoPreviewController: UIScrollViewDelegate {
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if scrollView.panGestureRecognizer.state == .ended {
-            perform(#selector(hideMiniMap), with: self, afterDelay: 3)
+            perform(#selector(hideMiniMap), with: self, afterDelay: 3, inModes: [.defaultRunLoopMode])
         } else {
-            NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(hideMiniMap), object: nil)
+            NSObject.cancelPreviousPerformRequests(withTarget: self)
         }
+    }
+
+    func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
+        perform(#selector(hideMiniMap), with: self, afterDelay: 3, inModes: [.defaultRunLoopMode])
+        afterZooming = true
     }
     
     /// Check pan gesture condition
