@@ -230,7 +230,11 @@ class PhotoPreviewController: UIViewController {
         miniMap?.image = image
         imageView.width = screenWidth
         imageView.height = image.size.height / image.size.width * screenWidth
-        imageView.center = self.view.center
+        if imageView.height > screenHeight {
+            imageView.originY = 0
+        } else {
+            imageView.center = self.view.center
+        }
         scrollView.contentSize = imageView.frame.size
     }
     
