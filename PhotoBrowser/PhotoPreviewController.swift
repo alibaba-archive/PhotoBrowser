@@ -290,6 +290,16 @@ class PhotoPreviewController: UIViewController {
                     view.addSubview(newWaitingView)
                 }
                 
+                if let accessToken = PhotoBrowser.accessToken {
+                    let configuration = URLSessionConfiguration.default
+                    configuration.httpAdditionalHeaders = [
+                        "Authorization" : "Bearer \(accessToken)"
+                    ]
+                    let imgManager = ImageDownloader.default
+                    imgManager.sessionConfiguration = configuration
+                    KingfisherManager.shared.downloader = imgManager
+                }
+                
                 let resource = ImageResource(downloadURL: photoUrl, cacheKey: photoFileKey)
                 imageView.kf.setImage(with: resource, placeholder: photo.localThumbnailPhoto(), options: nil, progressBlock: { (receivedSize, totalSize) -> () in
                     let progress = CGFloat(receivedSize) / CGFloat(totalSize)
