@@ -11,9 +11,6 @@ import UIKit
 import Kingfisher
 import Photos
 
-let ToolbarHeight: CGFloat = 44
-let PadToolbarItemSpace: CGFloat = 72
-
 public protocol PhotoBrowserDelegate: class {
     func dismissPhotoBrowser(_ photoBrowser: PhotoBrowser)
     func photoBrowser(_ browser: PhotoBrowser, longPressOnPhoto photo: Photo, index: Int)
@@ -45,38 +42,24 @@ public extension PhotoBrowserDelegate {
 }
 
 open class PhotoBrowser: UIPageViewController {
-    
-    var isFullScreen = false
-    var headerView: PBNavigationBar?
     open var photos: [Photo]? {
         didSet {
-            if let photos = photos {
-                if photos.count == 0 {
-                    leftButtonTap(nil)
-                } else {
-                    currentIndex = min(currentIndex, photos.count - 1)
-                    let initPage = PhotoPreviewController(photo: photos[currentIndex], index: currentIndex, skitches: skitchesDictionary[currentIndex], isSkitchButtonHidden: isSkitchButtonHidden)
-                    initPage.delegate = self
-                    setViewControllers([initPage], direction: UIPageViewControllerNavigationDirection.forward, animated: false, completion: nil)
-                    updateNavigationBarTitle()
-                }
-            }
+            loadPhotos()
         }
     }
-
+    
+    private var isFullScreen = false
+    private var headerView: PBNavigationBar?
+    
+    // Support Skitch
     open var isSkitchButtonHidden: Bool = true
-    fileprivate var isSkitchesSetted: Bool = false
-
+    private var isSkitchesSetted: Bool = false
     open var skitchesDictionary: [Int: [[String: Any]]] = [:]
 
     open var assets: [PHAsset]? {
         didSet {
             if  let assets = assets {
-                var p: [Photo] = []
-                for asset in assets {
-                    p.append(Photo(asset: asset))
-                }
-                self.photos = p
+                self.photos = assets.map { Photo(asset: $0) }
             }
         }
     }
@@ -100,7 +83,7 @@ open class PhotoBrowser: UIPageViewController {
     open var currentPhoto: Photo? {
         return photos?[currentIndex]
     }
-    fileprivate lazy var progressView: UIProgressView = {
+    private lazy var progressView: UIProgressView = {
         let progressView = UIProgressView(progressViewStyle: .default)
         progressView.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: 2)
         progressView.autoresizingMask = [.flexibleWidth, .flexibleBottomMargin]
@@ -128,7 +111,8 @@ open class PhotoBrowser: UIPageViewController {
     open var isPreviewMode: Bool = false
     open var selectedIndex: [Int] = []
 
-    public override init(transitionStyle style: UIPageViewControllerTransitionStyle, navigationOrientation: UIPageViewControllerNavigationOrientation, options: [String : Any]?) {
+    // MARK: - init methods
+    public override init(transitionStyle style: UIPageViewControllerTransitionStyle, navigationOrientation: UIPageViewControllerNavigationOrientation, options: [String: Any]?) {
         super.init(transitionStyle: style, navigationOrientation: navigationOrientation, options: options)
     }
     
@@ -137,9 +121,10 @@ open class PhotoBrowser: UIPageViewController {
     }
     
     public convenience init() {
-        self.init(transitionStyle: UIPageViewControllerTransitionStyle.scroll, navigationOrientation: UIPageViewControllerNavigationOrientation.horizontal, options: [UIPageViewControllerOptionInterPageSpacingKey:20])
+        self.init(transitionStyle: UIPageViewControllerTransitionStyle.scroll, navigationOrientation: UIPageViewControllerNavigationOrientation.horizontal, options: [UIPageViewControllerOptionInterPageSpacingKey: 20])
     }
     
+    // MARK: - life cycle
     open override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = backgroundColor
@@ -149,8 +134,7 @@ open class PhotoBrowser: UIPageViewController {
         modalPresentationStyle = .custom
         dataSource = self
         delegate = self
-        
-        self.updateToolbar()
+        updateToolbar()
     }
     
     open override func viewWillAppear(_ animated: Bool) {
@@ -161,7 +145,6 @@ open class PhotoBrowser: UIPageViewController {
     open override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         navigationController?.setNavigationBarHidden(false, animated: true)
-//        navigationController?.setNavigationBarHidden(false, animated: true)
     }
     
     open override func viewDidAppear(_ animated: Bool) {
@@ -169,27 +152,47 @@ open class PhotoBrowser: UIPageViewController {
         isFullScreenMode = false
     }
     
-    open override var preferredStatusBarStyle : UIStatusBarStyle {
+    open override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
 
     open func updatePhotoSkitch(at index: Int, skitches: [[String: Any]], versionID: String) {
-        if let previewController = viewControllers?[0] as? PhotoPreviewController, index == currentIndex {
-            if skitchesDictionary[index] == nil || skitchesDictionary[index]?.count == 0 { // first skitches set
-                if isSkitchButtonHidden && !isSkitchesSetted{
-                    isSkitchButtonHidden = false
-                    isSkitchesSetted = true
-                }
+        guard let previewController = viewControllers?[0] as? PhotoPreviewController, index == currentIndex else {
+            return
+        }
+        if skitchesDictionary[index] == nil || skitchesDictionary[index]?.count == 0 { // first skitches set
+            if isSkitchButtonHidden && !isSkitchesSetted {
+                isSkitchButtonHidden = false
+                isSkitchesSetted = true
             }
-            skitchesDictionary[index] = skitches
-            previewController.updateSkiches(skitches, versionID: versionID, isHidden: isSkitchButtonHidden)
-            updateNavigationBarTitle()
+        }
+        skitchesDictionary[index] = skitches
+        previewController.updateSkiches(skitches, versionID: versionID, isHidden: isSkitchButtonHidden)
+        updateNavigationBarTitle()
+    }
+    
+    open func setToolBarButton(at index: NSInteger, enabled: Bool) {
+        guard let items = toolbar?.items, items.count > 0 && index < items.count else { return }
+
+        var toolBarIndex: NSInteger?
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            toolBarIndex = index + 2
+        } else {
+            if items.count == 1 {
+                toolBarIndex = 1
+            } else if items.count == 2 {
+                toolBarIndex = index * 3 + 1
+            } else {
+                toolBarIndex = index * 2 + 1
+            }
+        }
+        if let toolBarIndex = toolBarIndex, toolBarIndex < items.count {
+            toolbar?.items?[toolBarIndex].isEnabled = enabled
         }
     }
 }
 
-// Mark: -Progress bar update
-
+// MARK: - Progress bar updates
 public extension PhotoBrowser {
     func beginUpdate() {
         dataSource = nil
@@ -215,144 +218,83 @@ public extension PhotoBrowser {
             updateNavigationBarTitle()
         }
     }
+    
+    private func loadPhotos() {
+        if let photos = photos {
+            if photos.count == 0 {
+                leftButtonTap(nil) // dismiss
+            } else {
+                currentIndex = min(currentIndex, photos.count - 1)
+                let initPage = PhotoPreviewController(photo: photos[currentIndex], index: currentIndex, skitches: skitchesDictionary[currentIndex], isSkitchButtonHidden: isSkitchButtonHidden)
+                initPage.delegate = self
+                setViewControllers([initPage], direction: UIPageViewControllerNavigationDirection.forward, animated: false, completion: nil)
+                updateNavigationBarTitle()
+            }
+        }
+    }
 }
 
 extension PhotoBrowser {
-    
-    open override var prefersStatusBarHidden : Bool {
+    open override var prefersStatusBarHidden: Bool {
         return isFullScreen
     }
     
-    open override var preferredStatusBarUpdateAnimation : UIStatusBarAnimation {
+    open override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
         return .fade
     }
     
-    func updateNavigationBarTitle() {
-        guard let photos = photos else {
-            return
-        }
-
-        if headerView == nil {
-            headerView = PBNavigationBar()
-            if let headerView = headerView {
-                headerView.isFromPhotoPicker = isFromPhotoPicker
-                headerView.isPreviewMode = isPreviewMode
-                headerView.isShowMoreButton = isShowMoreButton
-                headerView.alpha = 0
-                view.addSubview(headerView)
-                headerView.translatesAutoresizingMaskIntoConstraints = false
-                
-                view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[headerView]-0-|", options: [], metrics: nil, views: ["headerView":headerView]))
-                if #available(iOS 11.0, *) {
-                    view.addConstraint(NSLayoutConstraint(item: headerView, attribute: .bottom, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .top, multiplier: 1.0, constant: 44))
-                } else {
-                    headerView.addConstraint(NSLayoutConstraint(item: headerView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 64))
-                }
-                view.addConstraint(NSLayoutConstraint(item: view, attribute: .top, relatedBy: .equal, toItem: headerView, attribute: .top, multiplier: 1.0, constant: 0))
-                
-                headerView.leftButton.addTarget(self, action: #selector(leftButtonTap(_:)), for: .touchUpInside)
-                headerView.rightButton.addTarget(self, action: #selector(rightButtonTap(_:)), for: .touchUpInside)
-                headerView.moreButton.addTarget(self, action: #selector(showMoreFiles(_:)), for: .touchUpInside)
-                headerView.imageSelected = selectedIndex.contains(currentIndex)
-            }
-        }
-        if let headerView = headerView {
-            headerView.titleLabel.text = photos[currentIndex].title
-//            headerView.indexLabel.text = "\(currentIndex + 1)/\(photos.count)"
-            headerView.imageSelected = selectedIndex.contains(currentIndex)
-        }
-//        if let skitches = skitchesDictionary[currentIndex], skitches.count > 0 {
-//            headerView?.updateShowSkitchButtonStatus(false, isHiddenSkitch: isSkitchButtonHidden)
-//        } else {
-//            headerView?.updateShowSkitchButtonStatus(true, isHiddenSkitch: isSkitchButtonHidden)
-//        }
-    }
-    
-    func updateToolbar() {
-        guard let items = toolbarItems , items.count > 0 else {
-            return
-        }
-        if toolbar == nil {
-            toolbar = PBToolbar()
-            if let toolbar = toolbar {
-                toolbar.alpha = 0
-                view.addSubview(toolbar)
-                toolbar.translatesAutoresizingMaskIntoConstraints = false
-                view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[toolbar]-0-|", options: [], metrics: nil , views: ["toolbar":toolbar]))
-                
-                view.addConstraint(NSLayoutConstraint(item: view, attribute: .bottom, relatedBy: .equal, toItem: toolbar, attribute: .bottom, multiplier: 1.0, constant: 0))
-                if #available(iOS 11.0, *) {
-                    view.addConstraint(NSLayoutConstraint(item: toolbar, attribute: .top, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .bottom, multiplier: 1.0, constant: -ToolbarHeight))
-                } else {
-                    view.addConstraint(NSLayoutConstraint(item: toolbar, attribute: .top, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1.0, constant: -ToolbarHeight))
-                }
-                
-            }
-        }
-        if let toolbar = toolbar {
-            let itemsArray = layoutToolbar(items)
-            toolbar.setItems(itemsArray, animated: false)
-        }
-    }
-    
-    func layoutToolbar(_ items: [UIBarButtonItem]) -> [UIBarButtonItem]? {
-        let flexSpace = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: self, action: nil)
-        let fixedSpace = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: self, action: nil)
-        fixedSpace.width = PadToolbarItemSpace
-        var itemsArray = [UIBarButtonItem]()
-        
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            itemsArray.append(flexSpace)
-            for item in items {
-                itemsArray.append(item)
-                itemsArray.append(fixedSpace)
-            }
-            itemsArray.removeLast()
-            itemsArray.append(flexSpace)
-        } else {
-            if items.count == 1, let first = items.first {
-                itemsArray = [flexSpace, first, flexSpace]
-            } else if items.count == 2, let first = items.first, let last = items.last {
-                itemsArray = [flexSpace, first, flexSpace, flexSpace, last, flexSpace]
-            } else {
-                for item in items {
-                    itemsArray.append(item)
-                    itemsArray.append(flexSpace)
-                }
-                if itemsArray.count > 0 {
-                    itemsArray.removeLast()
-                }
-            }
-        }
-        return itemsArray
-    }
-    
-    @objc func leftButtonTap(_ sender: AnyObject?) {
-        if let delegate = photoBrowserDelegate {
-            delegate.dismissPhotoBrowser(self)
-        } else {
-            dismissPhotoBrowser()
-        }
-    }
-
-    @objc func showMoreFiles(_ sender: Any) {
-        photoBrowserDelegate?.didShowMoreFiles(self)
-    }
-
     open func showSkitchButtonTapped() {
         if isSkitchButtonHidden {
             isSkitchButtonHidden = false
         } else {
             isSkitchButtonHidden = true
         }
-//        headerView?.updateSkitchButton(isSkitchButtonHidden)
         if let previewController = viewControllers?[0] as? PhotoPreviewController {
             previewController.updateSkitchButtonStatus(isSkitchButtonHidden)
         }
         photoBrowserDelegate?.photoBrowser(self, didHideSkitchButton: isSkitchButtonHidden)
     }
 
-    @objc func rightButtonTap(_ sender: AnyObject) {
+    public func defaultShareAction() {
+        if let image = currentImageView()?.image, let button = headerView?.rightButton, let photos = photos {
+            let url = URL(fileURLWithPath: NSTemporaryDirectory().appending(photos[currentIndex].title ?? ""))
+            let data = UIImagePNGRepresentation(image)
+            do {
+                try data?.write(to: url)
+            } catch {}
+            
+            let activityController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                activityController.modalPresentationStyle = .popover
+                activityController.popoverPresentationController?.sourceView = view
+                let frame = view.convert(button.frame, from: button.superview)
+                activityController.popoverPresentationController?.sourceRect = frame
+            }
+            activityController.completionWithItemsHandler = { (_, _, _, _) in
+                do {
+                    try FileManager.default.removeItem(at: url)
+                } catch {}
+            }
+            present(activityController, animated: true)
+        }
+    }
+}
+
+// MARK: - Actions
+extension PhotoBrowser {
+    @objc private func leftButtonTap(_ sender: Any?) {
+        if let delegate = photoBrowserDelegate {
+            delegate.dismissPhotoBrowser(self)
+        } else {
+            dismissPhotoBrowser()
+        }
+    }
+    
+    @objc private func showMoreFiles(_ sender: Any) {
+        photoBrowserDelegate?.didShowMoreFiles(self)
+    }
+    
+    @objc private func rightButtonTap(_ sender: Any) {
         guard let photo = currentPhoto else {
             return
         }
@@ -377,31 +319,6 @@ extension PhotoBrowser {
             }
         } else {
             defaultShareAction()
-        }
-    }
-
-    public func defaultShareAction() {
-        if let image = currentImageView()?.image, let button = headerView?.rightButton, let photos = photos {
-            let url = URL(fileURLWithPath: NSTemporaryDirectory().appending(photos[currentIndex].title ?? ""))
-            let data = UIImagePNGRepresentation(image)
-            do {
-                try data?.write(to: url)
-            } catch {}
-            
-            let activityController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
-            if UIDevice.current.userInterfaceIdiom == .pad {
-                activityController.modalPresentationStyle = .popover
-                activityController.popoverPresentationController?.sourceView = view
-                let frame = view.convert(button.frame, from: button.superview)
-                activityController.popoverPresentationController?.sourceRect = frame
-            }
-            activityController.completionWithItemsHandler = { (_, _, _, _) in
-                do {
-                    try FileManager.default.removeItem(at: url)
-                } catch {}
-            }
-            
-            present(activityController, animated: true)
         }
     }
 }
@@ -460,39 +377,21 @@ extension PhotoBrowser: UIPageViewControllerDataSource, UIPageViewControllerDele
 
 // MARK: - PhotoPreviewControllerDelegate
 extension PhotoBrowser: PhotoPreviewControllerDelegate {
-    
     var isFullScreenMode: Bool {
         get {
             return isFullScreen
         }
-        
         set(newValue) {
             isFullScreen = newValue
-            
-            if isFullScreen { // fix status bar dimiss animation bug
-                UIView.animate(withDuration: 0.25, animations: { () -> Void in
-                    self.view.backgroundColor = UIColor.black
-                    self.headerView?.alpha = 0
-                    self.toolbar?.alpha = 0
-                }) { (_) in
-                    self.setNeedsStatusBarAppearanceUpdate()
-                }
-            } else {
-                UIView.animate(withDuration: 0.25, animations: { () -> Void in
-                    self.setNeedsStatusBarAppearanceUpdate()
-                    self.view.backgroundColor = self.backgroundColor
-                    self.headerView?.alpha = 1
-                    self.toolbar?.alpha = 1
-                })
-            }
+            showFullScreen(isFullScreen)
         }
     }
-    
-    func longPressOn(_ photo: Photo, gesture: UILongPressGestureRecognizer) {
+
+    func photoPreviewController(_ controller: PhotoPreviewController, longPressOn photo: Photo, gesture: UILongPressGestureRecognizer) {
         photoBrowserDelegate?.photoBrowser(self, longPressOnPhoto: photo, index: currentIndex)
     }
 
-    func didTapOnBackground() {
+    func didTapBackground(_ controller: PhotoPreviewController) {
         if let delegate = photoBrowserDelegate {
             delegate.dismissPhotoBrowser(self)
         } else {
@@ -500,21 +399,21 @@ extension PhotoBrowser: PhotoPreviewControllerDelegate {
         }
     }
 
-    func didTapSkitch(_ skitch: Skitch, versionID: String) {
+    func photoPreviewController(_ controller: PhotoPreviewController, didTapSkitch skitch: Skitch, versionID: String) {
         print("photo index: \(currentIndex), skitch index: \(index)")
         photoBrowserDelegate?.photoBrowser(self, didTapSkitch: skitch, versionID: versionID)
     }
     
-    func didShowPhotoAtIndex(_ index: Int) {
+    func photoPreviewController(_ controller: PhotoPreviewController, didShowPhotoAtIndex index: Int) {
         photoBrowserDelegate?.photoBrowser(self, didShowPhotoAtIndex: index)
     }
     
-    func doDraging(_ dragProgress: CGFloat) {
+    func photoPreviewController(_ controller: PhotoPreviewController, doDraging dragProgress: CGFloat) {
         let progress = min(1, (1-dragProgress))
         view.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: progress)
     }
 
-    func doDownDrag(_ isBegin: Bool, view: PhotoPreviewController, needBack: Bool, imageFrame: CGRect, imageView: UIImageView?) {
+    func photoPreviewController(_ controller: PhotoPreviewController, doDownDrag isBegin: Bool, needBack: Bool, imageFrame: CGRect, imageView: UIImageView?) {
         if needBack { // 页面消失
             guard let imageView = imageView else { return }
             UIView.animate(withDuration: 0.25, animations: {
@@ -525,13 +424,14 @@ extension PhotoBrowser: PhotoPreviewControllerDelegate {
             })
         } else {
             guard let vcs = viewControllers else { return }
-            for vc in vcs where vc != view {
+            for vc in vcs where vc != controller {
                 vc.view.isHidden = isBegin
             }
         }
     }
 }
 
+// MARK: - Helpers
 extension PhotoBrowser {
     func currentImageView() -> UIImageView? {
         guard let page = viewControllers?.last as? PhotoPreviewController else {
@@ -539,8 +439,122 @@ extension PhotoBrowser {
         }
         return page.imageView
     }
+    
+    private func showFullScreen(_ flag: Bool) {
+        if isFullScreen { // fix status bar dimiss animation bug
+            UIView.animate(withDuration: 0.25, animations: { () -> Void in
+                self.view.backgroundColor = UIColor.black
+                self.headerView?.alpha = 0
+                self.toolbar?.alpha = 0
+            }) { (_) in
+                self.setNeedsStatusBarAppearanceUpdate()
+            }
+        } else {
+            UIView.animate(withDuration: 0.25, animations: { () -> Void in
+                self.setNeedsStatusBarAppearanceUpdate()
+                self.view.backgroundColor = self.backgroundColor
+                self.headerView?.alpha = 1
+                self.toolbar?.alpha = 1
+            })
+        }
+    }
+    
+    private func updateNavigationBarTitle() {
+        guard let photos = photos else {
+            return
+        }
+        
+        if headerView == nil {
+            headerView = PBNavigationBar()
+            if let headerView = headerView {
+                headerView.isFromPhotoPicker = isFromPhotoPicker
+                headerView.isPreviewMode = isPreviewMode
+                headerView.isShowMoreButton = isShowMoreButton
+                headerView.alpha = 0
+                view.addSubview(headerView)
+                headerView.translatesAutoresizingMaskIntoConstraints = false
+                
+                view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[headerView]-0-|", options: [], metrics: nil, views: ["headerView": headerView]))
+                if #available(iOS 11.0, *) {
+                    view.addConstraint(NSLayoutConstraint(item: headerView, attribute: .bottom, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .top, multiplier: 1.0, constant: 44))
+                } else {
+                    headerView.addConstraint(NSLayoutConstraint(item: headerView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 64))
+                }
+                view.addConstraint(NSLayoutConstraint(item: view, attribute: .top, relatedBy: .equal, toItem: headerView, attribute: .top, multiplier: 1.0, constant: 0))
+                
+                headerView.leftButton.addTarget(self, action: #selector(leftButtonTap(_:)), for: .touchUpInside)
+                headerView.rightButton.addTarget(self, action: #selector(rightButtonTap(_:)), for: .touchUpInside)
+                headerView.moreButton.addTarget(self, action: #selector(showMoreFiles(_:)), for: .touchUpInside)
+                headerView.imageSelected = selectedIndex.contains(currentIndex)
+            }
+        }
+        if let headerView = headerView {
+            headerView.titleLabel.text = photos[currentIndex].title
+            headerView.imageSelected = selectedIndex.contains(currentIndex)
+        }
+    }
+    
+    private func updateToolbar() {
+        guard let items = toolbarItems, items.count > 0 else {
+            return
+        }
+        if toolbar == nil {
+            toolbar = PBToolbar()
+            if let toolbar = toolbar {
+                toolbar.alpha = 0
+                view.addSubview(toolbar)
+                toolbar.translatesAutoresizingMaskIntoConstraints = false
+                view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[toolbar]-0-|", options: [], metrics: nil, views: ["toolbar": toolbar]))
+                
+                view.addConstraint(NSLayoutConstraint(item: view, attribute: .bottom, relatedBy: .equal, toItem: toolbar, attribute: .bottom, multiplier: 1.0, constant: 0))
+                if #available(iOS 11.0, *) {
+                    view.addConstraint(NSLayoutConstraint(item: toolbar, attribute: .top, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .bottom, multiplier: 1.0, constant: -PBConstant.PhotoBrowser.toolBarHeight))
+                } else {
+                    view.addConstraint(NSLayoutConstraint(item: toolbar, attribute: .top, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1.0, constant: -PBConstant.PhotoBrowser.toolBarHeight))
+                }
+                
+            }
+        }
+        if let toolbar = toolbar {
+            let itemsArray = layoutToolbar(items)
+            toolbar.setItems(itemsArray, animated: false)
+        }
+    }
+    
+    private func layoutToolbar(_ items: [UIBarButtonItem]) -> [UIBarButtonItem]? {
+        let flexSpace = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: self, action: nil)
+        let fixedSpace = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: self, action: nil)
+        fixedSpace.width = PBConstant.PhotoBrowser.padToolBarSpace
+        var itemsArray = [UIBarButtonItem]()
+        
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            itemsArray.append(flexSpace)
+            for item in items {
+                itemsArray.append(item)
+                itemsArray.append(fixedSpace)
+            }
+            itemsArray.removeLast()
+            itemsArray.append(flexSpace)
+        } else {
+            if items.count == 1, let first = items.first {
+                itemsArray = [flexSpace, first, flexSpace]
+            } else if items.count == 2, let first = items.first, let last = items.last {
+                itemsArray = [flexSpace, first, flexSpace, flexSpace, last, flexSpace]
+            } else {
+                for item in items {
+                    itemsArray.append(item)
+                    itemsArray.append(flexSpace)
+                }
+                if itemsArray.count > 0 {
+                    itemsArray.removeLast()
+                }
+            }
+        }
+        return itemsArray
+    }
 }
 
+// MARK: - update waiting image view and checked image view
 extension PhotoBrowser {
     public static func updateCustomImages(_ loadingLogoImage: UIImage? = nil, checkSelectedImage: UIImage? = nil) {
         if let logoImage = loadingLogoImage {

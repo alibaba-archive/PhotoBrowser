@@ -25,7 +25,7 @@ class ViewController: UIViewController {
         UIImageWriteToSavedPhotosAlbum(image, self, #selector(self.image(_:didFinishSavingWithError:contextInfo:)), nil)
     }
 
-    @objc func image(_ image: UIImage, didFinishSavingWithError error:NSError?, contextInfo:UnsafeRawPointer) {
+    @objc func image(_ image: UIImage, didFinishSavingWithError error: NSError?, contextInfo: UnsafeRawPointer) {
         if error == nil {
             print("save success")
         } else {
@@ -43,28 +43,27 @@ extension ViewController {
         let thumbnail3 = UIImage.init(named: "thumbnail3")
         let photoUrl3 = URL.init(string: "https://pic2.zhimg.com/a5455838750e168d97480d9247537d31_r.jpeg")
         
-        let photo = Photo.init(image: nil, title:"Image1fjdkkfadjfkajdkfalkdsfjklasfklaskdfkadsjfklajklsdjfkajsdkfaksdjfkajsdkfjlaksdfjkakdfklak", thumbnailImage: thumbnail1, photoUrl: photoUrl1, fileKey: "abc100")
-        let photo2 = Photo.init(image: nil, title:"Image2", thumbnailImage: thumbnail2, photoUrl: photoUrl2, fileKey: "abc101")
-        let photo3 = Photo.init(image: nil, title:"Image3", thumbnailImage: thumbnail3, photoUrl: photoUrl3, fileKey: "abc102")
+        let photo = Photo.init(image: nil, title: "Image1fjdkkfadjfkajdkfalkdsfjklasfklaskdfkadsjfklajklsdjfkajsdkfaksdjfkajsdkfjlaksdfjkakdfklak", thumbnailImage: thumbnail1, photoUrl: photoUrl1, fileKey: "abc100")
+        let photo2 = Photo.init(image: nil, title: "Image2", thumbnailImage: thumbnail2, photoUrl: photoUrl2, fileKey: "abc101")
+        let photo3 = Photo.init(image: nil, title: "Image3", thumbnailImage: thumbnail3, photoUrl: photoUrl3, fileKey: "abc102")
 
-        let item1 = PBActionBarItem(title: "ONE", style: .plain) { (photoBrowser, item) in
+        let item1 = PBActionBarItem(title: "ONE", style: .plain) { (photoBrowser, _) in
             let photos = [photo, photo2]
             photoBrowser.photos = photos
         }
-        let item2 = PBActionBarItem(title: "TWO", style: .plain) { (photoBrowser, item) in
+        let item2 = PBActionBarItem(title: "TWO", style: .plain) { (photoBrowser, _) in
 //            photoBrowser.enableShare = !photoBrowser.enableShare
             print("item2")
             let vc = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "DetailViewController")
             self.photoBrowser?.navigationController?.pushViewController(vc, animated: true)
         }
-        let item3 = PBActionBarItem(title: "THREE", style: .plain) { (photoBrowser, item) in
+        let item3 = PBActionBarItem(title: "THREE", style: .plain) { (_, _) in
             print("item3")
         }
-        let item4 = PBActionBarItem(title: "FOUR", style: .plain) { (photoBrowser, item) in
+        let item4 = PBActionBarItem(title: "FOUR", style: .plain) { (_, _) in
             print("item3")
         }
 
-        
         photoBrowser = PhotoBrowser()
         if let browser = photoBrowser {
 //            browser.isFromPhotoPicker = true
@@ -122,7 +121,7 @@ extension ViewController: PhotoBrowserDelegate {
     func photoBrowser(_ browser: PhotoBrowser, longPressOnPhoto photo: Photo, index: Int) {
         let alertController = UIAlertController.init(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
         let cancelAction = UIAlertAction.init(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil)
-        let saveAction = UIAlertAction.init(title: "Save", style: UIAlertActionStyle.default) {[unowned self] (action) -> Void in
+        let saveAction = UIAlertAction.init(title: "Save", style: UIAlertActionStyle.default) {[unowned self] (_) -> Void in
             if let image = photo.imageToSave() {
                 self.saveToAlbum(image)
             }

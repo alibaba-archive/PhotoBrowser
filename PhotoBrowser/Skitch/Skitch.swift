@@ -18,8 +18,14 @@ public struct Point {
         if let x = pointJSON["x"] as? Double, let y = pointJSON["y"] as? Double {
             self.x = CGFloat(x)
             self.y = CGFloat(y)
+        } else if let x = pointJSON["x"] as? Int, let y = pointJSON["y"] as? Int {
+            self.x = CGFloat(x)
+            self.y = CGFloat(y)
         }
         if let width = pointJSON["width"] as? Double, let height = pointJSON["height"] as? Double {
+            self.width = CGFloat(width)
+            self.height = CGFloat(height)
+        } else if let width = pointJSON["width"] as? Int, let height = pointJSON["height"] as? Int {
             self.width = CGFloat(width)
             self.height = CGFloat(height)
         }
@@ -48,17 +54,15 @@ public struct Skitch {
     public var type: SkitchType = .point
 
     init?(skitchJSON: [String: Any]) {
-        if let skitchType = skitchJSON["type"] as? String, skitchType == "point" {
-            self.type = .point
-        } else if let skitchType = skitchJSON["type"] as? String, skitchType == "rectangle" {
-            self.type = .rectangle
+        id = skitchJSON["_id"] as? String ?? ""
+        number = skitchJSON["num"] as? Int ?? 0
+        let pointJSON = skitchJSON["coordinate"] as? [String: Any] ?? [:]
+        point = Point(pointJSON: pointJSON)
+
+        if let type = skitchJSON["type"] as? String, let skitchType = SkitchType(rawValue: type) {
+            self.type = skitchType
         } else {
             return nil
         }
-
-        self.id = skitchJSON["_id"] as? String ?? ""
-        self.number = skitchJSON["num"] as? Int ?? 0
-        let pointJSON = skitchJSON["coordinate"] as? [String: Any] ?? [:]
-        self.point = Point(pointJSON: pointJSON)
     }
 }

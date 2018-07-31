@@ -8,8 +8,7 @@
 
 import Foundation
 
-final class CustomPhotoBroswerManager {
-
+class CustomPhotoBroswerManager {
     static let shared = CustomPhotoBroswerManager()
 
     var customLogoLoading: UIImage?

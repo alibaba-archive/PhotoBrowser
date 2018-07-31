@@ -35,7 +35,7 @@ class DetailViewController: UIViewController {
 
 // MARK: - KVO for NavigationBar
 extension DetailViewController {
-    open override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+    open override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
         guard context == &navigationBarKVOContext else {
             return
         }
@@ -47,4 +47,3 @@ extension DetailViewController {
         }
     }
 }
-

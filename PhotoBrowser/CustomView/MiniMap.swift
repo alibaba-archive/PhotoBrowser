@@ -40,7 +40,7 @@ public class MiniMap: UIView {
     
     private var maskLayer = CAShapeLayer()
     
-    private let _size: CGSize
+    private let realSize: CGSize
     
     var ratios: Ratios = .zero {
         didSet {
@@ -51,7 +51,7 @@ public class MiniMap: UIView {
     private var imageViewSize: CGSize
     
     required public init(size: CGSize) {
-        _size = size
+        realSize = size
         imageViewSize = size
         super.init(frame: .zero)
         setup()
@@ -68,11 +68,11 @@ public class MiniMap: UIView {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
         imageView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        updateImageViewSize()
+        updateImageViewConstraint()
     }
     
     private func addLayer() {
-        backgroundLayer.frame = CGRect(origin: .zero, size: _size)
+        backgroundLayer.frame = CGRect(origin: .zero, size: realSize)
         backgroundLayer.backgroundColor = UIColor.black.withAlphaComponent(0.5).cgColor
         imageView.layer.addSublayer(backgroundLayer)
 
@@ -108,7 +108,6 @@ public class MiniMap: UIView {
         maskLayer.path = maskBezierPath.cgPath
         backgroundLayer.mask = maskLayer
 
-        
         let lineBezierPath = UIBezierPath()
         lineBezierPath.move(to: CGPoint(x: left, y: top))
         lineBezierPath.addLine(to: CGPoint(x: left + width, y: top))
@@ -119,19 +118,23 @@ public class MiniMap: UIView {
         lineLayer.path = lineBezierPath.cgPath
     }
     
-    private func updateimageViewSize() {
+    func getImageSize() -> CGSize {
         let ratio = image.size.width / image.size.height
-        
+        var size: CGSize
         if image.size.width > image.size.height {
-            imageViewSize = CGSize(width: _size.width, height: _size.width / ratio)
+            size = CGSize(width: realSize.width, height: realSize.width / ratio)
         } else {
-            imageViewSize = CGSize(width: _size.height * ratio, height: _size.height)
+            size = CGSize(width: realSize.height * ratio, height: realSize.height)
         }
-        
-        updateImageViewSize()
+        return size
     }
     
-    private func updateImageViewSize() {
+    private func updateimageViewSize() {
+        imageViewSize = getImageSize()
+        updateImageViewConstraint()
+    }
+    
+    private func updateImageViewConstraint() {
         imageView.widthAnchor.constraint(equalToConstant: imageViewSize.width).isActive = true
         imageView.heightAnchor.constraint(equalToConstant: imageViewSize.height).isActive = true
     }
