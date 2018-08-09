@@ -17,14 +17,13 @@ public struct Photo {
     public var photoUrl: URL?
     public var thumbnailUrl: URL?
     public var title: String?
-    public var object: AnyObject?
+    public var object: Any?
     public var asset: PHAsset?
     public var fileKey: String?
     
-    public init(image: UIImage?, title: String? = nil, thumbnailImage: UIImage? = nil, photoUrl: URL? = nil, thumbnailUrl: URL? = nil, object: AnyObject? = nil, fileKey: String?) {
+    public init(image: UIImage?, title: String? = nil, thumbnailImage: UIImage? = nil, photoUrl: URL? = nil, thumbnailUrl: URL? = nil, object: Any? = nil, fileKey: String?) {
         self.image = image
         self.title = title
-        
         self.thumbnailImage = thumbnailImage
         self.photoUrl = photoUrl
         self.thumbnailUrl = thumbnailUrl
@@ -60,7 +59,6 @@ public struct Photo {
     }
     
     public func imageToSave() -> UIImage? {
-        
         if let imageToSave = localOriginalPhoto() {
             return imageToSave
         }
@@ -68,6 +66,5 @@ public struct Photo {
             return imageToSave
         }
         return nil
-        
     }
 }

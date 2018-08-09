@@ -8,24 +8,50 @@
 
 /* Begin PBXBuildFile section */
 		1E11D49920AAC4CD00E48785 /* MiniMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E11D49820AAC4CD00E48785 /* MiniMap.swift */; };
-		4A0739991C98FB3C0004FEA5 /* PBCustomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A0739981C98FB3C0004FEA5 /* PBCustomView.swift */; };
 		4A0B3FDF1C76DB300049338C /* Kingfisher.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A0B3FDE1C76DB300049338C /* Kingfisher.framework */; };
 		4A52D1E41C72CB2E001C257B /* PhotoBrowser.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A52D1E31C72CB2E001C257B /* PhotoBrowser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4A52D1FE1C72CE69001C257B /* PhotoBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D1FD1C72CE69001C257B /* PhotoBrowser.swift */; };
 		4A52D2301C72F47C001C257B /* Photo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D22F1C72F47C001C257B /* Photo.swift */; };
 		4A52D2381C72F568001C257B /* PhotoPreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D2371C72F568001C257B /* PhotoPreviewController.swift */; };
 		4A6BC7C11C770F6400DACDA5 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4A6BC7C01C770F6400DACDA5 /* Images.xcassets */; };
-		4A87F61F1C96CF63005A9667 /* PBAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A87F61E1C96CF63005A9667 /* PBAnimation.swift */; };
 		4A8EB7291CEF16020065EAB0 /* PBActionBarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A8EB7281CEF16020065EAB0 /* PBActionBarItem.swift */; };
 		864F45E81E9F0A4900FF9215 /* Skitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 864F45E71E9F0A4900FF9215 /* Skitch.swift */; };
 		86AEF7301EDEC8A000034DBA /* SkitchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86AEF72F1EDEC8A000034DBA /* SkitchView.swift */; };
 		A18117E01E83B66900F8CE8E /* CustomPhotoBroswerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A18117DF1E83B66900F8CE8E /* CustomPhotoBroswerManager.swift */; };
+		C476DE4B2115F4350048B8C2 /* MiniMapSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C476DE4A2115F4350048B8C2 /* MiniMapSpec.swift */; };
+		C4B64B4D2117E73100B29C5B /* GradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B64B4C2117E73100B29C5B /* GradientView.swift */; };
+		C4B64B4F2117E75500B29C5B /* PBToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B64B4E2117E75500B29C5B /* PBToolbar.swift */; };
+		C4B64B512117E77200B29C5B /* PBNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B64B502117E77200B29C5B /* PBNavigationBar.swift */; };
+		C4B64B532117E7B000B29C5B /* WaitingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B64B522117E7B000B29C5B /* WaitingView.swift */; };
+		C4B64B5B2117E8D100B29C5B /* DismissImmediatelyAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B64B5A2117E8D100B29C5B /* DismissImmediatelyAnimation.swift */; };
+		C4B64B5D2117E90000B29C5B /* DismissAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B64B5C2117E90000B29C5B /* DismissAnimation.swift */; };
+		C4B64B5F2117E91300B29C5B /* PresentAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B64B5E2117E91300B29C5B /* PresentAnimation.swift */; };
+		C4B64B612117E92900B29C5B /* TransitionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B64B602117E92900B29C5B /* TransitionDelegate.swift */; };
+		C4B64B632117E95300B29C5B /* UIViewController+Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B64B622117E95300B29C5B /* UIViewController+Animation.swift */; };
+		C4B64B652117EA6300B29C5B /* PBConstant.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B64B642117EA6300B29C5B /* PBConstant.swift */; };
+		C4B64B70211927F400B29C5B /* PhotoSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B64B6F211927F400B29C5B /* PhotoSpec.swift */; };
+		C4B64B7221192C6000B29C5B /* PhotoPreviewControllerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B64B7121192C6000B29C5B /* PhotoPreviewControllerSpec.swift */; };
+		C4B64B742119320000B29C5B /* CustomPhotoBroswerManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B64B732119320000B29C5B /* CustomPhotoBroswerManagerSpec.swift */; };
+		C4B64B762119792700B29C5B /* UIViewSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B64B752119792700B29C5B /* UIViewSpec.swift */; };
+		C4B64B782119816200B29C5B /* PBActionBarItemSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B64B772119816200B29C5B /* PBActionBarItemSpec.swift */; };
 		C4C79EA12057808200C92C0C /* UIView+Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4C79EA02057808200C92C0C /* UIView+Frame.swift */; };
+		C4F017CD2111B1E100AA8678 /* SkitchSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4F017CC2111B1E100AA8678 /* SkitchSpec.swift */; };
+		C4F017D22112AC4E00AA8678 /* SkitchViewSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4F017D12112AC4E00AA8678 /* SkitchViewSpec.swift */; };
+		C4F017D42112E94800AA8678 /* RatiosSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4F017D32112E94800AA8678 /* RatiosSpec.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		C4F017BC2111AF4000AA8678 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4A52D1D71C72CB2E001C257B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4A52D1DF1C72CB2E001C257B;
+			remoteInfo = PhotoBrowser;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		1E11D49820AAC4CD00E48785 /* MiniMap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MiniMap.swift; sourceTree = "<group>"; };
-		4A0739981C98FB3C0004FEA5 /* PBCustomView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PBCustomView.swift; sourceTree = "<group>"; };
 		4A0B3FDE1C76DB300049338C /* Kingfisher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kingfisher.framework; path = Carthage/Build/iOS/Kingfisher.framework; sourceTree = "<group>"; };
 		4A52D1E01C72CB2E001C257B /* PhotoBrowser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PhotoBrowser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A52D1E31C72CB2E001C257B /* PhotoBrowser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PhotoBrowser.h; sourceTree = "<group>"; };
@@ -34,12 +60,34 @@
 		4A52D22F1C72F47C001C257B /* Photo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Photo.swift; sourceTree = "<group>"; };
 		4A52D2371C72F568001C257B /* PhotoPreviewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoPreviewController.swift; sourceTree = "<group>"; };
 		4A6BC7C01C770F6400DACDA5 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		4A87F61E1C96CF63005A9667 /* PBAnimation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PBAnimation.swift; sourceTree = "<group>"; };
 		4A8EB7281CEF16020065EAB0 /* PBActionBarItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PBActionBarItem.swift; sourceTree = "<group>"; };
 		864F45E71E9F0A4900FF9215 /* Skitch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Skitch.swift; sourceTree = "<group>"; };
 		86AEF72F1EDEC8A000034DBA /* SkitchView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SkitchView.swift; sourceTree = "<group>"; };
 		A18117DF1E83B66900F8CE8E /* CustomPhotoBroswerManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomPhotoBroswerManager.swift; sourceTree = "<group>"; };
+		C476DE4A2115F4350048B8C2 /* MiniMapSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniMapSpec.swift; sourceTree = "<group>"; };
+		C478DBE721103606005529EE /* Quick.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quick.framework; path = Carthage/Build/iOS/Quick.framework; sourceTree = "<group>"; };
+		C478DBE821103606005529EE /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nimble.framework; path = Carthage/Build/iOS/Nimble.framework; sourceTree = "<group>"; };
+		C4B64B4C2117E73100B29C5B /* GradientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
+		C4B64B4E2117E75500B29C5B /* PBToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PBToolbar.swift; sourceTree = "<group>"; };
+		C4B64B502117E77200B29C5B /* PBNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PBNavigationBar.swift; sourceTree = "<group>"; };
+		C4B64B522117E7B000B29C5B /* WaitingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaitingView.swift; sourceTree = "<group>"; };
+		C4B64B5A2117E8D100B29C5B /* DismissImmediatelyAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DismissImmediatelyAnimation.swift; sourceTree = "<group>"; };
+		C4B64B5C2117E90000B29C5B /* DismissAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DismissAnimation.swift; sourceTree = "<group>"; };
+		C4B64B5E2117E91300B29C5B /* PresentAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentAnimation.swift; sourceTree = "<group>"; };
+		C4B64B602117E92900B29C5B /* TransitionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionDelegate.swift; sourceTree = "<group>"; };
+		C4B64B622117E95300B29C5B /* UIViewController+Animation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Animation.swift"; sourceTree = "<group>"; };
+		C4B64B642117EA6300B29C5B /* PBConstant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PBConstant.swift; sourceTree = "<group>"; };
+		C4B64B6F211927F400B29C5B /* PhotoSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoSpec.swift; sourceTree = "<group>"; };
+		C4B64B7121192C6000B29C5B /* PhotoPreviewControllerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPreviewControllerSpec.swift; sourceTree = "<group>"; };
+		C4B64B732119320000B29C5B /* CustomPhotoBroswerManagerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPhotoBroswerManagerSpec.swift; sourceTree = "<group>"; };
+		C4B64B752119792700B29C5B /* UIViewSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewSpec.swift; sourceTree = "<group>"; };
+		C4B64B772119816200B29C5B /* PBActionBarItemSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PBActionBarItemSpec.swift; sourceTree = "<group>"; };
 		C4C79EA02057808200C92C0C /* UIView+Frame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Frame.swift"; sourceTree = "<group>"; };
+		C4F017B62111AF4000AA8678 /* PhotoBrowserTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PhotoBrowserTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C4F017BA2111AF4000AA8678 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C4F017CC2111B1E100AA8678 /* SkitchSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SkitchSpec.swift; sourceTree = "<group>"; };
+		C4F017D12112AC4E00AA8678 /* SkitchViewSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkitchViewSpec.swift; sourceTree = "<group>"; };
+		C4F017D32112E94800AA8678 /* RatiosSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatiosSpec.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,6 +99,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C4F017B32111AF4000AA8678 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -59,6 +114,7 @@
 			children = (
 				4A0B3FDE1C76DB300049338C /* Kingfisher.framework */,
 				4A52D1E21C72CB2E001C257B /* PhotoBrowser */,
+				C4F017B72111AF4000AA8678 /* PhotoBrowserTests */,
 				4A52D1E11C72CB2E001C257B /* Products */,
 				C4C79EA42057B6B000C92C0C /* Frameworks */,
 			);
@@ -68,6 +124,7 @@
 			isa = PBXGroup;
 			children = (
 				4A52D1E01C72CB2E001C257B /* PhotoBrowser.framework */,
+				C4F017B62111AF4000AA8678 /* PhotoBrowserTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -75,29 +132,152 @@
 		4A52D1E21C72CB2E001C257B /* PhotoBrowser */ = {
 			isa = PBXGroup;
 			children = (
+				C4B64B592117E89500B29C5B /* PhotoPreview */,
+				C4B64B582117E86C00B29C5B /* Manager */,
+				C4B64B572117E85600B29C5B /* Animation */,
+				C4B64B562117E82F00B29C5B /* Extensions */,
+				C4B64B552117E7FF00B29C5B /* Skitch */,
+				C4B64B542117E7DE00B29C5B /* CustomView */,
 				4A6BC7C01C770F6400DACDA5 /* Images.xcassets */,
 				4A52D1E31C72CB2E001C257B /* PhotoBrowser.h */,
-				4A52D22F1C72F47C001C257B /* Photo.swift */,
-				864F45E71E9F0A4900FF9215 /* Skitch.swift */,
-				86AEF72F1EDEC8A000034DBA /* SkitchView.swift */,
 				4A52D1FD1C72CE69001C257B /* PhotoBrowser.swift */,
-				4A8EB7281CEF16020065EAB0 /* PBActionBarItem.swift */,
-				4A52D2371C72F568001C257B /* PhotoPreviewController.swift */,
-				4A87F61E1C96CF63005A9667 /* PBAnimation.swift */,
-				4A0739981C98FB3C0004FEA5 /* PBCustomView.swift */,
-				A18117DF1E83B66900F8CE8E /* CustomPhotoBroswerManager.swift */,
-				C4C79EA02057808200C92C0C /* UIView+Frame.swift */,
-				1E11D49820AAC4CD00E48785 /* MiniMap.swift */,
 				4A52D1E51C72CB2E001C257B /* Info.plist */,
 			);
 			path = PhotoBrowser;
 			sourceTree = "<group>";
 		};
-		C4C79EA42057B6B000C92C0C /* Frameworks */ = {
+		C4B64B542117E7DE00B29C5B /* CustomView */ = {
+			isa = PBXGroup;
+			children = (
+				1E11D49820AAC4CD00E48785 /* MiniMap.swift */,
+				4A8EB7281CEF16020065EAB0 /* PBActionBarItem.swift */,
+				C4B64B4C2117E73100B29C5B /* GradientView.swift */,
+				C4B64B4E2117E75500B29C5B /* PBToolbar.swift */,
+				C4B64B502117E77200B29C5B /* PBNavigationBar.swift */,
+				C4B64B522117E7B000B29C5B /* WaitingView.swift */,
+			);
+			path = CustomView;
+			sourceTree = "<group>";
+		};
+		C4B64B552117E7FF00B29C5B /* Skitch */ = {
+			isa = PBXGroup;
+			children = (
+				864F45E71E9F0A4900FF9215 /* Skitch.swift */,
+				86AEF72F1EDEC8A000034DBA /* SkitchView.swift */,
+			);
+			path = Skitch;
+			sourceTree = "<group>";
+		};
+		C4B64B562117E82F00B29C5B /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				C4C79EA02057808200C92C0C /* UIView+Frame.swift */,
+				C4B64B622117E95300B29C5B /* UIViewController+Animation.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		C4B64B572117E85600B29C5B /* Animation */ = {
+			isa = PBXGroup;
+			children = (
+				C4B64B5A2117E8D100B29C5B /* DismissImmediatelyAnimation.swift */,
+				C4B64B5C2117E90000B29C5B /* DismissAnimation.swift */,
+				C4B64B5E2117E91300B29C5B /* PresentAnimation.swift */,
+				C4B64B602117E92900B29C5B /* TransitionDelegate.swift */,
+				C4B64B642117EA6300B29C5B /* PBConstant.swift */,
+			);
+			path = Animation;
+			sourceTree = "<group>";
+		};
+		C4B64B582117E86C00B29C5B /* Manager */ = {
+			isa = PBXGroup;
+			children = (
+				A18117DF1E83B66900F8CE8E /* CustomPhotoBroswerManager.swift */,
+			);
+			path = Manager;
+			sourceTree = "<group>";
+		};
+		C4B64B592117E89500B29C5B /* PhotoPreview */ = {
+			isa = PBXGroup;
+			children = (
+				4A52D22F1C72F47C001C257B /* Photo.swift */,
+				4A52D2371C72F568001C257B /* PhotoPreviewController.swift */,
+			);
+			path = PhotoPreview;
+			sourceTree = "<group>";
+		};
+		C4B64B692119276C00B29C5B /* CustomView */ = {
+			isa = PBXGroup;
+			children = (
+				C4F017D32112E94800AA8678 /* RatiosSpec.swift */,
+				C476DE4A2115F4350048B8C2 /* MiniMapSpec.swift */,
+				C4B64B772119816200B29C5B /* PBActionBarItemSpec.swift */,
+			);
+			path = CustomView;
+			sourceTree = "<group>";
+		};
+		C4B64B6A2119277A00B29C5B /* Skitch */ = {
+			isa = PBXGroup;
+			children = (
+				C4F017CC2111B1E100AA8678 /* SkitchSpec.swift */,
+				C4F017D12112AC4E00AA8678 /* SkitchViewSpec.swift */,
+			);
+			path = Skitch;
+			sourceTree = "<group>";
+		};
+		C4B64B6B2119278700B29C5B /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				C4B64B752119792700B29C5B /* UIViewSpec.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		C4B64B6C2119279200B29C5B /* Animations */ = {
 			isa = PBXGroup;
 			children = (
 			);
+			path = Animations;
+			sourceTree = "<group>";
+		};
+		C4B64B6D2119279700B29C5B /* Manager */ = {
+			isa = PBXGroup;
+			children = (
+				C4B64B732119320000B29C5B /* CustomPhotoBroswerManagerSpec.swift */,
+			);
+			path = Manager;
+			sourceTree = "<group>";
+		};
+		C4B64B6E2119279C00B29C5B /* PhotoPreview */ = {
+			isa = PBXGroup;
+			children = (
+				C4B64B6F211927F400B29C5B /* PhotoSpec.swift */,
+				C4B64B7121192C6000B29C5B /* PhotoPreviewControllerSpec.swift */,
+			);
+			path = PhotoPreview;
+			sourceTree = "<group>";
+		};
+		C4C79EA42057B6B000C92C0C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C478DBE821103606005529EE /* Nimble.framework */,
+				C478DBE721103606005529EE /* Quick.framework */,
+			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		C4F017B72111AF4000AA8678 /* PhotoBrowserTests */ = {
+			isa = PBXGroup;
+			children = (
+				C4B64B6E2119279C00B29C5B /* PhotoPreview */,
+				C4B64B6D2119279700B29C5B /* Manager */,
+				C4B64B6C2119279200B29C5B /* Animations */,
+				C4B64B6B2119278700B29C5B /* Extensions */,
+				C4B64B6A2119277A00B29C5B /* Skitch */,
+				C4B64B692119276C00B29C5B /* CustomView */,
+				C4F017BA2111AF4000AA8678 /* Info.plist */,
+			);
+			path = PhotoBrowserTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -122,6 +302,7 @@
 				4A52D1DC1C72CB2E001C257B /* Frameworks */,
 				4A52D1DD1C72CB2E001C257B /* Headers */,
 				4A52D1DE1C72CB2E001C257B /* Resources */,
+				C4B64B682119203400B29C5B /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -132,19 +313,42 @@
 			productReference = 4A52D1E01C72CB2E001C257B /* PhotoBrowser.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		C4F017B52111AF4000AA8678 /* PhotoBrowserTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C4F017BE2111AF4000AA8678 /* Build configuration list for PBXNativeTarget "PhotoBrowserTests" */;
+			buildPhases = (
+				C4F017B22111AF4000AA8678 /* Sources */,
+				C4F017B32111AF4000AA8678 /* Frameworks */,
+				C4F017B42111AF4000AA8678 /* Resources */,
+				C4F017D02111B4B300AA8678 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C4F017BD2111AF4000AA8678 /* PBXTargetDependency */,
+			);
+			name = PhotoBrowserTests;
+			productName = PhotoBrowserTests;
+			productReference = C4F017B62111AF4000AA8678 /* PhotoBrowserTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		4A52D1D71C72CB2E001C257B /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0720;
+				LastSwiftUpdateCheck = 0940;
 				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = Teambition;
 				TargetAttributes = {
 					4A52D1DF1C72CB2E001C257B = {
 						CreatedOnToolsVersion = 7.2.1;
 						LastSwiftMigration = 0900;
+					};
+					C4F017B52111AF4000AA8678 = {
+						CreatedOnToolsVersion = 9.4.1;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -161,6 +365,7 @@
 			projectRoot = "";
 			targets = (
 				4A52D1DF1C72CB2E001C257B /* PhotoBrowser */,
+				C4F017B52111AF4000AA8678 /* PhotoBrowserTests */,
 			);
 		};
 /* End PBXProject section */
@@ -174,7 +379,46 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C4F017B42111AF4000AA8678 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		C4B64B682119203400B29C5B /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null;\nthen\nswiftlint\n#cd Teambition&&swiftlint\nelse\necho \"SwiftLint does not exist, download from https://github.com/realm/SwiftLint\"\nfi";
+		};
+		C4F017D02111B4B300AA8678 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/Kingfisher.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Nimble.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Quick.framework",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		4A52D1DB1C72CB2E001C257B /* Sources */ = {
@@ -182,20 +426,52 @@
 			buildActionMask = 2147483647;
 			files = (
 				1E11D49920AAC4CD00E48785 /* MiniMap.swift in Sources */,
+				C4B64B512117E77200B29C5B /* PBNavigationBar.swift in Sources */,
 				864F45E81E9F0A4900FF9215 /* Skitch.swift in Sources */,
+				C4B64B4D2117E73100B29C5B /* GradientView.swift in Sources */,
 				4A52D2301C72F47C001C257B /* Photo.swift in Sources */,
-				4A0739991C98FB3C0004FEA5 /* PBCustomView.swift in Sources */,
+				C4B64B5B2117E8D100B29C5B /* DismissImmediatelyAnimation.swift in Sources */,
+				C4B64B632117E95300B29C5B /* UIViewController+Animation.swift in Sources */,
+				C4B64B5F2117E91300B29C5B /* PresentAnimation.swift in Sources */,
 				4A52D1FE1C72CE69001C257B /* PhotoBrowser.swift in Sources */,
-				4A87F61F1C96CF63005A9667 /* PBAnimation.swift in Sources */,
+				C4B64B612117E92900B29C5B /* TransitionDelegate.swift in Sources */,
 				4A52D2381C72F568001C257B /* PhotoPreviewController.swift in Sources */,
+				C4B64B4F2117E75500B29C5B /* PBToolbar.swift in Sources */,
 				C4C79EA12057808200C92C0C /* UIView+Frame.swift in Sources */,
+				C4B64B532117E7B000B29C5B /* WaitingView.swift in Sources */,
 				4A8EB7291CEF16020065EAB0 /* PBActionBarItem.swift in Sources */,
+				C4B64B5D2117E90000B29C5B /* DismissAnimation.swift in Sources */,
+				C4B64B652117EA6300B29C5B /* PBConstant.swift in Sources */,
 				A18117E01E83B66900F8CE8E /* CustomPhotoBroswerManager.swift in Sources */,
 				86AEF7301EDEC8A000034DBA /* SkitchView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C4F017B22111AF4000AA8678 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C476DE4B2115F4350048B8C2 /* MiniMapSpec.swift in Sources */,
+				C4B64B782119816200B29C5B /* PBActionBarItemSpec.swift in Sources */,
+				C4F017CD2111B1E100AA8678 /* SkitchSpec.swift in Sources */,
+				C4B64B7221192C6000B29C5B /* PhotoPreviewControllerSpec.swift in Sources */,
+				C4B64B70211927F400B29C5B /* PhotoSpec.swift in Sources */,
+				C4B64B742119320000B29C5B /* CustomPhotoBroswerManagerSpec.swift in Sources */,
+				C4F017D42112E94800AA8678 /* RatiosSpec.swift in Sources */,
+				C4F017D22112AC4E00AA8678 /* SkitchViewSpec.swift in Sources */,
+				C4B64B762119792700B29C5B /* UIViewSpec.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		C4F017BD2111AF4000AA8678 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4A52D1DF1C72CB2E001C257B /* PhotoBrowser */;
+			targetProxy = C4F017BC2111AF4000AA8678 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		4A52D1F21C72CB2E001C257B /* Debug */ = {
@@ -357,6 +633,59 @@
 			};
 			name = Release;
 		};
+		C4F017BF2111AF4000AA8678 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = PhotoBrowserTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.teambition.PhotoBrowserTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C4F017C02111AF4000AA8678 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = PhotoBrowserTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.teambition.PhotoBrowserTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -374,6 +703,15 @@
 			buildConfigurations = (
 				4A52D1F51C72CB2E001C257B /* Debug */,
 				4A52D1F61C72CB2E001C257B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C4F017BE2111AF4000AA8678 /* Build configuration list for PBXNativeTarget "PhotoBrowserTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C4F017BF2111AF4000AA8678 /* Debug */,
+				C4F017C02111AF4000AA8678 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
