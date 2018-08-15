@@ -94,13 +94,18 @@ class PhotoPreviewController: UIViewController {
         commonInit()
     }
     
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        scrollView.frame = CGRect(x: 0, y: 0, width: size.width, height: size.height)
+        loadNetworkPhoto()
+    }
+    
     private func commonInit() {
         extendedLayoutIncludesOpaqueBars = true
         automaticallyAdjustsScrollViewInsets = false
         edgesForExtendedLayout = UIRectEdge.top
 
         isFullScreenMode = delegate?.isFullScreenMode ?? false
-        view.backgroundColor = UIColor.clear
         view.addSubview(scrollView)
 
         scrollView.addSubview(imageView)
@@ -140,13 +145,24 @@ extension PhotoPreviewController {
     private func setImageViewFrame(_ image: UIImage) {
         miniMap?.image = image
         imageOriginWidth = image.size.width
-        imageView.width = PBConstant.Screen.width
-        imageView.height = image.size.height / image.size.width * PBConstant.Screen.width
-        if imageView.height > PBConstant.Screen.height {
-            imageView.originY = 0
-        } else {
-            imageView.center = self.view.center
+        imageView.frame = scrollView.bounds
+        
+        var resultWidth: CGFloat = image.size.width
+        var resultHeight: CGFloat = image.size.height
+    
+        // compute frame width and height
+        if image.size.width >= UIScreen.main.bounds.size.width {
+            resultWidth = UIScreen.main.bounds.size.width
+            resultHeight = image.size.height / image.size.width * UIScreen.main.bounds.size.width
         }
+        
+        if resultHeight >= UIScreen.main.bounds.size.height {
+            resultHeight = UIScreen.main.bounds.size.height
+            resultWidth = resultWidth / resultHeight * UIScreen.main.bounds.size.height
+        }
+        
+        imageView.size = CGSize(width: resultWidth, height: resultHeight)
+        imageView.center = scrollView.center
         scrollView.contentSize = imageView.frame.size
     }
     
@@ -170,7 +186,7 @@ extension PhotoPreviewController {
         options.deliveryMode = .highQualityFormat
         options.isSynchronous = false
         options.isNetworkAccessAllowed = true
-        options.progressHandler = { progress, _, _, _ in
+        options.progressHandler = { [weak self] progress, _, _, _ in
             DispatchQueue.main.async { [weak self] in
                 self?.waitingView?.progress = CGFloat(progress)
             }
@@ -236,21 +252,25 @@ extension PhotoPreviewController {
         }
         
         let resource = ImageResource(downloadURL: photoUrl, cacheKey: photoFileKey)
-        imageView.kf.setImage(with: resource, placeholder: photo.localThumbnailPhoto(), options: nil, progressBlock: { (receivedSize, totalSize) -> Void in
+        imageView.kf.setImage(with: resource, placeholder: photo.localThumbnailPhoto(), options: nil, progressBlock: { [weak self] (receivedSize, totalSize) -> Void in
             let progress = CGFloat(receivedSize) / CGFloat(totalSize)
-            if let waitingView = self.waitingView {
+            if let waitingView = self?.waitingView {
                 waitingView.progress = progress
             }
-        }, completionHandler: { (image, _, _, _) -> Void in
-            if let waitingView = self.waitingView {
+        }, completionHandler: { [weak self] (image, _, _, _) -> Void in
+            guard let strongSelf = self else { return }
+            if let waitingView = strongSelf.waitingView {
                 waitingView.removeFromSuperview()
             }
-            if let image = image {
-                self.setImageViewFrame(image)
+            if let image = strongSelf.imageView.image {
+                strongSelf.setImageViewFrame(image)
             }
-            self.addSkitches()
-            if let index = self.index {
-                self.delegate?.photoPreviewController(self, didShowPhotoAtIndex: index)
+            if let image = image {
+                strongSelf.setImageViewFrame(image)
+            }
+            strongSelf.addSkitches()
+            if let index = strongSelf.index {
+                strongSelf.delegate?.photoPreviewController(strongSelf, didShowPhotoAtIndex: index)
             }
         })
     }
@@ -305,6 +325,7 @@ extension PhotoPreviewController {
         scrollView.maximumZoomScale = CGFloat.greatestFiniteMagnitude
         scrollView.zoomScale = 1.0
         scrollView.contentOffset = CGPoint.zero
+
         if #available(iOS 11.0, *) {
             scrollView.contentInsetAdjustmentBehavior = .never
         }
@@ -314,7 +335,7 @@ extension PhotoPreviewController {
     private func makeImageView() -> UIImageView {
         let imageView = UIImageView()
         imageView.layer.masksToBounds = true
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }
     
@@ -473,7 +494,7 @@ extension PhotoPreviewController {
         imageHeightBeforeDrag = imageView.height
 
         //计算图片centerY需要考虑到图片此时的高
-        let imageBeginY = (imageHeightBeforeDrag < PBConstant.Screen.height) ? (PBConstant.Screen.height - imageHeightBeforeDrag) * 0.5 : 0.0
+        let imageBeginY = (imageHeightBeforeDrag < UIScreen.main.bounds.size.height) ? (UIScreen.main.bounds.size.height - imageHeightBeforeDrag) * 0.5 : 0.0
         imageYBeforeDrag = imageBeginY
         
         //centerX需要考虑到offset

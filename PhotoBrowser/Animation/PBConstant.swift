@@ -47,9 +47,4 @@ enum PBConstant {
     enum Device {
         static let isIPhoneX = (UIScreen.main.bounds.size == PBConstant.DeviceSize.Portrait.iPhoneX || UIScreen.main.bounds.size == PBConstant.DeviceSize.Landscape.iPhoneX)
     }
-    
-    enum Screen {
-        static let width: CGFloat = UIScreen.main.bounds.size.width
-        static let height: CGFloat = UIScreen.main.bounds.size.height
-    }
 }
