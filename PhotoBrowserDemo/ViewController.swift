@@ -119,9 +119,9 @@ extension ViewController: PhotoBrowserDelegate {
     }
     
     func photoBrowser(_ browser: PhotoBrowser, longPressOnPhoto photo: Photo, index: Int) {
-        let alertController = UIAlertController.init(title: nil, message: nil, preferredStyle: UIAlertControllerStyle.actionSheet)
-        let cancelAction = UIAlertAction.init(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil)
-        let saveAction = UIAlertAction.init(title: "Save", style: UIAlertActionStyle.default) {[unowned self] (_) -> Void in
+        let alertController = UIAlertController.init(title: nil, message: nil, preferredStyle: UIAlertController.Style.actionSheet)
+        let cancelAction = UIAlertAction.init(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil)
+        let saveAction = UIAlertAction.init(title: "Save", style: UIAlertAction.Style.default) {[unowned self] (_) -> Void in
             if let image = photo.imageToSave() {
                 self.saveToAlbum(image)
             }
