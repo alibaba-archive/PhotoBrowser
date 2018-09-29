@@ -379,20 +379,47 @@ extension PhotoBrowser {
             defaultShareAction()
         }
     }
-
     public func defaultShareAction() {
-        if let image = currentImageView()?.image, let button = headerView?.rightButton {
-            let activityController = UIActivityViewController(activityItems: [image], applicationActivities: nil)
+        if let image = currentImageView()?.image, let button = headerView?.rightButton, let photos = photos {
+            let url = URL(fileURLWithPath: NSTemporaryDirectory().appending(photos[currentIndex].title ?? ""))
+            let data = UIImagePNGRepresentation(image)
+            do {
+                try data?.write(to: url)
+            } catch {}
+            
+            let activityController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+            
             if UIDevice.current.userInterfaceIdiom == .pad {
                 activityController.modalPresentationStyle = .popover
                 activityController.popoverPresentationController?.sourceView = view
                 let frame = view.convert(button.frame, from: button.superview)
                 activityController.popoverPresentationController?.sourceRect = frame
             }
-            present(activityController, animated: true, completion: nil)
+            
+            activityController.completionWithItemsHandler = { (a, flag, array, error) in
+               
+                do {
+                    try FileManager.default.removeItem(at: url)
+                } catch {}
+
+            }
+            self.navigationController?.present(activityController, animated: true)
         }
     }
 }
+//    public func defaultShareAction() {
+//        if let image = currentImageView()?.image, let button = headerView?.rightButton {
+//            let activityController = UIActivityViewController(activityItems: [image], applicationActivities: nil)
+//            if UIDevice.current.userInterfaceIdiom == .pad {
+//                activityController.modalPresentationStyle = .popover
+//                activityController.popoverPresentationController?.sourceView = view
+//                let frame = view.convert(button.frame, from: button.superview)
+//                activityController.popoverPresentationController?.sourceRect = frame
+//            }
+//            present(activityController, animated: true, completion: nil)
+//        }
+//    }
+//}
 
 extension PhotoBrowser: UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     open func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
