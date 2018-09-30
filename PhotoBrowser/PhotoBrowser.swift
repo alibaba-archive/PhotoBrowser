@@ -302,7 +302,7 @@ extension PhotoBrowser {
             if isFromPhotoPicker {
                 if delegate.photoBrowser(self, canSelectPhotoAtIndex: currentIndex) {
                     delegate.photoBrowser(self, didSelectPhotoAtIndex: currentIndex)
-                    if let i = selectedIndex.index(of: currentIndex) {
+                    if let i = selectedIndex.firstIndex(of: currentIndex) {
                         selectedIndex.remove(at: i)
                         if let headerView = headerView {
                             headerView.imageSelected = false
@@ -400,7 +400,7 @@ extension PhotoBrowser: PhotoPreviewControllerDelegate {
     }
 
     func photoPreviewController(_ controller: PhotoPreviewController, didTapSkitch skitch: Skitch, versionID: String) {
-        print("photo index: \(currentIndex), skitch index: \(index)")
+        print("photo index: \(currentIndex), skitch index: \(String(describing: index))")
         photoBrowserDelegate?.photoBrowser(self, didTapSkitch: skitch, versionID: versionID)
     }
     
@@ -480,7 +480,7 @@ extension PhotoBrowser {
                 } else {
                     headerView.addConstraint(NSLayoutConstraint(item: headerView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 64))
                 }
-                view.addConstraint(NSLayoutConstraint(item: view, attribute: .top, relatedBy: .equal, toItem: headerView, attribute: .top, multiplier: 1.0, constant: 0))
+                view.addConstraint(NSLayoutConstraint(item: view!, attribute: .top, relatedBy: .equal, toItem: headerView, attribute: .top, multiplier: 1.0, constant: 0))
                 
                 headerView.leftButton.addTarget(self, action: #selector(leftButtonTap(_:)), for: .touchUpInside)
                 headerView.rightButton.addTarget(self, action: #selector(rightButtonTap(_:)), for: .touchUpInside)
@@ -506,7 +506,7 @@ extension PhotoBrowser {
                 toolbar.translatesAutoresizingMaskIntoConstraints = false
                 view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-0-[toolbar]-0-|", options: [], metrics: nil, views: ["toolbar": toolbar]))
                 
-                view.addConstraint(NSLayoutConstraint(item: view, attribute: .bottom, relatedBy: .equal, toItem: toolbar, attribute: .bottom, multiplier: 1.0, constant: 0))
+                view.addConstraint(NSLayoutConstraint(item: view!, attribute: .bottom, relatedBy: .equal, toItem: toolbar, attribute: .bottom, multiplier: 1.0, constant: 0))
                 if #available(iOS 11.0, *) {
                     view.addConstraint(NSLayoutConstraint(item: toolbar, attribute: .top, relatedBy: .equal, toItem: view.safeAreaLayoutGuide, attribute: .bottom, multiplier: 1.0, constant: -PBConstant.PhotoBrowser.toolBarHeight))
                 } else {
