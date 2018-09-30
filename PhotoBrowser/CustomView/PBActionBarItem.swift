@@ -15,13 +15,13 @@ open class PBActionBarItem: NSObject {
     open var action: BarActionClosure?
     open weak var photoBrowser: PhotoBrowser?
 
-    public init(title: String?, style: UIBarButtonItemStyle, action: BarActionClosure? = nil) {
+    public init(title: String?, style: UIBarButtonItem.Style, action: BarActionClosure? = nil) {
         super.init()
         self.action = action
         barButtonItem = UIBarButtonItem(title: title, style: .plain, target: self, action: #selector(PBActionBarItem.triggerAction))
     }
 
-    public init(image: UIImage?, style: UIBarButtonItemStyle, action: BarActionClosure? = nil) {
+    public init(image: UIImage?, style: UIBarButtonItem.Style, action: BarActionClosure? = nil) {
         super.init()
         self.action = action
         barButtonItem = UIBarButtonItem(image: image, style: style, target: self, action: #selector(PBActionBarItem.triggerAction))
@@ -42,7 +42,7 @@ open class PBActionBarItem: NSObject {
 }
 
 public extension PhotoBrowser {
-    func addActionBarItem(title: String?, style: UIBarButtonItemStyle, action: BarActionClosure?) {
+    func addActionBarItem(title: String?, style: UIBarButtonItem.Style, action: BarActionClosure?) {
         let barItem = PBActionBarItem(title: title, style: style, action: action)
         barItem.photoBrowser = self
         actionItems.append(barItem)

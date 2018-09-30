@@ -26,7 +26,7 @@ class SkitchViewSpec: QuickSpec {
                 var skitchView: SkitchView!
                 var mockDelegate: MockSkitchViewDelegate!
                 beforeEach {
-                    skitchView = SkitchView(frame: CGRect.zero)
+                    skitchView = SkitchView(frame: .zero)
                     mockDelegate = MockSkitchViewDelegate()
                     skitchView.delegate = mockDelegate
                     skitchView.setTitle("10", index: 10)

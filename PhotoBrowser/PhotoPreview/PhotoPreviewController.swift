@@ -58,8 +58,8 @@ class PhotoPreviewController: UIViewController {
     private var imageCenterXBeforeDrag: CGFloat = 0 // 向下拖拽开始时，图片的中心X
     private var imageYBeforeDrag: CGFloat = 0 // 向下拖拽开始时，图片的Y
     private var scrollOffsetX: CGFloat = 0 // 向下拖拽开始时，滚动控件的offsetX
-    private var scrollNewOffset: CGPoint = CGPoint.zero
-    private var scrollOldOffset: CGPoint = CGPoint.zero
+    private var scrollNewOffset: CGPoint = .zero
+    private var scrollOldOffset: CGPoint = .zero
     private var imageOriginWidth: CGFloat = 0
     private var panLastY: CGFloat = 0
     private var afterZooming = false
@@ -315,7 +315,7 @@ extension PhotoPreviewController {
     private func makeScrollView() -> UIScrollView {
         let scrollView = UIScrollView(frame: self.view.frame)
         scrollView.delegate = self
-        scrollView.backgroundColor = UIColor.clear
+        scrollView.backgroundColor = .clear
         scrollView.clipsToBounds = true
         scrollView.showsVerticalScrollIndicator = false
         scrollView.showsHorizontalScrollIndicator = false
@@ -324,7 +324,7 @@ extension PhotoPreviewController {
         scrollView.minimumZoomScale = 1.0
         scrollView.maximumZoomScale = CGFloat.greatestFiniteMagnitude
         scrollView.zoomScale = 1.0
-        scrollView.contentOffset = CGPoint.zero
+        scrollView.contentOffset = .zero
 
         if #available(iOS 11.0, *) {
             scrollView.contentInsetAdjustmentBehavior = .never
@@ -392,7 +392,7 @@ extension PhotoPreviewController {
         guard let delegate = delegate, let photo = photo else {
             return
         }
-        if sender.state == UIGestureRecognizerState.began {
+        if sender.state == .began {
             delegate.photoPreviewController(self, longPressOn: photo, gesture: sender)
         }
     }
@@ -459,14 +459,14 @@ extension PhotoPreviewController: UIScrollViewDelegate {
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if scrollView.panGestureRecognizer.state == .ended {
-            perform(#selector(hideMiniMap), with: self, afterDelay: 3, inModes: [.defaultRunLoopMode])
+            perform(#selector(hideMiniMap), with: self, afterDelay: 3, inModes: [.default])
         } else {
             NSObject.cancelPreviousPerformRequests(withTarget: self)
         }
     }
 
     func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
-        perform(#selector(hideMiniMap), with: self, afterDelay: 3, inModes: [.defaultRunLoopMode])
+        perform(#selector(hideMiniMap), with: self, afterDelay: 3, inModes: [.default])
         afterZooming = true
     }
 }
@@ -536,8 +536,8 @@ extension PhotoPreviewController {
         if moveImage == nil { // 添加moveImage
             moveImage = UIImageView()
             view.addSubview(moveImage!)
-            moveImage?.contentMode = UIViewContentMode.scaleAspectFill
-            moveImage?.backgroundColor = UIColor.white
+            moveImage?.contentMode = .scaleAspectFill
+            moveImage?.backgroundColor = .white
             moveImage?.layer.masksToBounds = true
             moveImage?.image = imageView.image
             moveImage?.width = imageWidthBeforeDrag

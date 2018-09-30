@@ -32,8 +32,8 @@ class SkitchView: UIView {
         let circleButton = UIButton()
         circleButton.translatesAutoresizingMaskIntoConstraints = false
 
-        circleButton.titleLabel?.font = UIFont.systemFont(ofSize: PBConstant.PhotoPreview.skitchButtonFontSize)
-        circleButton.setTitleColor(UIColor.white, for: .normal)
+        circleButton.titleLabel?.font = .systemFont(ofSize: PBConstant.PhotoPreview.skitchButtonFontSize)
+        circleButton.setTitleColor(.white, for: .normal)
         circleButton.backgroundColor = PBConstant.PhotoPreview.skitchButtonBgColor
         circleButton.addTarget(self, action: #selector(handleSkitchButtonTap(_:)), for: .touchUpInside)
         

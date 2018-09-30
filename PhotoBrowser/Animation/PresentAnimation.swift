@@ -38,7 +38,7 @@ open class PresentAnimation: NSObject, UIViewControllerAnimatedTransitioning {
         toViewController.view.transform = scale.concatenating(translate)
         toViewController.view.alpha = 0
         
-        UIView.animate(withDuration: PBConstant.Animation.presentDuration, delay: 0, options: UIViewAnimationOptions(), animations: {
+        UIView.animate(withDuration: PBConstant.Animation.presentDuration, delay: 0, options: UIView.AnimationOptions(), animations: {
             toViewController.view.transform = CGAffineTransform(scaleX: 1, y: 1)
             toViewController.view.alpha = 1
             self.fromView.alpha = 0
