@@ -328,7 +328,8 @@ extension PhotoBrowser: UIPageViewControllerDataSource, UIPageViewControllerDele
         guard let viewController = viewController as? PhotoPreviewController else {
             return nil
         }
-        guard let index = viewController.index, let photos = photos else {
+        let index = viewController.index
+        guard let photos = photos else {
             return nil
         }
         if index < 1 {
@@ -345,9 +346,7 @@ extension PhotoBrowser: UIPageViewControllerDataSource, UIPageViewControllerDele
         guard let viewController = viewController as? PhotoPreviewController else {
             return nil
         }
-        guard let index = viewController.index else {
-            return nil
-        }
+        let index = viewController.index
         guard let photos = photos else {
             return nil
         }
@@ -366,11 +365,9 @@ extension PhotoBrowser: UIPageViewControllerDataSource, UIPageViewControllerDele
             guard let currentViewController = pageViewController.viewControllers?.last as? PhotoPreviewController else {
                 return
             }
-            if let index = currentViewController.index {
-                currentIndex = index
-                updateNavigationBarTitle()
-                photoBrowserDelegate?.photoBrowser(self, didShowPhotoAtIndex: index)
-            }
+            let index = currentViewController.index
+            currentIndex = index
+            updateNavigationBarTitle()
         }
     }
 }
@@ -413,7 +410,7 @@ extension PhotoBrowser: PhotoPreviewControllerDelegate {
         view.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: progress)
     }
 
-    func photoPreviewController(_ controller: PhotoPreviewController, doDownDrag isBegin: Bool, needBack: Bool, imageFrame: CGRect, imageView: UIImageView?) {
+    func photoPreviewController(_ controller: PhotoPreviewController, doDownDrag isBegin: Bool, needBack: Bool, imageFrame: CGRect, imageView: UIView?) {
         if needBack { // 页面消失
             guard let imageView = imageView else { return }
             UIView.animate(withDuration: 0.25, animations: {
@@ -433,7 +430,7 @@ extension PhotoBrowser: PhotoPreviewControllerDelegate {
 
 // MARK: - Helpers
 extension PhotoBrowser {
-    func currentImageView() -> UIImageView? {
+    func currentImageView() -> ImageView? {
         guard let page = viewControllers?.last as? PhotoPreviewController else {
             return nil
         }

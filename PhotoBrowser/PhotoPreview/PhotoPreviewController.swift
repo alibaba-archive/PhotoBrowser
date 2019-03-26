@@ -19,18 +19,44 @@ protocol PhotoPreviewControllerDelegate: class {
     func photoPreviewController(_ controller: PhotoPreviewController, didTapSkitch skitch: Skitch, versionID: String)
     func photoPreviewController(_ controller: PhotoPreviewController, didShowPhotoAtIndex index: Int)
     func photoPreviewController(_ controller: PhotoPreviewController, doDraging dragProgress: CGFloat)
-    func photoPreviewController(_ controller: PhotoPreviewController, doDownDrag isBegin: Bool, needBack: Bool, imageFrame: CGRect, imageView: UIImageView?)
+    func photoPreviewController(_ controller: PhotoPreviewController, doDownDrag isBegin: Bool, needBack: Bool, imageFrame: CGRect, imageView: UIView?)
 }
+
+typealias ImageView = ImageContainerView
 
 // MARK: - PhotoPreviewController
 class PhotoPreviewController: UIViewController {
-    var index: NSInteger?
-    var photo: Photo?
-    lazy var imageView: UIImageView = self.makeImageView()
-    
+    var index: NSInteger
+    var photo: Photo
+
+    lazy var imageView: ImageView = {
+        let imageView = ImageView()
+        imageView.layer.masksToBounds = true
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
+
     private var waitingView: WaitingView?
-    private lazy var scrollView: UIScrollView = self.makeScrollView()
-    
+    private lazy var scrollView: UIScrollView = {
+        let scrollView = UIScrollView(frame: self.view.frame)
+        scrollView.delegate = self
+        scrollView.backgroundColor = .clear
+        scrollView.clipsToBounds = true
+        scrollView.showsVerticalScrollIndicator = false
+        scrollView.showsHorizontalScrollIndicator = false
+        scrollView.alwaysBounceHorizontal = true
+        scrollView.alwaysBounceVertical = true
+        scrollView.minimumZoomScale = 1.0
+        scrollView.maximumZoomScale = .greatestFiniteMagnitude
+        scrollView.zoomScale = 1.0
+        scrollView.contentOffset = .zero
+
+        if #available(iOS 11.0, *) {
+            scrollView.contentInsetAdjustmentBehavior = .never
+        }
+        return scrollView
+    }()
+
     // Support Skitch View
     private var skitches: [Skitch] = []
     private var versionID: String = ""
@@ -45,7 +71,7 @@ class PhotoPreviewController: UIViewController {
     private var minPanY: CGFloat {
         return  (miniMap?.isHidden ?? true) ? -10 : -CGFloat.greatestFiniteMagnitude
     }
-    private var moveImage: UIImageView? // 拖拽图片
+    private var moveImage: UIView? // 拖拽图片
     private var isPanning: Bool = false // 正在拖拽
     private var isZooming: Bool = false // 正在缩放
     private var panningProgress: CGFloat = 0  // 拖拽进度
@@ -71,35 +97,37 @@ class PhotoPreviewController: UIViewController {
             updateMiniMapLayout()
         }
     }
-    
+
     // Support MiniMap
     private var miniMap: MiniMap?
     private var miniMapTopConstraint: NSLayoutConstraint?
-    public var miniMapSize: CGSize = CGSize(width: 100, height: 100)
-    
-    init(photo: Photo, index: NSInteger, skitches: [[String: Any]]? = nil, isSkitchButtonHidden: Bool = true) {
-        super.init(nibName: nil, bundle: nil)
+    public var miniMapSize = CGSize(width: 100, height: 100)
+
+    required init(photo: Photo, index: NSInteger, skitches: [[String: Any]]? = nil, isSkitchButtonHidden: Bool = true) {
         self.index = index
         self.photo = photo
+        
+        super.init(nibName: nil, bundle: nil)
+
         self.isSkitchButtonHidden = isSkitchButtonHidden
         self.initSkitches(skitches)
-        self.loadCloudKitPhoto(at: index)
+        self.loadCloudKitPhoto()
     }
     
     required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidLoad() {
         commonInit()
     }
-    
+
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         scrollView.frame = CGRect(x: 0, y: 0, width: size.width, height: size.height)
-        loadNetworkPhoto()
+        loadImage(with: photo)
     }
-    
+
     private func commonInit() {
         extendedLayoutIncludesOpaqueBars = true
         automaticallyAdjustsScrollViewInsets = false
@@ -110,26 +138,26 @@ class PhotoPreviewController: UIViewController {
 
         scrollView.addSubview(imageView)
         imageView.isUserInteractionEnabled = true
-        
+
         let doubleTap = UITapGestureRecognizer.init(target: self, action: #selector(handleDoubleTap(_:)))
         doubleTap.numberOfTapsRequired = 2
         imageView.addGestureRecognizer(doubleTap)
-        
+
         let singleTap = UITapGestureRecognizer.init(target: self, action: #selector(handleSingleTap(_:)))
         singleTap.numberOfTapsRequired = 1
         imageView.addGestureRecognizer(singleTap)
-        
+
         let longPress = UILongPressGestureRecognizer.init(target: self, action: #selector(handleLongPress(_:)))
         imageView.addGestureRecognizer(longPress)
 
         let backgroudSingleTap = UITapGestureRecognizer.init(target: self, action: #selector(handleBackgroundSingleTap(_:)))
         backgroudSingleTap.numberOfTapsRequired = 1
         view.addGestureRecognizer(backgroudSingleTap)
-        
+
         singleTap.require(toFail: doubleTap)
-        
+
         miniMap = makeMiniMap()
-        loadNetworkPhoto()
+        loadImage(with: photo)
     }
 }
 
@@ -141,7 +169,7 @@ extension PhotoPreviewController {
         let actualCenter = CGPoint(x: scrollView.contentSize.width * 0.5 + offsetX, y: scrollView.contentSize.height * 0.5 + offsetY)
         return actualCenter
     }
-    
+
     private func setImageViewFrame(_ image: UIImage) {
         DispatchQueue.main.async { [weak self] in
             guard let strongSelf = self else {
@@ -170,9 +198,40 @@ extension PhotoPreviewController {
             strongSelf.scrollView.contentSize = strongSelf.imageView.frame.size
         }
     }
-    
-    private func loadCloudKitPhoto(at index: NSInteger) {
-        guard let asset = self.photo?.asset, self.photo?.image == nil else {
+
+    private func updateMiniMap(with image: UIImage) {
+        let pointSize = miniMapSize
+        DispatchQueue.global().async { [weak self] in
+            // downsample image to minimap size to reduce memory cost
+            let downsampled = image.kf.resize(to: pointSize, for: .aspectFit)
+            DispatchQueue.main.async {
+                self?.miniMap?.image = downsampled
+            }
+        }
+    }
+
+    private func updateImageViewFrameWithImageSize(_ imageSize: CGSize) {
+        imageOriginWidth = imageSize.width
+        imageView.frame = scrollView.bounds
+
+        var imageViewSize = imageSize
+        let imageScale = min(scrollView.bounds.width / imageSize.width,
+                             scrollView.bounds.height / imageSize.height)
+        if imageScale > 1 {
+            imageViewSize = imageSize
+        } else {
+            imageViewSize = CGSize(width: imageSize.width * imageScale,
+                                   height: imageSize.height * imageScale)
+        }
+
+        imageView.size = imageViewSize
+        imageView.center = scrollView.center
+        scrollView.contentSize = imageView.frame.size
+    }
+
+    private func loadCloudKitPhoto() {
+        guard let asset = self.photo.asset,
+            self.photo.image == nil else {
             return
         }
 
@@ -181,12 +240,12 @@ extension PhotoPreviewController {
             waitingView.removeFromSuperview()
         }
         waitingView = WaitingView(frame: CGRect(x: 0, y: 0, width: 70, height: 70))
-        
+
         if let newWaitingView = waitingView {
             newWaitingView.center = view.center
             view.addSubview(newWaitingView)
         }
-        
+
         let options = PHImageRequestOptions()
         options.deliveryMode = .highQualityFormat
         options.isSynchronous = false
@@ -196,17 +255,18 @@ extension PhotoPreviewController {
                 self?.waitingView?.progress = CGFloat(progress)
             }
         }
-        
+
         // Request data
         PHImageManager.default().requestImageData(for: asset, options: options) { [weak self] data, _, _, _ in
             guard let strongSelf = self else { return }
             DispatchQueue.main.async {
                 if let imageData = data, let image = UIImage(data: imageData) {
-                    strongSelf.photo?.image = image
-                    strongSelf.setImageViewFrame(image)
+                    strongSelf.photo.image = image
+                    strongSelf.updateImageViewFrameWithImageSize(image.size)
                     strongSelf.imageView.image = image
                     strongSelf.addSkitches()
-                    strongSelf.delegate?.photoPreviewController(strongSelf, didShowPhotoAtIndex: index)
+                    strongSelf.delegate?.photoPreviewController(strongSelf,
+                                                                didShowPhotoAtIndex: strongSelf.index)
                 }
                 if let waitingView = strongSelf.waitingView {
                     waitingView.removeFromSuperview()
@@ -214,97 +274,96 @@ extension PhotoPreviewController {
             }
         }
     }
-    
-    private func loadNetworkPhoto() {
-        guard let photo = photo else {
-            return
-        }
-        
-        photo.localOriginalPhoto { [weak self] (image) in
-            guard let strongSelf = self else { return }
-            if let image = image {
-                strongSelf.loadLocalOriginalPhoto(image)
-            } else {
-                strongSelf.downloadPhoto(photo)
-            }
-        }
-    }
-    
-    private func loadLocalOriginalPhoto(_ image: UIImage) {
-        setImageViewFrame(image)
-        imageView.image = image
-        addSkitches()
 
-        if let index = index {
-            delegate?.photoPreviewController(self, didShowPhotoAtIndex: index)
-        }
-    }
-    
-    private func downloadPhoto(_ photo: Photo) {
-        photo.localThumbnailPhoto { [weak self] (thumbnail) in
+    private func loadImage(with photo: Photo) {
+        let setImage: (UIImage) -> Void = { [weak self] (image) in
             guard let strongSelf = self else { return }
-            if let thumbnail = thumbnail {
-                strongSelf.setImageViewFrame(thumbnail)
-                strongSelf.imageView.image = thumbnail
-            }
-        }
-        if let waitingView = waitingView {
-            waitingView.removeFromSuperview()
-        }
-        
-        guard let photoUrl = photo.photoUrl, let photoFileKey = photo.fileKey else {
-            return
+            strongSelf.updateImageViewFrameWithImageSize(image.size)
+            strongSelf.imageView.image = image
+            strongSelf.updateMiniMap(with: image)
+            strongSelf.addSkitches()
+            strongSelf.delegate?.photoPreviewController(strongSelf,
+                                                        didShowPhotoAtIndex: strongSelf.index)
         }
         
-        waitingView = WaitingView.init(frame: CGRect(x: 0, y: 0, width: 70, height: 70))
-        if let newWaitingView = waitingView {
-            newWaitingView.center = view.center
-            view.addSubview(newWaitingView)
-        }
-        
-        let resource = ImageResource(downloadURL: photoUrl, cacheKey: photoFileKey)
-
-        photo.localThumbnailPhoto { [weak self] image in
-            guard let strongSelf = self else {
-                return
-            }
-            strongSelf.imageView.kf.setImage(with: resource, placeholder: image ?? photo.image, options: nil, progressBlock: { [weak self] (receivedSize, totalSize) -> Void in
+        let downloadCompleted: (Result<RetrieveImageResult, KingfisherError>) -> Void = { [weak self] (result) in
+            DispatchQueue.main.async {
                 guard let strongSelf = self else { return }
-                let progress = CGFloat(receivedSize) / CGFloat(totalSize)
-                if let waitingView = strongSelf.waitingView {
-                    waitingView.progress = progress
+                strongSelf.dismissProgressView()
+                if let image = try? result.get().image {
+                    setImage(image)
                 }
-                }, completionHandler: { [weak self] (result) -> Void in
-                    guard let strongSelf = self else { return }
-                    switch result {
-                    case .success(let retrieveImageResult):
-                        if let waitingView = strongSelf.waitingView {
-                            waitingView.removeFromSuperview()
-                        }
-                        strongSelf.setImageViewFrame(retrieveImageResult.image)
-                        strongSelf.addSkitches()
-                        if let index = strongSelf.index {
-                            strongSelf.delegate?.photoPreviewController(strongSelf, didShowPhotoAtIndex: index)
-                        }
-                    case .failure:
-                        print("fetch image error")
-                    }
-            })
+            }
         }
+
+        let progressUpdated: DownloadProgressBlock
+            = { [weak self] (received, total) in
+                DispatchQueue.main.async {
+                    guard let strongSelf = self else { return }
+                    let progress = CGFloat(received) / CGFloat(total)
+                    strongSelf.waitingView?.progress = progress
+                }
+        }
+        
+        if photo.isOriginImageCached() {
+            photo.localOriginalPhoto { (image) in
+                if let originImage = image {
+                    setImage(originImage)
+                }
+            }
+            return
+        }
+        
+        if photo.isThumbnailCached() {
+            photo.localThumbnailPhoto { (thumbnail) in
+                if let thumbnail = thumbnail {
+                    // show thumbnail first when exists
+                    setImage(thumbnail)
+                }
+            }
+        }
+        
+        // load image from url
+        guard let url = photo.photoUrl else { return }
+        // specify cacheKey to fileKey if exists
+        let imageResource = ImageResource(downloadURL: url, cacheKey: photo.fileKey)
+        
+        showProgressView()
+        let options: KingfisherOptionsInfo = [.preloadAllAnimationData,
+                                              .cacheSerializer(CustomCacheSerializer.default)]
+        KingfisherManager.shared.retrieveImage(with: imageResource,
+                                               options: options,
+                                               progressBlock: progressUpdated,
+                                               completionHandler: downloadCompleted)
     }
-    
+
+    private func showProgressView() {
+        if let old = waitingView {
+            old.removeFromSuperview()
+        }
+
+        let progressView = WaitingView(frame: CGRect(x: 0, y: 0, width: 70, height: 70))
+        progressView.center = view.center
+        view.addSubview(progressView)
+        waitingView = progressView
+    }
+
+    private func dismissProgressView() {
+        waitingView?.removeFromSuperview()
+    }
+
     private func updateConstraint() {
         updateSkitchViewConstraint()
         view.layoutIfNeeded()
     }
-    
+
     private func zoomScaleForDoubleTap() -> CGFloat {
         guard imageView.image != nil  else {
             return scrollView.minimumZoomScale
         }
         return 2 * scrollView.minimumZoomScale
     }
-    
+
     private func updateMiniMapLayout() {
         guard miniMap != nil else {
             return
@@ -318,7 +377,7 @@ extension PhotoPreviewController {
             self.view.layoutIfNeeded()
         }
     }
-    
+
     private func initSkitches(_ skitches: [[String: Any]]? = nil) {
         if let skitches = skitches {
             self.skitches = skitches.compactMap({ (skitchJSON) -> Skitch? in
@@ -330,33 +389,6 @@ extension PhotoPreviewController {
 
 // MARK: - factory methods
 extension PhotoPreviewController {
-    private func makeScrollView() -> UIScrollView {
-        let scrollView = UIScrollView(frame: self.view.frame)
-        scrollView.delegate = self
-        scrollView.backgroundColor = .clear
-        scrollView.clipsToBounds = true
-        scrollView.showsVerticalScrollIndicator = false
-        scrollView.showsHorizontalScrollIndicator = false
-        scrollView.alwaysBounceHorizontal = true
-        scrollView.alwaysBounceVertical = true
-        scrollView.minimumZoomScale = 1.0
-        scrollView.maximumZoomScale = CGFloat.greatestFiniteMagnitude
-        scrollView.zoomScale = 1.0
-        scrollView.contentOffset = .zero
-
-        if #available(iOS 11.0, *) {
-            scrollView.contentInsetAdjustmentBehavior = .never
-        }
-        return scrollView
-    }
-    
-    private func makeImageView() -> UIImageView {
-        let imageView = UIImageView()
-        imageView.layer.masksToBounds = true
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }
-    
     private func makeMiniMap() -> MiniMap {
         let miniMap = MiniMap(size: miniMapSize)
         miniMap.isHidden = true
@@ -397,7 +429,7 @@ extension PhotoPreviewController {
         }
         updateConstraint()
     }
-    
+
     @objc private func handleSingleTap(_ sender: UITapGestureRecognizer) {
         guard let delegate = delegate else {
             return
@@ -405,9 +437,9 @@ extension PhotoPreviewController {
         isFullScreenMode = !isFullScreenMode
         delegate.isFullScreenMode = !delegate.isFullScreenMode
     }
-    
+
     @objc private func handleLongPress(_ sender: UILongPressGestureRecognizer) {
-        guard let delegate = delegate, let photo = photo else {
+        guard let delegate = delegate else {
             return
         }
         if sender.state == .began {
@@ -418,7 +450,7 @@ extension PhotoPreviewController {
     @objc private func handleBackgroundSingleTap(_ sender: UITapGestureRecognizer) {
         delegate?.didTapBackground(self)
     }
-    
+
     @objc private func hideMiniMap() {
         miniMap?.isHidden = true
     }
@@ -435,15 +467,15 @@ extension PhotoPreviewController: UIScrollViewDelegate {
         isZooming = false
         updateConstraint()
     }
-    
+
     func scrollViewWillBeginZooming(_ scrollView: UIScrollView, with view: UIView?) {
         isZooming = true
     }
-    
+
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         endPan()
     }
-    
+
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         /// sometime, iOS called once `scrollViewDidScroll` when after `scrollViewDidEndZooming`
         if afterZooming {
@@ -455,16 +487,16 @@ extension PhotoPreviewController: UIScrollViewDelegate {
         if scrollView.panGestureRecognizer.state == .began {
             scrollOldOffset = scrollView.contentOffset
         }
-        
+
         scrollNewOffset = scrollView.contentOffset
         if !isZooming {
             if isPanning {
-                doPan(scrollView.panGestureRecognizer)
+                onPan(scrollView.panGestureRecognizer)
             } else {
                 checkPanGesture(scrollView)
             }
         }
-        
+
         miniMap?.isHidden = scrollView.contentSize.width <= view.frame.width || moveImage != nil
         miniMap?.ratios =
             Ratios(
@@ -474,7 +506,7 @@ extension PhotoPreviewController: UIScrollViewDelegate {
                 height: view.frame.height / scrollView.contentSize.height
             )
     }
-    
+
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if scrollView.panGestureRecognizer.state == .ended {
             perform(#selector(hideMiniMap), with: self, afterDelay: 3, inModes: [.default])
@@ -495,13 +527,13 @@ extension PhotoPreviewController {
         guard scrollNewOffset.y < scrollOldOffset.y else {
             return
         }
-        
+
         if scrollView.contentOffset.y < minPanY {
             let x = abs(scrollNewOffset.x - scrollOldOffset.x)
             let y = abs(scrollNewOffset.y - scrollOldOffset.y)
             let minTan: CGFloat = 0.577 // tan 30
             if x / y < minTan {
-                doPan(scrollView.panGestureRecognizer)
+                onPan(scrollView.panGestureRecognizer)
             }
         }
     }
@@ -514,15 +546,15 @@ extension PhotoPreviewController {
         //计算图片centerY需要考虑到图片此时的高
         let imageBeginY = (imageHeightBeforeDrag < UIScreen.main.bounds.size.height) ? (UIScreen.main.bounds.size.height - imageHeightBeforeDrag) * 0.5 : 0.0
         imageYBeforeDrag = imageBeginY
-        
+
         //centerX需要考虑到offset
         scrollOffsetX = self.scrollView.contentOffset.x
         let imageX = -scrollOffsetX
         imageCenterXBeforeDrag = imageX + imageWidthBeforeDrag * 0.5
         dragCoefficient = 1.0 + imageHeightBeforeDrag / 2000.0
     }
-    
-    private func doPan(_ pan: UIPanGestureRecognizer) {
+
+    private func onPan(_ pan: UIPanGestureRecognizer) {
         if pan.state == .ended || pan.state == .possible { // 手势已结束
             panBeginX = 0
             panBeginY = 0
@@ -532,7 +564,7 @@ extension PhotoPreviewController {
             }
             return
         }
-        
+
         if pan.numberOfTouches != 1 || isZooming { // 两个手指在拖，此时在缩放
             moveImage = nil
             isPanning = false
@@ -540,7 +572,7 @@ extension PhotoPreviewController {
             panBeginY = 0
             return
         }
-        
+
         if panBeginX == 0.0 && panBeginY == 0.0 { // 新的一次下拉开始了
             panBeginX = pan.location(in: self.view).x
             panBeginY = pan.location(in: self.view).y
@@ -550,23 +582,30 @@ extension PhotoPreviewController {
             saveFrameBeginPan()
             delegate?.photoPreviewController(self, doDownDrag: true, needBack: false, imageFrame: CGRect.zero, imageView: nil)
         }
-        
+
         if moveImage == nil { // 添加moveImage
-            moveImage = UIImageView()
+            let imageSizeBeforeDrag = CGSize(width: imageWidthBeforeDrag,
+                              height: imageHeightBeforeDrag)
+            let shotImageView = imageView.snapshotView(afterScreenUpdates: false)
+            moveImage = shotImageView
+            moveImage?.frame = CGRect(origin: .zero, size: imageSizeBeforeDrag)
+//            moveImage = UIImageView(frame: CGRect(origin: .zero, size: imageSizeBeforeDrag))
             view.addSubview(moveImage!)
             moveImage?.contentMode = .scaleAspectFill
             moveImage?.backgroundColor = .white
             moveImage?.layer.masksToBounds = true
-            moveImage?.image = imageView.image
+//            let adjustedSize = CGSize(width: ceil(imageSizeBeforeDrag.width), height: ceil(imageSizeBeforeDrag.height))
+//            moveImage?.image = imageView.image?.kf.resize(to: adjustedSize,
+//                                                          for: .aspectFill)
             moveImage?.width = imageWidthBeforeDrag
             moveImage?.height = imageHeightBeforeDrag
             moveImage?.center.x = imageCenterXBeforeDrag
             moveImage?.originY = imageYBeforeDrag
         }
-        
+
         let panCurrentX: CGFloat = pan.location(in: view).x
         let panCurrentY: CGFloat = pan.location(in: view).y
-        
+
         // 判断是否向下拖拽
         isDirectionDown = panCurrentY > panLastY
         panLastY = panCurrentY
@@ -586,7 +625,7 @@ extension PhotoPreviewController {
         moveImage?.center.x = (panCurrentX - panBeginX) + imageCenterXBeforeDrag
         moveImage?.originY = (panCurrentY - panBeginY) * dragCoefficient + imageYBeforeDrag
     }
-    
+
     private func endPan() {
         if !isDirectionDown { // 不退回页面
             guard moveImage != nil else {

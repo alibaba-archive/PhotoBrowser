@@ -2,18 +2,37 @@
 //  ViewController.swift
 //  PhotoBrowserDemo
 //
-//  Created by 王卫 on 16/2/16.
+//  Created by WangWei on 16/2/16.
 //  Copyright © 2016年 Teambition. All rights reserved.
 //
 
 import UIKit
 import PhotoBrowser
 
+enum DemoImageConstants {
+    static let imageOne = "https://photojournal.jpl.nasa.gov/jpeg/PIA23010.jpg"
+    static let imageTwo = "https://photojournal.jpl.nasa.gov/jpeg/PIA22094.jpg"
+    static let imageThree = "https://photojournal.jpl.nasa.gov/jpeg/PIA23004.jpg"
+    static let gif = "https://www.sample-videos.com/gif/2.gif"
+
+    static var thumbnailOne: UIImage? {
+        return UIImage(named: "thumbnail_one")
+    }
+
+    static var thumbnailTwo: UIImage? {
+        return UIImage(named: "thumbnail_two")
+    }
+
+    static var thumbnailThree: UIImage? {
+        return UIImage(named: "thumbnail_three")
+    }
+}
+
 class ViewController: UIViewController {
     var photoBrowser: PhotoBrowser?
-    
+
     @IBOutlet weak var imageView: UIImageView!
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         let gesture = UITapGestureRecognizer(target: self, action: #selector(displayPhotoBrowser))
@@ -36,48 +55,50 @@ class ViewController: UIViewController {
 
 extension ViewController {
     @objc func displayPhotoBrowser() {
-        let thumbnail1 = UIImage.init(named: "thumbnail1")
-        let photoUrl1 = URL.init(string: "https://pic1.zhimg.com/0f70807392a9f62528b00ec434f5519c_b.png")
-        let thumbnail2 = UIImage.init(named: "thumbnail2")
-        let photoUrl2 = URL.init(string: "https://pic1.zhimg.com/0f70807392a9f62528b00ec434f5519c_b.png")
-        let thumbnail3 = UIImage.init(named: "thumbnail3")
-        let photoUrl3 = URL.init(string: "https://pic2.zhimg.com/a5455838750e168d97480d9247537d31_r.jpeg")
-        
-        let photo = Photo.init(image: nil, title: "Image1fjdkkfadjfkajdkfalkdsfjklasfklaskdfkadsjfklajklsdjfkajsdkfaksdjfkajsdkfjlaksdfjkakdfklak", thumbnailImage: thumbnail1, photoUrl: photoUrl1, fileKey: "abc100")
-        let photo2 = Photo.init(image: nil, title: "Image2", thumbnailImage: thumbnail2, photoUrl: photoUrl2, fileKey: "abc101")
-        let photo3 = Photo.init(image: nil, title: "Image3", thumbnailImage: thumbnail3, photoUrl: photoUrl3, fileKey: "abc102")
+        let photo1 = Photo(image: nil, title: "2412*1713",
+                          thumbnailImage: DemoImageConstants.thumbnailOne,
+                          photoUrl: URL(string: DemoImageConstants.imageOne),
+                          fileKey: nil)
+        let photo2 = Photo(image: nil,
+                           title: "6000*3500",
+                           thumbnailImage: DemoImageConstants.thumbnailTwo,
+                           photoUrl: URL(string: DemoImageConstants.imageTwo),
+                           fileKey: nil)
+        let photo3 = Photo(image: nil,
+                           title: "6000*3375",
+                           thumbnailImage: DemoImageConstants.thumbnailThree,
+                           photoUrl: URL(string: DemoImageConstants.imageThree),
+                           fileKey: nil)
+        let photo4 = Photo(image: nil,
+                           title: "gif",
+                           thumbnailImage: nil,
+                           photoUrl: URL(string: DemoImageConstants.gif),
+                           fileKey: nil)
 
-        let item1 = PBActionBarItem(title: "ONE", style: .plain) { (photoBrowser, _) in
-            let photos = [photo, photo2]
+        let item1 = PBActionBarItem(title: "😄", style: .plain) { (photoBrowser, _) in
+            let photos = [photo1, photo2]
             photoBrowser.photos = photos
         }
-        let item2 = PBActionBarItem(title: "TWO", style: .plain) { (photoBrowser, _) in
-//            photoBrowser.enableShare = !photoBrowser.enableShare
-            print("item2")
+        let item2 = PBActionBarItem(title: "👌", style: .plain) { (photoBrowser, _) in
             let vc = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "DetailViewController")
             self.photoBrowser?.navigationController?.pushViewController(vc, animated: true)
         }
-        let item3 = PBActionBarItem(title: "THREE", style: .plain) { (_, _) in
+        let item3 = PBActionBarItem(title: "✈️", style: .plain) { (_, _) in
             print("item3")
         }
-        let item4 = PBActionBarItem(title: "FOUR", style: .plain) { (_, _) in
+        let item4 = PBActionBarItem(title: "🚢", style: .plain) { (_, _) in
             print("item3")
         }
 
         photoBrowser = PhotoBrowser()
         if let browser = photoBrowser {
-//            browser.isFromPhotoPicker = true
-
             browser.selectedIndex = [0, 1]
-            browser.photos = [photo, photo2, photo3]
+            browser.photos = [photo1, photo2, photo3, photo4]
             browser.actionItems = [item1, item2, item3, item4]
             browser.photoBrowserDelegate = self
             browser.currentIndex = 0
-//            browser.isFromPhotoPicker = true
             browser.isShowMoreButton = false
             
-//            browser.isPreviewMode = false
-//            present(browser, animated: true, completion: nil)
             presentPhotoBrowser(browser, fromView: imageView)
         }
     }
@@ -85,39 +106,32 @@ extension ViewController {
 
 extension ViewController: PhotoBrowserDelegate {
     func photoBrowser(_ browser: PhotoBrowser, didTapSkitch skitch: Skitch, versionID: String) {
-//        print("didTapSkichAtIndex tapped: \(skitch.number)")
     }
 
     func photoBrowser(_ browser: PhotoBrowser, willShowPhotoAtIndex index: Int) {
-//        print("will show photo at index: \(index)")
     }
-    
+
     func photoBrowser(_ browser: PhotoBrowser, didHideSkitchButton isHidden: Bool) {
-//        if isHidden {
-//            print("hidden")
-//        } else {
-//            print("visible")
-//        }
     }
 
     func photoBrowser(_ browser: PhotoBrowser, didShowPhotoAtIndex index: Int) {
-//        print("photo browser did show at index: \(index)")
-//        let points1 = ["x": 100.0, "y": 50.0, "width": 50.0, "height": 50.0]
         let points21 = ["x": 0, "y": 0, "width": 20.0, "height": 20.0]
         let points22 = ["x": 230.0, "y": 230.0, "width": 20.0, "height": 20.0]
         let points23 = ["x": 250.0, "y": 250.0, "width": 50.0, "height": 50.0]
         let points3 = ["x": 80.0, "y": 80.0, "width": 10.0, "height": 10.0]
-//        browser.updatePhotoSkitch(at: 0, skitches: [["_id": "120", "num": 1, "type": "point", "coordinate": points1]], versionID: "kkk")
-        browser.updatePhotoSkitch(at: 1, skitches: [["_id": "121", "num": 2, "type": "point", "coordinate": points21],
-                                                    ["_id": "122", "num": 3, "type": "point", "coordinate": points22],
-                                                    ["_id": "123", "num": 4, "type": "point", "coordinate": points23]], versionID: "ggg")
-        browser.updatePhotoSkitch(at: 2, skitches: [["_id": "124", "num": 3, "type": "point", "coordinate": points3]], versionID: "zzz")
+        if index == 1 {
+            browser.updatePhotoSkitch(at: 1, skitches: [["_id": "121", "num": 2, "type": "point", "coordinate": points21],
+                                                        ["_id": "122", "num": 3, "type": "point", "coordinate": points22],
+                                                        ["_id": "123", "num": 4, "type": "point", "coordinate": points23]], versionID: "ggg")
+        } else if index == 2 {
+            browser.updatePhotoSkitch(at: 2, skitches: [["_id": "124", "num": 3, "type": "point", "coordinate": points3]], versionID: "zzz")
+        }
     }
-    
+
     func dismissPhotoBrowser(_ photoBrowser: PhotoBrowser) {
         dismissPhotoBrowser(toView: imageView)
     }
-    
+
     func photoBrowser(_ browser: PhotoBrowser, longPressOnPhoto photo: Photo, index: Int) {
         let alertController = UIAlertController.init(title: nil, message: nil, preferredStyle: UIAlertController.Style.actionSheet)
         let cancelAction = UIAlertAction.init(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil)

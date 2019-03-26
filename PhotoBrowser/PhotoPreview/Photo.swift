@@ -11,6 +11,11 @@ import UIKit
 import Kingfisher
 import Photos
 
+enum PhotoBrowserError: Error {
+    case cacheKeyNotExsit
+    case imageNotExsit
+}
+
 public struct Photo {
     public var image: UIImage?
     public var thumbnailImage: UIImage?
@@ -20,7 +25,7 @@ public struct Photo {
     public var object: Any?
     public var asset: PHAsset?
     public var fileKey: String?
-    
+
     public init(image: UIImage?, title: String? = nil, thumbnailImage: UIImage? = nil, photoUrl: URL? = nil, thumbnailUrl: URL? = nil, object: Any? = nil, fileKey: String?) {
         self.image = image
         self.title = title
@@ -35,78 +40,77 @@ public struct Photo {
         self.asset = asset
     }
     
-    public func localOriginalPhoto(_ completion: @escaping ((UIImage)?) -> Void) {
+    public func isOriginImageCached() -> Bool {
         if image != nil {
-            completion(image)
-        } else if let originFileKey = fileKey {
-            let image = KingfisherManager.shared.cache.retrieveImageInMemoryCache(forKey: originFileKey)
-            if image != nil {
-                return completion(image)
-            } else {
-                KingfisherManager.shared.cache.retrieveImageInDiskCache(forKey: originFileKey) { result in
-                    DispatchQueue.main.async {
-                        switch result {
-                        case .success(let diskImage):
-                            completion(diskImage)
-                        case .failure:
-                            completion(nil)
-                        }
-                    }
-                }
-            }
-        } else if let photoUrl = photoUrl {
-            let image = KingfisherManager.shared.cache.retrieveImageInMemoryCache(forKey: photoUrl.absoluteString)
-            if image != nil {
-                return completion(image)
-            } else {
-                KingfisherManager.shared.cache.retrieveImageInDiskCache(forKey: photoUrl.absoluteString) { result in
-                    DispatchQueue.main.async {
-                        switch result {
-                        case .success(let diskImage):
-                            completion(diskImage)
-                        case .failure:
-                            completion(nil)
-                        }
-                    }
-                }
-            }
+            return true
         }
+        
+        guard let cacheKey = fileKey ?? photoUrl?.absoluteString else {
+            return false
+        }
+        
+        return KingfisherManager.shared.cache.isCached(forKey: cacheKey)
     }
     
-    public func localThumbnailPhoto(_ completion: @escaping ((UIImage)?) -> Void) {
+    public func isThumbnailCached() -> Bool {
+        if thumbnailImage != nil {
+            return true
+        }
+        
+        guard let cacheKey = thumbnailUrl?.absoluteString else {
+            return false
+        }
+        
+        return KingfisherManager.shared.cache.isCached(forKey: cacheKey)
+    }
+
+    public func localOriginalPhoto(_ completion: @escaping ((UIImage)?) -> Void) {
+        if let image = image {
+            completion(image)
+            return
+        }
+        guard let cacheKey = fileKey ?? photoUrl?.absoluteString else {
+            completion(nil)
+            return
+        }
+        // retrieve image from cache
+        let options: KingfisherOptionsInfo = [.preloadAllAnimationData]
+        KingfisherManager.shared.cache
+            .retrieveImage(forKey: cacheKey,
+                           options: options,
+                           callbackQueue: .mainAsync) { (result) in
+                            completion(try? result.get().image)
+        }
+    }
+
+    public func localThumbnailPhoto(_ completion: @escaping (UIImage?) -> Void) {
         if thumbnailImage != nil {
             completion(thumbnailImage)
-        } else if let thumbnailUrl = thumbnailUrl {
-            let image = KingfisherManager.shared.cache.retrieveImageInMemoryCache(forKey: thumbnailUrl.absoluteString)
-            if image != nil {
-                return completion(image)
-            } else {
-                KingfisherManager.shared.cache.retrieveImageInDiskCache(forKey: thumbnailUrl.absoluteString) { result in
-                    DispatchQueue.main.async {
-                        switch result {
-                        case .success(let diskImage):
-                            completion(diskImage)
-                        case .failure:
-                            completion(nil)
-                        }
-                    }
-                }
-            }
+            return
         }
-        completion(nil)
+        guard let cacheKey = thumbnailUrl?.absoluteString else {
+            completion(nil)
+            return
+        }
+        
+        let options: KingfisherOptionsInfo = [.preloadAllAnimationData]
+        KingfisherManager.shared.cache
+            .retrieveImage(forKey: cacheKey,
+                           options: options,
+                           callbackQueue: .mainAsync) { (result) in
+                completion(try? result.get().image)
+        }
     }
-    
-    public func imageToSave(_ completion: @escaping ((UIImage)?) -> Void) {
+
+    public func imageToSave(_ completion: @escaping (UIImage?) -> Void) {
         localOriginalPhoto { (image) in
             if image != nil {
                 completion(image)
+                return
             }
-        }
-        localThumbnailPhoto { (image) in
-            if image != nil {
+            self.localThumbnailPhoto { (image) in
                 completion(image)
             }
         }
-        completion(nil)
     }
 }
