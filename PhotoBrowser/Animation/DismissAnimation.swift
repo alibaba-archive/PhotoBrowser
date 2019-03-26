@@ -35,10 +35,12 @@ open class DismissAnimation: NSObject, UIViewControllerAnimatedTransitioning {
         toView.alpha = 0
         
         UIView.animate(withDuration: PBConstant.Animation.dismissDuration, delay: 0, options: .curveEaseOut, animations: {
+            // this transform may cause memory issue
             fromViewController.view.transform = scale.concatenating(translate)
             fromViewController.view.alpha = 0
             self.toView.alpha = 1
         }) { (_) in
+            fromViewController.view.removeFromSuperview()
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
         }
     }

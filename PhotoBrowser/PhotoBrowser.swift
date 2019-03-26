@@ -433,7 +433,7 @@ extension PhotoBrowser: PhotoPreviewControllerDelegate {
 
 // MARK: - Helpers
 extension PhotoBrowser {
-    func currentImageView() -> UIImageView? {
+    func currentImageView() -> ImageView? {
         guard let page = viewControllers?.last as? PhotoPreviewController else {
             return nil
         }

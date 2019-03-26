@@ -2,12 +2,30 @@
 //  ViewController.swift
 //  PhotoBrowserDemo
 //
-//  Created by 王卫 on 16/2/16.
+//  Created by WangWei on 16/2/16.
 //  Copyright © 2016年 Teambition. All rights reserved.
 //
 
 import UIKit
 import PhotoBrowser
+
+enum DemoImageConstants {
+    static let imageOne = "https://photojournal.jpl.nasa.gov/jpeg/PIA23010.jpg"
+    static let imageTwo = "https://photojournal.jpl.nasa.gov/jpeg/PIA22094.jpg"
+    static let imageThree = "https://www.jpl.nasa.gov/spaceimages/images/wallpaper/PIA23004-1600x1200.jpg"
+    
+    static var thumbnailOne: UIImage? {
+        return UIImage(named: "thumbnail_one")
+    }
+    
+    static var thumbnailTwo: UIImage? {
+        return UIImage(named: "thumbnail_one")
+    }
+    
+    static var thumbnailThree: UIImage? {
+        return UIImage(named: "thumbnail_one")
+    }
+}
 
 class ViewController: UIViewController {
     var photoBrowser: PhotoBrowser?
@@ -36,31 +54,35 @@ class ViewController: UIViewController {
 
 extension ViewController {
     @objc func displayPhotoBrowser() {
-        let thumbnail1 = UIImage.init(named: "thumbnail1")
-        let photoUrl1 = URL.init(string: "https://www.teambition.com/api/works/575d0bbf93e0f8860d73d88e/download/IMG_0005.JPG.jpeg?signature=eyJhbGciOiJIUzI1NiJ9.eyJfd29ya0lkIjoiNTc1ZDBiYmY5M2UwZjg4NjBkNzNkODhlIiwiZmlsZUtleSI6IjExMGg2MzRhOTg3MDQ5MDJmNDY1MmJhZTYzYjI1MTQyZTUyMSIsIl91c2VySWQiOiI1MmE2Y2MyZGVmNjZiYzk4MGMwMDAzMTIiLCJleHAiOjE0ODIwNjA0ODgsInN0b3JhZ2UiOiJzdHJpa2VyLWh6In0.czjEgDdAKqqOm8fK8lDOiE7wA_5H48bh6phlomGQqWo")
-        let thumbnail2 = UIImage.init(named: "thumbnail2")
-        let photoUrl2 = URL.init(string: "https://pic1.zhimg.com/0f70807392a9f62528b00ec434f5519c_b.png")
-        let thumbnail3 = UIImage.init(named: "thumbnail3")
-        let photoUrl3 = URL.init(string: "https://pic2.zhimg.com/a5455838750e168d97480d9247537d31_r.jpeg")
-        
-        let photo = Photo.init(image: nil, title: "Image1fjdkkfadjfkajdkfalkdsfjklasfklaskdfkadsjfklajklsdjfkajsdkfaksdjfkajsdkfjlaksdfjkakdfklak", thumbnailImage: thumbnail1, photoUrl: photoUrl1, fileKey: "abc100")
-        let photo2 = Photo.init(image: nil, title: "Image2", thumbnailImage: thumbnail2, photoUrl: photoUrl2, fileKey: "abc101")
-        let photo3 = Photo.init(image: nil, title: "Image3", thumbnailImage: thumbnail3, photoUrl: photoUrl3, fileKey: "abc102")
+        let photo1 = Photo(image: nil, title: "2412*1713",
+                          thumbnailImage: DemoImageConstants.thumbnailOne,
+                          photoUrl: URL(string: DemoImageConstants.imageOne),
+                          fileKey: nil)
+        let photo2 = Photo(image: nil,
+                           title: "6000*3500",
+                           thumbnailImage: DemoImageConstants.thumbnailTwo,
+                           photoUrl: URL(string: DemoImageConstants.imageTwo),
+                           fileKey: nil)
+        let photo3 = Photo(image: nil,
+                           title: "6000*3375",
+                           thumbnailImage: DemoImageConstants.thumbnailThree,
+                           photoUrl: URL(string: DemoImageConstants.imageThree),
+                           fileKey: nil)
 
-        let item1 = PBActionBarItem(title: "ONE", style: .plain) { (photoBrowser, _) in
-            let photos = [photo, photo2]
+        let item1 = PBActionBarItem(title: "😄", style: .plain) { (photoBrowser, _) in
+            let photos = [photo1, photo2]
             photoBrowser.photos = photos
         }
-        let item2 = PBActionBarItem(title: "TWO", style: .plain) { (photoBrowser, _) in
+        let item2 = PBActionBarItem(title: "👌", style: .plain) { (photoBrowser, _) in
 //            photoBrowser.enableShare = !photoBrowser.enableShare
             print("item2")
             let vc = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "DetailViewController")
             self.photoBrowser?.navigationController?.pushViewController(vc, animated: true)
         }
-        let item3 = PBActionBarItem(title: "THREE", style: .plain) { (_, _) in
+        let item3 = PBActionBarItem(title: "✈️", style: .plain) { (_, _) in
             print("item3")
         }
-        let item4 = PBActionBarItem(title: "FOUR", style: .plain) { (_, _) in
+        let item4 = PBActionBarItem(title: "🚢", style: .plain) { (_, _) in
             print("item3")
         }
 
@@ -69,7 +91,7 @@ extension ViewController {
 //            browser.isFromPhotoPicker = true
 
             browser.selectedIndex = [0, 1]
-            browser.photos = [photo, photo2, photo3]
+            browser.photos = [photo1, photo2, photo3]
             browser.actionItems = [item1, item2, item3, item4]
             browser.photoBrowserDelegate = self
             browser.currentIndex = 0

@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  PhotoBrowserDemo
 //
-//  Created by 王卫 on 16/2/16.
+//  Created by WangWei on 16/2/16.
 //  Copyright © 2016年 Teambition. All rights reserved.
 //
 
