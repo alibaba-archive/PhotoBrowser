@@ -13,17 +13,18 @@ enum DemoImageConstants {
     static let imageOne = "https://photojournal.jpl.nasa.gov/jpeg/PIA23010.jpg"
     static let imageTwo = "https://photojournal.jpl.nasa.gov/jpeg/PIA22094.jpg"
     static let imageThree = "https://www.jpl.nasa.gov/spaceimages/images/wallpaper/PIA23004-1600x1200.jpg"
+    static let gif = "https://www.sample-videos.com/gif/2.gif"
     
     static var thumbnailOne: UIImage? {
         return UIImage(named: "thumbnail_one")
     }
     
     static var thumbnailTwo: UIImage? {
-        return UIImage(named: "thumbnail_one")
+        return UIImage(named: "thumbnail_two")
     }
     
     static var thumbnailThree: UIImage? {
-        return UIImage(named: "thumbnail_one")
+        return UIImage(named: "thumbnail_three")
     }
 }
 
@@ -68,6 +69,11 @@ extension ViewController {
                            thumbnailImage: DemoImageConstants.thumbnailThree,
                            photoUrl: URL(string: DemoImageConstants.imageThree),
                            fileKey: nil)
+        let photo4 = Photo(image: nil,
+                           title: "gif",
+                           thumbnailImage: nil,
+                           photoUrl: URL(string: DemoImageConstants.gif),
+                           fileKey: nil)
 
         let item1 = PBActionBarItem(title: "😄", style: .plain) { (photoBrowser, _) in
             let photos = [photo1, photo2]
@@ -91,7 +97,7 @@ extension ViewController {
 //            browser.isFromPhotoPicker = true
 
             browser.selectedIndex = [0, 1]
-            browser.photos = [photo1, photo2, photo3]
+            browser.photos = [photo1, photo2, photo3, photo4]
             browser.actionItems = [item1, item2, item3, item4]
             browser.photoBrowserDelegate = self
             browser.currentIndex = 0

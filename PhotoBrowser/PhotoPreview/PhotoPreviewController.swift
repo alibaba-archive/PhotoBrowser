@@ -290,8 +290,9 @@ extension PhotoPreviewController {
             let imageResource = ImageResource(downloadURL: url, cacheKey: photo.fileKey)
 
             showProgressView()
+            let options: KingfisherOptionsInfo = [.preloadAllAnimationData]
             KingfisherManager.shared.retrieveImage(with: imageResource,
-                                                   options: nil,
+                                                   options: options,
                                                    progressBlock: progressUpdated,
                                                    completionHandler: downloadCompleted)
         }

@@ -36,24 +36,38 @@ public struct Photo {
     }
     
     public func localOriginalPhoto() -> UIImage? {
+        let options: KingfisherOptionsInfo = [.preloadAllAnimationData]
         if image != nil {
             return image
         } else if let originFileKey = fileKey {
-            let image = KingfisherManager.shared.cache.retrieveImageInMemoryCache(forKey: originFileKey)
-            return image ?? KingfisherManager.shared.cache.retrieveImageInDiskCache(forKey: originFileKey)
+            let image = KingfisherManager.shared.cache
+                .retrieveImageInMemoryCache(forKey: originFileKey,
+                                            options: options)
+            return image ?? KingfisherManager.shared.cache
+                .retrieveImageInDiskCache(forKey: originFileKey,
+                                          options: options)
         } else if let photoUrl = photoUrl {
-            let image = KingfisherManager.shared.cache.retrieveImageInMemoryCache(forKey: photoUrl.absoluteString)
-            return image ?? KingfisherManager.shared.cache.retrieveImageInDiskCache(forKey: photoUrl.absoluteString)
+            let image = KingfisherManager.shared.cache
+                .retrieveImageInMemoryCache(forKey: photoUrl.absoluteString,
+                                            options: options)
+            return image ?? KingfisherManager.shared.cache
+                .retrieveImageInDiskCache(forKey: photoUrl.absoluteString,
+                                          options: options)
         }
         return nil
     }
     
     public func localThumbnailPhoto() -> UIImage? {
+        let options: KingfisherOptionsInfo = [.preloadAllAnimationData]
         if thumbnailImage != nil {
             return thumbnailImage
         } else if let thumbnailUrl = thumbnailUrl {
-            let image = KingfisherManager.shared.cache.retrieveImageInMemoryCache(forKey: thumbnailUrl.absoluteString)
-            return image ?? KingfisherManager.shared.cache.retrieveImageInDiskCache(forKey: thumbnailUrl.absoluteString)
+            let image = KingfisherManager.shared.cache
+                .retrieveImageInMemoryCache(forKey: thumbnailUrl.absoluteString,
+                                            options: options)
+            return image ?? KingfisherManager.shared.cache
+                .retrieveImageInDiskCache(forKey: thumbnailUrl.absoluteString,
+                                          options: options)
         }
         return nil
     }
