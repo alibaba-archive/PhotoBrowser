@@ -214,11 +214,14 @@ extension PhotoPreviewController {
         guard let photo = photo else {
             return
         }
-
-        if let image = photo.localOriginalPhoto() {
-            loadLocalOriginalPhoto(image)
-        } else {
-            downloadPhoto(photo)
+        
+        photo.localThumbnailPhoto { [weak self] (image) in
+            guard let strongSelf = self else { return }
+            if let image = image {
+                strongSelf.loadLocalOriginalPhoto(image)
+            } else {
+                strongSelf.downloadPhoto(photo)
+            }
         }
     }
     
@@ -233,9 +236,12 @@ extension PhotoPreviewController {
     }
     
     private func downloadPhoto(_ photo: Photo) {
-        if let thumbnail = photo.localThumbnailPhoto() {
-            setImageViewFrame(thumbnail)
-            imageView.image = thumbnail
+        photo.localThumbnailPhoto { [weak self] (thumbnail) in
+            guard let strongSelf = self else { return }
+            if let thumbnail = thumbnail {
+                strongSelf.setImageViewFrame(thumbnail)
+                strongSelf.imageView.image = thumbnail
+            }
         }
         if let waitingView = waitingView {
             waitingView.removeFromSuperview()
@@ -252,25 +258,26 @@ extension PhotoPreviewController {
         }
         
         let resource = ImageResource(downloadURL: photoUrl, cacheKey: photoFileKey)
-        imageView.kf.setImage(with: resource, placeholder: photo.localThumbnailPhoto(), options: nil, progressBlock: { [weak self] (receivedSize, totalSize) -> Void in
+        
+        imageView.kf.setImage(with: resource, placeholder: photo.image, options: nil, progressBlock: { [weak self] (receivedSize, totalSize) -> Void in
             let progress = CGFloat(receivedSize) / CGFloat(totalSize)
             if let waitingView = self?.waitingView {
                 waitingView.progress = progress
             }
-        }, completionHandler: { [weak self] (image, _, _, _) -> Void in
+        }, completionHandler: { [weak self] (result) -> Void in
             guard let strongSelf = self else { return }
-            if let waitingView = strongSelf.waitingView {
-                waitingView.removeFromSuperview()
-            }
-            if let image = strongSelf.imageView.image {
-                strongSelf.setImageViewFrame(image)
-            }
-            if let image = image {
-                strongSelf.setImageViewFrame(image)
-            }
-            strongSelf.addSkitches()
-            if let index = strongSelf.index {
-                strongSelf.delegate?.photoPreviewController(strongSelf, didShowPhotoAtIndex: index)
+            switch result {
+            case .success(let retrieveImageResult):
+                if let waitingView = strongSelf.waitingView {
+                    waitingView.removeFromSuperview()
+                }
+                strongSelf.setImageViewFrame(retrieveImageResult.image)
+                strongSelf.addSkitches()
+                if let index = strongSelf.index {
+                    strongSelf.delegate?.photoPreviewController(strongSelf, didShowPhotoAtIndex: index)
+                }
+            case .failure:
+                print("fetch image error")
             }
         })
     }

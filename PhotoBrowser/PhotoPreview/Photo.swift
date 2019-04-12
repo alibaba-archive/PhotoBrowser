@@ -35,36 +35,72 @@ public struct Photo {
         self.asset = asset
     }
     
-    public func localOriginalPhoto() -> UIImage? {
+    public func localOriginalPhoto(_ completion: @escaping ((UIImage)?) -> Void) {
         if image != nil {
-            return image
+            completion(image)
         } else if let originFileKey = fileKey {
             let image = KingfisherManager.shared.cache.retrieveImageInMemoryCache(forKey: originFileKey)
-            return image ?? KingfisherManager.shared.cache.retrieveImageInDiskCache(forKey: originFileKey)
+            if image != nil {
+                return completion(image)
+            } else {
+                KingfisherManager.shared.cache.retrieveImageInDiskCache(forKey: originFileKey) { result in
+                    switch result {
+                    case .success(let diskImage):
+                        completion(diskImage)
+                    case .failure:
+                        completion(nil)
+                    }
+                }
+            }
         } else if let photoUrl = photoUrl {
             let image = KingfisherManager.shared.cache.retrieveImageInMemoryCache(forKey: photoUrl.absoluteString)
-            return image ?? KingfisherManager.shared.cache.retrieveImageInDiskCache(forKey: photoUrl.absoluteString)
+            if image != nil {
+                return completion(image)
+            } else {
+                KingfisherManager.shared.cache.retrieveImageInDiskCache(forKey: photoUrl.absoluteString) { result in
+                    switch result {
+                    case .success(let diskImage):
+                        completion(diskImage)
+                    case .failure:
+                        completion(nil)
+                    }
+                }
+            }
         }
-        return nil
     }
     
-    public func localThumbnailPhoto() -> UIImage? {
+    public func localThumbnailPhoto(_ completion: @escaping ((UIImage)?) -> Void) {
         if thumbnailImage != nil {
-            return thumbnailImage
+            completion(thumbnailImage)
         } else if let thumbnailUrl = thumbnailUrl {
             let image = KingfisherManager.shared.cache.retrieveImageInMemoryCache(forKey: thumbnailUrl.absoluteString)
-            return image ?? KingfisherManager.shared.cache.retrieveImageInDiskCache(forKey: thumbnailUrl.absoluteString)
+            if image != nil {
+                return completion(image)
+            } else {
+                KingfisherManager.shared.cache.retrieveImageInDiskCache(forKey: thumbnailUrl.absoluteString) { result in
+                    switch result {
+                    case .success(let diskImage):
+                        completion(diskImage)
+                    case .failure:
+                        completion(nil)
+                    }
+                }
+            }
         }
-        return nil
+        completion(nil)
     }
     
-    public func imageToSave() -> UIImage? {
-        if let imageToSave = localOriginalPhoto() {
-            return imageToSave
+    public func imageToSave(_ completion: @escaping ((UIImage)?) -> Void) {
+        localOriginalPhoto { (image) in
+            if image != nil {
+                completion(image)
+            }
         }
-        if let imageToSave = localThumbnailPhoto() {
-            return imageToSave
+        localThumbnailPhoto { (image) in
+            if image != nil {
+                completion(image)
+            }
         }
-        return nil
+        completion(nil)
     }
 }
