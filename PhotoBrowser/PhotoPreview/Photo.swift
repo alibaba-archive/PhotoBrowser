@@ -44,11 +44,13 @@ public struct Photo {
                 return completion(image)
             } else {
                 KingfisherManager.shared.cache.retrieveImageInDiskCache(forKey: originFileKey) { result in
-                    switch result {
-                    case .success(let diskImage):
-                        completion(diskImage)
-                    case .failure:
-                        completion(nil)
+                    DispatchQueue.main.async {
+                        switch result {
+                        case .success(let diskImage):
+                            completion(diskImage)
+                        case .failure:
+                            completion(nil)
+                        }
                     }
                 }
             }
@@ -58,11 +60,13 @@ public struct Photo {
                 return completion(image)
             } else {
                 KingfisherManager.shared.cache.retrieveImageInDiskCache(forKey: photoUrl.absoluteString) { result in
-                    switch result {
-                    case .success(let diskImage):
-                        completion(diskImage)
-                    case .failure:
-                        completion(nil)
+                    DispatchQueue.main.async {
+                        switch result {
+                        case .success(let diskImage):
+                            completion(diskImage)
+                        case .failure:
+                            completion(nil)
+                        }
                     }
                 }
             }
@@ -78,11 +82,13 @@ public struct Photo {
                 return completion(image)
             } else {
                 KingfisherManager.shared.cache.retrieveImageInDiskCache(forKey: thumbnailUrl.absoluteString) { result in
-                    switch result {
-                    case .success(let diskImage):
-                        completion(diskImage)
-                    case .failure:
-                        completion(nil)
+                    DispatchQueue.main.async {
+                        switch result {
+                        case .success(let diskImage):
+                            completion(diskImage)
+                        case .failure:
+                            completion(nil)
+                        }
                     }
                 }
             }

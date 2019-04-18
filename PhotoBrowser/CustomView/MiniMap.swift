@@ -27,8 +27,13 @@ struct Ratios {
 public class MiniMap: UIView {
     public var image = UIImage() {
         didSet {
-            updateimageViewSize()
-            imageView.image = image
+            DispatchQueue.main.async { [weak self] in
+                guard let strongSelf = self else {
+                    return
+                }
+                strongSelf.updateimageViewSize()
+                strongSelf.imageView.image = strongSelf.image
+            }
         }
     }
     

@@ -143,27 +143,32 @@ extension PhotoPreviewController {
     }
     
     private func setImageViewFrame(_ image: UIImage) {
-        miniMap?.image = image
-        imageOriginWidth = image.size.width
-        imageView.frame = scrollView.bounds
-        
-        var resultWidth: CGFloat = image.size.width
-        var resultHeight: CGFloat = image.size.height
-    
-        // compute frame width and height
-        if image.size.width >= UIScreen.main.bounds.size.width {
-            resultWidth = UIScreen.main.bounds.size.width
-            resultHeight = image.size.height / image.size.width * UIScreen.main.bounds.size.width
+        DispatchQueue.main.async { [weak self] in
+            guard let strongSelf = self else {
+                return
+            }
+            strongSelf.miniMap?.image = image
+            strongSelf.imageOriginWidth = image.size.width
+            strongSelf.imageView.frame = strongSelf.scrollView.bounds
+
+            var resultWidth: CGFloat = image.size.width
+            var resultHeight: CGFloat = image.size.height
+
+            // compute frame width and height
+            if image.size.width >= UIScreen.main.bounds.size.width {
+                resultWidth = UIScreen.main.bounds.size.width
+                resultHeight = image.size.height / image.size.width * UIScreen.main.bounds.size.width
+            }
+
+            if resultHeight >= UIScreen.main.bounds.size.height {
+                resultHeight = UIScreen.main.bounds.size.height
+                resultWidth = resultWidth / resultHeight * UIScreen.main.bounds.size.height
+            }
+
+            strongSelf.imageView.size = CGSize(width: resultWidth, height: resultHeight)
+            strongSelf.imageView.center = strongSelf.scrollView.center
+            strongSelf.scrollView.contentSize = strongSelf.imageView.frame.size
         }
-        
-        if resultHeight >= UIScreen.main.bounds.size.height {
-            resultHeight = UIScreen.main.bounds.size.height
-            resultWidth = resultWidth / resultHeight * UIScreen.main.bounds.size.height
-        }
-        
-        imageView.size = CGSize(width: resultWidth, height: resultHeight)
-        imageView.center = scrollView.center
-        scrollView.contentSize = imageView.frame.size
     }
     
     private func loadCloudKitPhoto(at index: NSInteger) {
@@ -215,7 +220,7 @@ extension PhotoPreviewController {
             return
         }
         
-        photo.localThumbnailPhoto { [weak self] (image) in
+        photo.localOriginalPhoto { [weak self] (image) in
             guard let strongSelf = self else { return }
             if let image = image {
                 strongSelf.loadLocalOriginalPhoto(image)
@@ -229,8 +234,8 @@ extension PhotoPreviewController {
         setImageViewFrame(image)
         imageView.image = image
         addSkitches()
-        
-        if let index = self.index {
+
+        if let index = index {
             delegate?.photoPreviewController(self, didShowPhotoAtIndex: index)
         }
     }
@@ -258,28 +263,34 @@ extension PhotoPreviewController {
         }
         
         let resource = ImageResource(downloadURL: photoUrl, cacheKey: photoFileKey)
-        
-        imageView.kf.setImage(with: resource, placeholder: photo.image, options: nil, progressBlock: { [weak self] (receivedSize, totalSize) -> Void in
-            let progress = CGFloat(receivedSize) / CGFloat(totalSize)
-            if let waitingView = self?.waitingView {
-                waitingView.progress = progress
+
+        photo.localThumbnailPhoto { [weak self] image in
+            guard let strongSelf = self else {
+                return
             }
-        }, completionHandler: { [weak self] (result) -> Void in
-            guard let strongSelf = self else { return }
-            switch result {
-            case .success(let retrieveImageResult):
+            strongSelf.imageView.kf.setImage(with: resource, placeholder: image ?? photo.image, options: nil, progressBlock: { [weak self] (receivedSize, totalSize) -> Void in
+                guard let strongSelf = self else { return }
+                let progress = CGFloat(receivedSize) / CGFloat(totalSize)
                 if let waitingView = strongSelf.waitingView {
-                    waitingView.removeFromSuperview()
+                    waitingView.progress = progress
                 }
-                strongSelf.setImageViewFrame(retrieveImageResult.image)
-                strongSelf.addSkitches()
-                if let index = strongSelf.index {
-                    strongSelf.delegate?.photoPreviewController(strongSelf, didShowPhotoAtIndex: index)
-                }
-            case .failure:
-                print("fetch image error")
-            }
-        })
+                }, completionHandler: { [weak self] (result) -> Void in
+                    guard let strongSelf = self else { return }
+                    switch result {
+                    case .success(let retrieveImageResult):
+                        if let waitingView = strongSelf.waitingView {
+                            waitingView.removeFromSuperview()
+                        }
+                        strongSelf.setImageViewFrame(retrieveImageResult.image)
+                        strongSelf.addSkitches()
+                        if let index = strongSelf.index {
+                            strongSelf.delegate?.photoPreviewController(strongSelf, didShowPhotoAtIndex: index)
+                        }
+                    case .failure:
+                        print("fetch image error")
+                    }
+            })
+        }
     }
     
     private func updateConstraint() {
