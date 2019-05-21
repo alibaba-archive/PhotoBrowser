@@ -1,3 +1,1 @@
-github "onevcat/Kingfisher"
-github "Quick/Nimble"
-github "Quick/Quick"
+github "onevcat/Kingfisher" ~> 4.0.0

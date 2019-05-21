@@ -14,6 +14,9 @@
 		4A52D2301C72F47C001C257B /* Photo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D22F1C72F47C001C257B /* Photo.swift */; };
 		4A52D2381C72F568001C257B /* PhotoPreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A52D2371C72F568001C257B /* PhotoPreviewController.swift */; };
 		4A6BC7C11C770F6400DACDA5 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4A6BC7C01C770F6400DACDA5 /* Images.xcassets */; };
+		4A70A003225308A100DBD070 /* Kingfisher+CacheSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A70A002225308A100DBD070 /* Kingfisher+CacheSerializer.swift */; };
+		4A7E8F3E224A16A6005B54C8 /* ImageContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7E8F3D224A16A6005B54C8 /* ImageContainerView.swift */; };
+		4A8A90962244C27D00A09C55 /* HighResolutionImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A8A90952244C27D00A09C55 /* HighResolutionImageView.swift */; };
 		4A8EB7291CEF16020065EAB0 /* PBActionBarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A8EB7281CEF16020065EAB0 /* PBActionBarItem.swift */; };
 		864F45E81E9F0A4900FF9215 /* Skitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 864F45E71E9F0A4900FF9215 /* Skitch.swift */; };
 		86AEF7301EDEC8A000034DBA /* SkitchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86AEF72F1EDEC8A000034DBA /* SkitchView.swift */; };
@@ -60,6 +63,9 @@
 		4A52D22F1C72F47C001C257B /* Photo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Photo.swift; sourceTree = "<group>"; };
 		4A52D2371C72F568001C257B /* PhotoPreviewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoPreviewController.swift; sourceTree = "<group>"; };
 		4A6BC7C01C770F6400DACDA5 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		4A70A002225308A100DBD070 /* Kingfisher+CacheSerializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Kingfisher+CacheSerializer.swift"; sourceTree = "<group>"; };
+		4A7E8F3D224A16A6005B54C8 /* ImageContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageContainerView.swift; sourceTree = "<group>"; };
+		4A8A90952244C27D00A09C55 /* HighResolutionImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighResolutionImageView.swift; sourceTree = "<group>"; };
 		4A8EB7281CEF16020065EAB0 /* PBActionBarItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PBActionBarItem.swift; sourceTree = "<group>"; };
 		864F45E71E9F0A4900FF9215 /* Skitch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Skitch.swift; sourceTree = "<group>"; };
 		86AEF72F1EDEC8A000034DBA /* SkitchView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SkitchView.swift; sourceTree = "<group>"; };
@@ -155,6 +161,8 @@
 				C4B64B4E2117E75500B29C5B /* PBToolbar.swift */,
 				C4B64B502117E77200B29C5B /* PBNavigationBar.swift */,
 				C4B64B522117E7B000B29C5B /* WaitingView.swift */,
+				4A8A90952244C27D00A09C55 /* HighResolutionImageView.swift */,
+				4A7E8F3D224A16A6005B54C8 /* ImageContainerView.swift */,
 			);
 			path = CustomView;
 			sourceTree = "<group>";
@@ -173,6 +181,7 @@
 			children = (
 				C4C79EA02057808200C92C0C /* UIView+Frame.swift */,
 				C4B64B622117E95300B29C5B /* UIViewController+Animation.swift */,
+				4A70A002225308A100DBD070 /* Kingfisher+CacheSerializer.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -433,6 +442,7 @@
 				C4B64B4D2117E73100B29C5B /* GradientView.swift in Sources */,
 				4A52D2301C72F47C001C257B /* Photo.swift in Sources */,
 				C4B64B5B2117E8D100B29C5B /* DismissImmediatelyAnimation.swift in Sources */,
+				4A70A003225308A100DBD070 /* Kingfisher+CacheSerializer.swift in Sources */,
 				C4B64B632117E95300B29C5B /* UIViewController+Animation.swift in Sources */,
 				C4B64B5F2117E91300B29C5B /* PresentAnimation.swift in Sources */,
 				4A52D1FE1C72CE69001C257B /* PhotoBrowser.swift in Sources */,
@@ -441,6 +451,8 @@
 				C4B64B4F2117E75500B29C5B /* PBToolbar.swift in Sources */,
 				C4C79EA12057808200C92C0C /* UIView+Frame.swift in Sources */,
 				C4B64B532117E7B000B29C5B /* WaitingView.swift in Sources */,
+				4A8A90962244C27D00A09C55 /* HighResolutionImageView.swift in Sources */,
+				4A7E8F3E224A16A6005B54C8 /* ImageContainerView.swift in Sources */,
 				4A8EB7291CEF16020065EAB0 /* PBActionBarItem.swift in Sources */,
 				C4B64B5D2117E90000B29C5B /* DismissAnimation.swift in Sources */,
 				C4B64B652117EA6300B29C5B /* PBConstant.swift in Sources */,
