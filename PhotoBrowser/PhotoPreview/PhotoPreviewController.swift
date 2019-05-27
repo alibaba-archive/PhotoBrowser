@@ -325,6 +325,16 @@ extension PhotoPreviewController {
         
         // load image from url
         guard let url = photo.photoUrl else { return }
+        
+        // add access token for CRM
+        if let accessToken = PhotoBrowser.accessToken {
+            let configuration = URLSessionConfiguration.default
+            configuration.httpAdditionalHeaders = ["Authorization": "Bearer \(accessToken)"]
+            let imgManager = ImageDownloader.default
+            imgManager.sessionConfiguration = configuration
+            KingfisherManager.shared.downloader = imgManager
+        }
+        
         // specify cacheKey to fileKey if exists
         let imageResource = ImageResource(downloadURL: url, cacheKey: photo.fileKey)
         

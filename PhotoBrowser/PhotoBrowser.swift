@@ -42,6 +42,7 @@ public extension PhotoBrowserDelegate {
 }
 
 open class PhotoBrowser: UIPageViewController {
+    public static var accessToken: String?
     open var photos: [Photo]? {
         didSet {
             loadPhotos()
