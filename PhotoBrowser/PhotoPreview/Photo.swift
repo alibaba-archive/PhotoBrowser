@@ -106,10 +106,10 @@ public struct Photo {
         localOriginalPhoto { (image) in
             if image != nil {
                 completion(image)
-                return
-            }
-            self.localThumbnailPhoto { (image) in
-                completion(image)
+            } else {
+                self.localThumbnailPhoto { (image) in
+                    completion(image)
+                }
             }
         }
     }
