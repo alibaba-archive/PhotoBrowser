@@ -22,7 +22,7 @@ protocol PhotoPreviewControllerDelegate: class {
     func photoPreviewController(_ controller: PhotoPreviewController, doDownDrag isBegin: Bool, needBack: Bool, imageFrame: CGRect, imageView: UIView?)
 }
 
-typealias ImageView = ImageContainerView
+typealias ImageView = UIImageView
 
 // MARK: - PhotoPreviewController
 class PhotoPreviewController: UIViewController {
