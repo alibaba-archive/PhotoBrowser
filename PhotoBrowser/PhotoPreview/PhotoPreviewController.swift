@@ -203,7 +203,8 @@ extension PhotoPreviewController {
         let pointSize = miniMapSize
         DispatchQueue.global().async { [weak self] in
             // downsample image to minimap size to reduce memory cost
-            let downsampled = image.kf.resize(to: pointSize, for: .aspectFit)
+            let targetSize = image.size.kf.resize(to: pointSize, for: .aspectFit)
+            let downsampled = image.resize(to: targetSize)
             DispatchQueue.main.async {
                 self?.miniMap?.image = downsampled
             }
