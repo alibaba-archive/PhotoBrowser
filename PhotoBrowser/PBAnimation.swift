@@ -111,7 +111,7 @@ open class PresentAnimation: NSObject, UIViewControllerAnimatedTransitioning {
         toVC.view.transform = scale.concatenating(translate)
         toVC.view.alpha = 0
         
-        UIView.animate(withDuration: PresentDuration, delay: 0, options: UIViewAnimationOptions(), animations: {
+        UIView.animate(withDuration: PresentDuration, delay: 0, options: UIView.AnimationOptions(), animations: {
             toVC.view.transform = CGAffineTransform(scaleX: 1, y: 1)
             toVC.view.alpha = 1
             self.fromView.alpha = 0

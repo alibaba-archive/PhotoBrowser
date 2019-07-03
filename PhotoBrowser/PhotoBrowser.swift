@@ -57,7 +57,7 @@ open class PhotoBrowser: UIPageViewController {
                     currentIndex = min(currentIndex, photos.count - 1)
                     let initPage = PhotoPreviewController(photo: photos[currentIndex], index: currentIndex, skitches: skitchesDictionary[currentIndex], isSkitchButtonHidden: isSkitchButtonHidden)
                     initPage.delegate = self
-                    setViewControllers([initPage], direction: UIPageViewControllerNavigationDirection.forward, animated: false, completion: nil)
+                    setViewControllers([initPage], direction: UIPageViewController.NavigationDirection.forward, animated: false, completion: nil)
                     updateNavigationBarTitle()
                 }
             }
@@ -128,8 +128,11 @@ open class PhotoBrowser: UIPageViewController {
     open var isPreviewMode: Bool = false
     open var selectedIndex: [Int] = []
 
-    public override init(transitionStyle style: UIPageViewControllerTransitionStyle, navigationOrientation: UIPageViewControllerNavigationOrientation, options: [String : Any]?) {
-        super.init(transitionStyle: style, navigationOrientation: navigationOrientation, options: options)
+    public override init(transitionStyle style: UIPageViewController.TransitionStyle, navigationOrientation: UIPageViewController.NavigationOrientation, options: [UIPageViewController.OptionsKey : Any]?) {
+// Local variable inserted by Swift 4.2 migrator.
+let options = convertFromOptionalUIPageViewControllerOptionsKeyDictionary(options)
+
+        super.init(transitionStyle: style, navigationOrientation: navigationOrientation, options: convertToOptionalUIPageViewControllerOptionsKeyDictionary(options))
     }
     
     public required init?(coder: NSCoder) {
@@ -137,7 +140,7 @@ open class PhotoBrowser: UIPageViewController {
     }
     
     public convenience init() {
-        self.init(transitionStyle: UIPageViewControllerTransitionStyle.scroll, navigationOrientation: UIPageViewControllerNavigationOrientation.horizontal, options: [UIPageViewControllerOptionInterPageSpacingKey:20])
+        self.init(transitionStyle: UIPageViewController.TransitionStyle.scroll, navigationOrientation: UIPageViewController.NavigationOrientation.horizontal, options: convertToOptionalUIPageViewControllerOptionsKeyDictionary([convertFromUIPageViewControllerOptionsKey(UIPageViewController.OptionsKey.interPageSpacing):20]))
     }
     
     open override func viewDidLoad() {
@@ -211,7 +214,7 @@ public extension PhotoBrowser {
             let initPage = PhotoPreviewController(photo: photos[index], index: index, skitches: skitchesDictionary[currentIndex])
 
             initPage.delegate = self
-            setViewControllers([initPage], direction: UIPageViewControllerNavigationDirection.forward, animated: false, completion: nil)
+            setViewControllers([initPage], direction: UIPageViewController.NavigationDirection.forward, animated: false, completion: nil)
             updateNavigationBarTitle()
         }
     }
@@ -296,7 +299,7 @@ extension PhotoBrowser {
     }
     
     func layoutToolbar(_ items: [UIBarButtonItem]) -> [UIBarButtonItem]? {
-        let flexSpace = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: self, action: nil)
+        let flexSpace = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: self, action: nil)
         let fixedSpace = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: self, action: nil)
         fixedSpace.width = PadToolbarItemSpace
         var itemsArray = [UIBarButtonItem]()
@@ -382,7 +385,7 @@ extension PhotoBrowser {
     public func defaultShareAction() {
         if let image = currentImageView()?.image, let button = headerView?.rightButton, let photos = photos {
             let url = URL(fileURLWithPath: NSTemporaryDirectory().appending(photos[currentIndex].title ?? ""))
-            let data = UIImagePNGRepresentation(image)
+            let data = image.pngData()
             do {
                 try data?.write(to: url)
             } catch {}
@@ -566,4 +569,21 @@ extension PhotoBrowser {
             CustomPhotoBroswerManager.shared.customCheckSelected = checkSelected
         }
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromOptionalUIPageViewControllerOptionsKeyDictionary(_ input: [UIPageViewController.OptionsKey: Any]?) -> [String: Any]? {
+	guard let input = input else { return nil }
+	return Dictionary(uniqueKeysWithValues: input.map {key, value in (key.rawValue, value)})
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToOptionalUIPageViewControllerOptionsKeyDictionary(_ input: [String: Any]?) -> [UIPageViewController.OptionsKey: Any]? {
+	guard let input = input else { return nil }
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIPageViewController.OptionsKey(rawValue: key), value)})
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromUIPageViewControllerOptionsKey(_ input: UIPageViewController.OptionsKey) -> String {
+	return input.rawValue
 }

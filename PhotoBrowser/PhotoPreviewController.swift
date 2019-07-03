@@ -284,7 +284,7 @@ extension PhotoPreviewController {
         guard let delegate = delegate, let photo = photo else {
             return
         }
-        if sender.state == UIGestureRecognizerState.began {
+        if sender.state == UIGestureRecognizer.State.began {
             delegate.longPressOn(photo, gesture: sender)
         }
     }
@@ -378,7 +378,7 @@ extension PhotoPreviewController {
         if moveImage == nil { // 添加moveImage
             moveImage = UIImageView()
             view.addSubview(moveImage!)
-            moveImage?.contentMode = UIViewContentMode.scaleAspectFill
+            moveImage?.contentMode = UIView.ContentMode.scaleAspectFill
             moveImage?.backgroundColor = UIColor.white
             moveImage?.layer.masksToBounds = true
             moveImage?.image = imageView.image

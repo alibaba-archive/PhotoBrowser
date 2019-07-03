@@ -149,7 +149,7 @@ class PBNavigationBar: UIView {
     lazy var leftButton: UIButton = {
         let button = UIButton()
         let image = UIImage(named: "icon-cross", in: Bundle(for: classForCoder), compatibleWith: nil)
-        button.setImage(image, for: UIControlState())
+        button.setImage(image, for: UIControl.State())
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addConstraint(NSLayoutConstraint(item: button, attribute: .width, relatedBy: .greaterThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 40))
         button.addConstraint(NSLayoutConstraint(item: button, attribute: .height, relatedBy: .greaterThanOrEqual, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 40))
